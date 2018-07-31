@@ -431,6 +431,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d1ac87e3cad4ac4fa69479cc585aac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TextMesh: {fileID: 1575736618}
 --- !u!102 &1575736618
 TextMesh:
   serializedVersion: 3
