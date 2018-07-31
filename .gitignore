@@ -1,0 +1,10 @@
+*.sln
+*.csproj
+*.pfx*
+/.vs/
+/obj/
+/Library/
+/Packages/
+/Temp/
+/UWP/
+/QCAR/
