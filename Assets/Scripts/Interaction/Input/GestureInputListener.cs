@@ -35,8 +35,12 @@ namespace HoloIslandVis.Interaction.Input
 
         public event GestureInputHandler OneHandManipulationStart = delegate { };
         public event GestureInputHandler TwoHandManipulationStart = delegate { };
-        public event GestureInputHandler OneHandManipulationEnd = delegate { };
-        public event GestureInputHandler TwoHandManipulationEnd = delegate { };
+        public event GestureInputHandler OneHandManipulationUpdate = delegate { };
+        public event GestureInputHandler TwoHandManipulationUpdate = delegate { };
+        public event GestureInputHandler ManipulationEnd = delegate { };
+
+        public event GestureInputHandler ManipulationTap = delegate { };
+        public event GestureInputHandler ManipulationDoubleTap = delegate { };
 
         private bool _isEvaluating;
         private Dictionary<IInputSource, SourceState> _sourceStates;
@@ -59,11 +63,9 @@ namespace HoloIslandVis.Interaction.Input
                 { Convert.ToInt32("00000001", 2), eventData => OneHandManipulationStart(eventData) },
                 { Convert.ToInt32("00010000", 2), eventData => OneHandManipulationStart(eventData) },
                 { Convert.ToInt32("00010001", 2), eventData => TwoHandManipulationStart(eventData) },
-                { Convert.ToInt32("00000100", 2), eventData => OneHandManipulationEnd(eventData) },
-                { Convert.ToInt32("01000000", 2), eventData => OneHandManipulationEnd(eventData) },
-                // TODO   TwoHandManipulationEnd should be invoked when only one hand ends 
-                //        manipulation as well.
-                { Convert.ToInt32("01000100", 2), eventData => TwoHandManipulationEnd(eventData) }
+                { Convert.ToInt32("00000100", 2), eventData => ManipulationEnd(eventData) },
+                { Convert.ToInt32("01000000", 2), eventData => ManipulationEnd(eventData) },
+                { Convert.ToInt32("01000100", 2), eventData => ManipulationEnd(eventData) }
             };
 
             InputManager.Instance.AddGlobalListener(gameObject);
