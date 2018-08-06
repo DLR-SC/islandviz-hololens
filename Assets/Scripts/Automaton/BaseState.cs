@@ -28,6 +28,8 @@ namespace HoloIslandVis.Automaton
             _stateTransitionTable = new Dictionary<Command, BaseState>();
             _interactionTaskTable = new Dictionary<Command, InteractionTask>();
 
+            // This may cause problems because call order of methods causes state to be null
+            // before subsequent methods are invoked.
             _openAction += (BaseState state) => StateOpened(state, EventArgs.Empty);
             _closeAction += (BaseState state) => StateClosed(state, EventArgs.Empty);
         }
@@ -66,7 +68,8 @@ namespace HoloIslandVis.Automaton
 
         private void processInteractionTask(Command command)
         {
-
+            InteractionTask interactionTask = _interactionTaskTable[command];
+            //interactionTask.Perform()
         }
 
         private void moveNext(BaseState newState)
