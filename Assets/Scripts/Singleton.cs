@@ -9,14 +9,18 @@ namespace HoloIslandVis
 
         public static T Instance {
             get { return _instance.Value; }
-            private set { }
         }
 
         static Singleton()
         {
             _instance = new Lazy<T>(() => {
-                BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
-                var constructor = typeof(T).GetConstructor(flags, null, Type.EmptyTypes, null);
+                #if NETFX_CORE
+                    var constructor = WinRTLegacy.TypeExtensions.GetConstructor(typeof(T), Type.EmptyTypes);
+                    System.Diagnostics.Debug.WriteLine(constructor.DeclaringType);
+                #else
+                    BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                    var constructor = typeof(T).GetConstructor(flags, null, Type.EmptyTypes, null);
+                #endif
                 return (T) constructor.Invoke(null);
             });
         }
