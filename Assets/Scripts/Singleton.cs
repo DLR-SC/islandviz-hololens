@@ -16,7 +16,6 @@ namespace HoloIslandVis
             _instance = new Lazy<T>(() => {
                 #if NETFX_CORE
                     var constructor = WinRTLegacy.TypeExtensions.GetConstructor(typeof(T), Type.EmptyTypes);
-                    System.Diagnostics.Debug.WriteLine(constructor.DeclaringType);
                 #else
                     BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
                     var constructor = typeof(T).GetConstructor(flags, null, Type.EmptyTypes, null);

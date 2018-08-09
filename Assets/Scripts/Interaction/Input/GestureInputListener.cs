@@ -2,147 +2,96 @@
 using HoloToolkit.Unity.InputModule;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace HoloIslandVis.Interaction.Input
 {
-    class SourceState
-    {
-        public IInputSource InputSource { get; private set; }
-        public int InputDown { get; set; }
-        public int InputUp { get; set; }
-
-        public SourceState(IInputSource inputSource)
-        {
-            InputSource = inputSource;
-            InputDown = 0;
-            InputUp = 0;
-        }
-    }
-
     public class GestureInputListener : SingletonComponent<GestureInputListener>, 
         IInputHandler, ISourceStateHandler
     {
-        private const float INPUT_WAIT = 0.25f;
+        public delegate void GestureInputHandler(GestureInputEventArgs eventData);
 
-        public delegate void GestureInputHandler(BaseInputEventData eventData);
+        public event GestureInputHandler Tap                    = delegate { };
+        public event GestureInputHandler DoubleTap              = delegate { };
 
-        public event GestureInputHandler OneHandTap = delegate { };
-        public event GestureInputHandler TwoHandTap = delegate { };
-        public event GestureInputHandler OneHandDoubleTap = delegate { };
-        public event GestureInputHandler TwoHandDoubleTap = delegate { };
+        public event GestureInputHandler ManipulationStart      = delegate { };
+        public event GestureInputHandler ManipulationEnd        = delegate { };
+        public event GestureInputHandler ManipulationUpdate     = delegate { };
 
-        public event GestureInputHandler OneHandManipulationStart = delegate { };
-        public event GestureInputHandler TwoHandManipulationStart = delegate { };
-        public event GestureInputHandler OneHandManipulationUpdate = delegate { };
-        public event GestureInputHandler TwoHandManipulationUpdate = delegate { };
-        public event GestureInputHandler ManipulationEnd = delegate { };
-
-        public event GestureInputHandler ManipulationTap = delegate { };
-        public event GestureInputHandler ManipulationDoubleTap = delegate { };
-
-        private bool _isEvaluating;
-        private Dictionary<IInputSource, SourceState> _sourceStates;
-        private Dictionary<int, Action<BaseInputEventData>> _gestureEventTable;
+        private Dictionary<IInputSource, GestureSource> _gestureSources;
+        private Dictionary<byte, Action<GestureInputEventArgs>> _gestureEventTable;
 
         protected override void Awake()
         {
             base.Awake();
-            _isEvaluating = false;
-
-            _sourceStates = new Dictionary<IInputSource, SourceState>(2);
-            _gestureEventTable = new Dictionary<int, Action<BaseInputEventData>>()
+            _gestureEventTable = new Dictionary<byte, Action<GestureInputEventArgs>>()
             {
-                { Convert.ToInt32("00000101", 2), eventData => OneHandTap(eventData) },
-                { Convert.ToInt32("01010000", 2), eventData => OneHandTap(eventData) },
-                { Convert.ToInt32("01010101", 2), eventData => TwoHandTap(eventData) },
-                { Convert.ToInt32("00001010", 2), eventData => OneHandDoubleTap(eventData) },
-                { Convert.ToInt32("10100000", 2), eventData => OneHandDoubleTap(eventData) },
-                { Convert.ToInt32("10101010", 2), eventData => TwoHandDoubleTap(eventData) },
-                { Convert.ToInt32("00000001", 2), eventData => OneHandManipulationStart(eventData) },
-                { Convert.ToInt32("00010000", 2), eventData => OneHandManipulationStart(eventData) },
-                { Convert.ToInt32("00010001", 2), eventData => TwoHandManipulationStart(eventData) },
-                { Convert.ToInt32("00000100", 2), eventData => ManipulationEnd(eventData) },
-                { Convert.ToInt32("01000000", 2), eventData => ManipulationEnd(eventData) },
-                { Convert.ToInt32("01000100", 2), eventData => ManipulationEnd(eventData) }
+                { Convert.ToByte("10001001", 2), eventArgs => Tap(eventArgs) },
+                { Convert.ToByte("10010010", 2), eventArgs => DoubleTap(eventArgs) },
+                { Convert.ToByte("11000001", 2), eventArgs => ManipulationStart(eventArgs) },
+                { Convert.ToByte("10001000", 2), eventArgs => ManipulationEnd(eventArgs) }
             };
 
+            _gestureSources = new Dictionary<IInputSource, GestureSource>(2);
             InputManager.Instance.AddGlobalListener(gameObject);
+        }
+
+        private void Update()
+        {
+            foreach(GestureSource source in _gestureSources.Values)
+            {
+                if(source.IsManipulating && !source.IsEvaluating)
+                    ManipulationUpdate(new GestureInputEventArgs());
+            }
         }
 
         public void OnSourceDetected(SourceStateEventData eventData)
         {
             IInputSource inputSource = eventData.InputSource;
-            if(_sourceStates.ContainsKey(inputSource))
+            if (_gestureSources.ContainsKey(inputSource))
                 return;
 
-            _sourceStates.Add(inputSource, new SourceState(inputSource));
+            _gestureSources.Add(inputSource, new GestureSource(inputSource));
         }
 
         public void OnSourceLost(SourceStateEventData eventData)
         {
             IInputSource inputSource = eventData.InputSource;
-            if(!_sourceStates.ContainsKey(inputSource))
+            if (!_gestureSources.ContainsKey(inputSource))
                 return;
 
-            _sourceStates.Remove(inputSource);
+            _gestureSources.Remove(inputSource);
         }
 
         public void OnInputDown(InputEventData eventData)
         {
-            _sourceStates[eventData.InputSource].InputDown++;
-            evaluateInput(eventData);
+            _gestureSources[eventData.InputSource].InputDown++;
+            StartCoroutine(processInput(eventData));
         }
 
         public void OnInputUp(InputEventData eventData)
         {
-            _sourceStates[eventData.InputSource].InputUp++;
-            evaluateInput(eventData);
+            _gestureSources[eventData.InputSource].InputUp++;
+            StartCoroutine(processInput(eventData));
         }
 
-        private void evaluateInput(InputEventData eventData)
+        private IEnumerator processInput(BaseInputEventData eventData)
         {
-            if (!_isEvaluating)
-                StartCoroutine(handleInput(eventData));
-        }
+            if(!_gestureSources.ContainsKey(eventData.InputSource))
+                yield break;
 
-        private IEnumerator handleInput(BaseInputEventData eventData)
-        {
-            _isEvaluating = true;
-            yield return new WaitForSeconds(INPUT_WAIT);
-            byte inputData = getInputData(_sourceStates);
+            GestureSource gestureSource = _gestureSources[eventData.InputSource];
+            if(gestureSource.IsEvaluating)
+                yield break;
 
-            Action<BaseInputEventData> action;
-            if (_gestureEventTable.TryGetValue(inputData, out action))
-                action.Invoke(eventData);
+            yield return StartCoroutine(gestureSource.Evaluate());
 
-            resetSourceStates();
-            _isEvaluating = false;
-        }
-
-        private byte getInputData(Dictionary<IInputSource, SourceState> sourceStates)
-        {
-            byte inputData = 0;
-            SourceState[] statesArr = new SourceState[sourceStates.Values.Count];
-            sourceStates.Values.CopyTo(statesArr, 0);
-
-            for (int i = 0; i < statesArr.Length; i++)
-            {
-                inputData += (byte) (Mathf.Min(2, statesArr[i].InputDown) << i*4);
-                inputData += (byte) (Mathf.Min(2, statesArr[i].InputUp) << i*4+2);
-            }
-
-            return inputData;
-        }
-
-        private void resetSourceStates()
-        {
-            foreach(var sourceState in _sourceStates.Values)
-            {
-                sourceState.InputDown = 0;
-                sourceState.InputUp = 0;
-            }
+            Action<GestureInputEventArgs> action;
+            if(_gestureEventTable.TryGetValue(gestureSource.InputData, out action))
+                action.Invoke(new GestureInputEventArgs());
         }
     }
 }
