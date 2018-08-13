@@ -52,14 +52,13 @@ namespace HoloIslandVis
 
         public void inputListenerDebug()
         {
-            //GestureInputListener.Instance.OneHandTap += (BaseInputEventData eventData) => Debug.Log("OneHandTap");
-            //GestureInputListener.Instance.TwoHandTap += (BaseInputEventData eventData) => Debug.Log("TwoHandTap");
-            //GestureInputListener.Instance.OneHandDoubleTap += (BaseInputEventData eventData) => Debug.Log("OneHandDoubleTap");
-            //GestureInputListener.Instance.TwoHandDoubleTap += (BaseInputEventData eventData) => Debug.Log("TwoHandDoubleTap");
-            //GestureInputListener.Instance.OneHandManipulationStart += (BaseInputEventData eventData) => Debug.Log("OneHandManipulationStart");
-            //GestureInputListener.Instance.TwoHandManipulationStart += (BaseInputEventData eventData) => Debug.Log("TwoHandManipulationStart");
-            //GestureInputListener.Instance.ManipulationEnd += (BaseInputEventData eventData) => Debug.Log("OneHandManipulationEnd");
-            //GestureInputListener.Instance.ManipulationEnd += (BaseInputEventData eventData) => Debug.Log("TwoHandManipulationEnd");
+            GestureInputListener.Instance.OneHandTap += (GestureInputEventArgs eventData) => Debug.Log("OneHandTap");
+            GestureInputListener.Instance.TwoHandTap += (GestureInputEventArgs eventData) => Debug.Log("TwoHandTap");
+            GestureInputListener.Instance.OneHandDoubleTap += (GestureInputEventArgs eventData) => Debug.Log("OneHandDoubleTap");
+            GestureInputListener.Instance.TwoHandDoubleTap += (GestureInputEventArgs eventData) => Debug.Log("TwoHandDoubleTap");
+            GestureInputListener.Instance.OneHandManipStart += (GestureInputEventArgs eventData) => Debug.Log("OneHandManipulationStart");
+            GestureInputListener.Instance.TwoHandManipStart += (GestureInputEventArgs eventData) => Debug.Log("TwoHandManipulationStart");
+            GestureInputListener.Instance.ManipulationEnd += (GestureInputEventArgs eventData) => Debug.Log("ManipulationEnd");
         }
     }
 

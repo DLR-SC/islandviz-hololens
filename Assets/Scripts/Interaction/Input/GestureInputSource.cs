@@ -19,7 +19,7 @@ namespace HoloIslandVis.Interaction.Input
 
         public IInputSource InputSource { get; private set; }
         public int InputBufferSize { get; private set; }
-        public float InputTimeout { get; private set; }
+        public int InputTimeout { get; private set; }
         public byte InputData { get; private set; }
         public bool IsManipulating { get; private set; }
         public bool IsEvaluating { get; set; }
@@ -30,9 +30,9 @@ namespace HoloIslandVis.Interaction.Input
             : this (inputSource, 2) { }
 
         public GestureSource(IInputSource inputSource, int inputBufferSize)
-            : this(inputSource, inputBufferSize, 0.25f) { }
+            : this(inputSource, inputBufferSize, 250) { }
 
-        public GestureSource(IInputSource inputSource, int inputBufferSize, float inputTimeout)
+        public GestureSource(IInputSource inputSource, int inputBufferSize, int inputTimeout)
         {
             _stateBytes = new Dictionary<SourceState, Func<GestureSource, byte>>
             {
@@ -49,10 +49,9 @@ namespace HoloIslandVis.Interaction.Input
             InputUp = 0;
         }
 
-        public IEnumerator Evaluate()
+        public byte Evaluate()
         {
             IsEvaluating = true;
-            yield return new WaitForSeconds(InputTimeout);
 
             InputData = getInputData(InputDown, InputUp);
             if(InputData == _stateBytes[SourceState.Pressed].Invoke(this))
@@ -64,6 +63,7 @@ namespace HoloIslandVis.Interaction.Input
             InputData = getInputData(InputDown, InputUp);
             resetInputData(this);
             IsEvaluating = false;
+            return InputData;
         }
 
         private byte getInputData(int inputDown, int inputUp)

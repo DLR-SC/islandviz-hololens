@@ -394,10 +394,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1083209325}
-  - component: {fileID: 1083209327}
   - component: {fileID: 1083209326}
   m_Layer: 0
-  m_Name: GestureInputDriver
+  m_Name: GestureInputListener
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -427,18 +426,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8765e2d9f7870f7489ddec69846678c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1083209327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1083209324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9adefe7a5af54174396b224b86fc51da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GestureInputListener: {fileID: 1083209326}
 --- !u!1 &1336785067
 GameObject:
   m_ObjectHideFlags: 0

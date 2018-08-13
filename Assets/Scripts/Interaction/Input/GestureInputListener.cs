@@ -14,29 +14,42 @@ namespace HoloIslandVis.Interaction.Input
     {
         public delegate void GestureInputHandler(GestureInputEventArgs eventData);
 
-        public event GestureInputHandler Tap                    = delegate { };
-        public event GestureInputHandler DoubleTap              = delegate { };
+        public event GestureInputHandler OneHandTap             = delegate { };
+        public event GestureInputHandler TwoHandTap             = delegate { };
+        public event GestureInputHandler OneHandDoubleTap       = delegate { };
+        public event GestureInputHandler TwoHandDoubleTap       = delegate { };
 
-        public event GestureInputHandler ManipulationStart      = delegate { };
-        public event GestureInputHandler ManipulationEnd        = delegate { };
+        public event GestureInputHandler OneHandManipStart      = delegate { };
+        public event GestureInputHandler TwoHandManipStart      = delegate { };
         public event GestureInputHandler ManipulationUpdate     = delegate { };
+        public event GestureInputHandler ManipulationEnd        = delegate { };
 
         private Dictionary<IInputSource, GestureSource> _gestureSources;
-        private Dictionary<byte, Action<GestureInputEventArgs>> _gestureEventTable;
+        private Dictionary<short, Action<GestureInputEventArgs>> _gestureEventTable;
+        private int _inputTimeout;
+        private bool _timerSet;
 
         protected override void Awake()
         {
             base.Awake();
-            _gestureEventTable = new Dictionary<byte, Action<GestureInputEventArgs>>()
+            _gestureEventTable = new Dictionary<short, Action<GestureInputEventArgs>>()
             {
-                { Convert.ToByte("10001001", 2), eventArgs => Tap(eventArgs) },
-                { Convert.ToByte("10010010", 2), eventArgs => DoubleTap(eventArgs) },
-                { Convert.ToByte("11000001", 2), eventArgs => ManipulationStart(eventArgs) },
-                { Convert.ToByte("10001000", 2), eventArgs => ManipulationEnd(eventArgs) }
+                { Convert.ToInt16("0000000010001001", 2), eventArgs => OneHandTap(eventArgs) },
+                { Convert.ToInt16("1000100110001001", 2), eventArgs => TwoHandTap(eventArgs) },
+                { Convert.ToInt16("0000000010010010", 2), eventArgs => OneHandDoubleTap(eventArgs) },
+                { Convert.ToInt16("1001001010010010", 2), eventArgs => TwoHandDoubleTap(eventArgs) },
+                { Convert.ToInt16("0000000011000001", 2), eventArgs => OneHandManipStart(eventArgs) },
+                { Convert.ToInt16("1100000111000001", 2), eventArgs => TwoHandManipStart(eventArgs) },
+                { Convert.ToInt16("0000000010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
+                { Convert.ToInt16("1000100010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
+                { Convert.ToInt16("1000000010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
+                { Convert.ToInt16("1000100010000000", 2), eventArgs => ManipulationEnd(eventArgs) }
             };
 
             _gestureSources = new Dictionary<IInputSource, GestureSource>(2);
             InputManager.Instance.AddGlobalListener(gameObject);
+            _inputTimeout = 250;
+            _timerSet = false;
         }
 
         private void Update()
@@ -44,7 +57,11 @@ namespace HoloIslandVis.Interaction.Input
             foreach(GestureSource source in _gestureSources.Values)
             {
                 if(source.IsManipulating && !source.IsEvaluating)
-                    ManipulationUpdate(new GestureInputEventArgs());
+                {
+                    GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
+                    _gestureSources.Values.CopyTo(gestureSources, 0);
+                    ManipulationUpdate(new GestureInputEventArgs(gestureSources));
+                }
             }
         }
 
@@ -69,29 +86,40 @@ namespace HoloIslandVis.Interaction.Input
         public void OnInputDown(InputEventData eventData)
         {
             _gestureSources[eventData.InputSource].InputDown++;
-            StartCoroutine(processInput(eventData));
+
+            if (!_timerSet)
+            {
+                _timerSet = true;
+                new Task(() => processInput(eventData)).Start();
+            }
         }
 
         public void OnInputUp(InputEventData eventData)
         {
             _gestureSources[eventData.InputSource].InputUp++;
-            StartCoroutine(processInput(eventData));
+
+            if (!_timerSet)
+            {
+                _timerSet = true;
+                new Task(() => processInput(eventData)).Start();
+            }
         }
 
-        private IEnumerator processInput(BaseInputEventData eventData)
+        private async void processInput(InputEventData eventData)
         {
-            if(!_gestureSources.ContainsKey(eventData.InputSource))
-                yield break;
+            await Task.Delay(_gestureSources[eventData.InputSource].InputTimeout);
 
-            GestureSource gestureSource = _gestureSources[eventData.InputSource];
-            if(gestureSource.IsEvaluating)
-                yield break;
+            GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
+            _gestureSources.Values.CopyTo(gestureSources, 0);
 
-            yield return StartCoroutine(gestureSource.Evaluate());
+            short inputData = 0;
+            for (int i = 0; i < gestureSources.Length; i++)
+                inputData += (short) (gestureSources[i].Evaluate() << i * 8);
 
+            _timerSet = false;
             Action<GestureInputEventArgs> action;
-            if(_gestureEventTable.TryGetValue(gestureSource.InputData, out action))
-                action.Invoke(new GestureInputEventArgs());
+            if (_gestureEventTable.TryGetValue(inputData, out action))
+                action.Invoke(new GestureInputEventArgs(gestureSources));
         }
     }
 }
