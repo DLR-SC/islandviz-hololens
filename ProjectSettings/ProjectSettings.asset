@@ -598,7 +598,7 @@ PlayerSettings:
   metroCertificatePassword: 
   metroCertificateSubject: DefaultCompany
   metroCertificateIssuer: DefaultCompany
-  metroCertificateNotAfter: 8088d011f94ed501
+  metroCertificateNotAfter: 808d7077f551d501
   metroApplicationDescription: Template_3D
   wsaImages: {}
   metroTileShortName: holo-island-viz
@@ -623,10 +623,10 @@ PlayerSettings:
       EnterpriseAuthentication: False
       HumanInterfaceDevice: False
       InputInjectionBrokered: False
-      InternetClient: False
+      InternetClient: True
       InternetClientServer: False
       Location: False
-      Microphone: False
+      Microphone: True
       MusicLibrary: False
       Objects3D: False
       PhoneCall: False
@@ -695,9 +695,9 @@ PlayerSettings:
     UNet: 1
   facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 3
-  cloudProjectId: 14f82484-6b82-40c1-bca6-409b647ed65d
+  cloudProjectId: 5c03be3e-cf2b-41d9-874f-856bc815dacc
   projectName: IslandVis_Holo
-  organizationId: krbu
+  organizationId: pseipel
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

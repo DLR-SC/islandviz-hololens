@@ -16,6 +16,7 @@ namespace HoloIslandVis
         void Start()
         {
             SpatialScan.Instance.RequestBeginScanning();
+            SpeechInputListener.Instance.speechResponse += (EventArgs eventData) => Debug.Log("speechEvent");
             //stateMachineDebug();
             //inputListenerDebug();
         }
