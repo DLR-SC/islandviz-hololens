@@ -15,8 +15,8 @@ namespace HoloIslandVis.Interaction.Input
     public class SpeechInputListener : SingletonComponent<SpeechInputListener>
     {
         public delegate void SpeechInputHandler(EventArgs eventData);
-        public event SpeechInputHandler speechResponse = delegate { };
-        private string baseURL = "http://localhost:5005/";
+        public event SpeechInputHandler SpeechResponse = delegate { };
+        private readonly string baseURL = "http://localhost:5005/";
 
         private DictationRecognizer m_DictationRecognizer;
         private TextToSpeech tts;
@@ -26,10 +26,10 @@ namespace HoloIslandVis.Interaction.Input
         {
             base.Awake();
             tts = gameObject.AddComponent<TextToSpeech>();
-            initDictationRecognizer();
+            InitDictationRecognizer();
         }
 
-        private void initDictationRecognizer()
+        private void InitDictationRecognizer()
         {
             m_DictationRecognizer = new DictationRecognizer();
 
@@ -48,22 +48,24 @@ namespace HoloIslandVis.Interaction.Input
                     {
                         int i = text.IndexOf(" ") + 1;
                         string str = text.Substring(i);
-                        StartCoroutine(getAPIResponse(str));
+                        StartCoroutine(GetAPIResponse(str));
                     }
                 }
                 else
                 {
-                    StartCoroutine(getAPIResponse(text));
+                    StartCoroutine(GetAPIResponse(text));
                     listening = false;
                 }
             };
             m_DictationRecognizer.Start();
         }
 
-        IEnumerator getAPIResponse(string voiceCommand)
+        IEnumerator GetAPIResponse(string voiceCommand)
         {
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("Content-Type", "application/json");
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            };
 
             using (WWW www = new WWW(
                 baseURL + "conversations/default/parse",

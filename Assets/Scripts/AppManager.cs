@@ -22,7 +22,7 @@ namespace HoloIslandVis
             _isUpdating = false;
             _isScanning = false;
 
-            SpeechInputListener.Instance.speechResponse += (EventArgs eventData) => Debug.Log("speechEvent");
+            SpeechInputListener.Instance.SpeechResponse += (EventArgs eventData) => Debug.Log("speechEvent");
 
             initScene();
             //inputListenerDebug();
