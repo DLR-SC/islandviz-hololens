@@ -118,8 +118,11 @@ namespace HoloIslandVis.Interaction.Input
 
             _timerSet = false;
             Action<GestureInputEventArgs> action;
-            if (_gestureEventTable.TryGetValue(inputData, out action))
-                action.Invoke(new GestureInputEventArgs(gestureSources));
+            if(_gestureEventTable.TryGetValue(inputData, out action))
+            {
+                GestureInputEventArgs eventArgs = new GestureInputEventArgs(gestureSources);
+                UnityMainThreadDispatcher.Instance.Enqueue(action, eventArgs);
+            }
         }
     }
 }

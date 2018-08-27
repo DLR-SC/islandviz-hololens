@@ -34,6 +34,9 @@ public class ScanInstructionText : MonoBehaviour
 
     private void OnScanStateChanged(SpatialUnderstanding.ScanStates scanState)
     {
-        //throw new NotImplementedException();
+        if(scanState == SpatialUnderstanding.ScanStates.Done)
+            UnityMainThreadDispatcher.Instance.Enqueue(() => {
+                TextMesh.text = "Tap to set content surface.";
+            });
     }
 }

@@ -26,7 +26,7 @@ namespace HoloIslandVis.Component.UI
 
         private void OnScanStateChanged(SpatialUnderstanding.ScanStates scanState)
         {
-            Debug.Log(gameObject.name + ": Scan state changed to " + scanState);
+            Debug.Log("Scan state changed to " + scanState);
         }
 
         private void OnPlatformCellCountChanged(int platformCellCount)

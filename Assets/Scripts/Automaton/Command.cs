@@ -6,37 +6,65 @@ namespace HoloIslandVis.Automaton
 {
     public enum GestureType
     {
-        Tap = 1,
-        DoubleTap = 2,
+        Invariant = 0,
+        OneHandTap = 1,
+        OneHandDoubleTap = 2,
         ManipulationStart = 4,
         ManipulationEnd = 8
     }
 
     public enum KeywordType
     {
-        Tap = 1,
-        DoubleTap = 2,
-        ManipulationStart = 4,
-        ManipulationEnd = 8
+        Invariant = 0
     }
 
     public enum InteractableType
     {
-        Island = 1,
-        Panel = 2
+        Invariant = 0
     }
 
     public class Command
     {
-        private GestureType _gesture;
-        private KeywordType _keyword;
-        private InteractableType _focusedObject;
+        public GestureType Gesture { get; private set; }
+        public KeywordType Keyword { get; private set; }
+        public InteractableType FocusedObject { get; private set; }
+
+        public Command()
+        {
+
+        }
 
         public Command(GestureType gesture, KeywordType keyword, InteractableType focusedObject)
         {
-            _gesture = gesture;
-            _keyword = keyword;
-            _focusedObject = focusedObject;
+            Gesture = gesture;
+            Keyword = keyword;
+            FocusedObject = focusedObject;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(!GetType().Equals(obj.GetType()))
+                return false;
+
+            Command other = (Command) obj;
+
+            if (Gesture != other.Gesture && other.Gesture != GestureType.Invariant && Gesture != GestureType.Invariant)
+                return false;
+
+            if (Keyword != other.Keyword && other.Keyword != KeywordType.Invariant && Keyword != KeywordType.Invariant)
+                return false;
+
+            if (FocusedObject != other.FocusedObject && other.FocusedObject != InteractableType.Invariant 
+                && FocusedObject != InteractableType.Invariant)
+                return false;
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            // TODO     Implement!
+            return 0;
         }
     }
 }

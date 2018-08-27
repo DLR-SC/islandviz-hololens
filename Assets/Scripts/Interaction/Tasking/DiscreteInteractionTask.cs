@@ -1,4 +1,5 @@
-﻿using HoloToolkit.Unity.InputModule;
+﻿using HoloIslandVis.Interaction.Input;
+using HoloToolkit.Unity.InputModule;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,17 +9,18 @@ namespace HoloIslandVis.Interaction.Tasking
 {
     public class DiscreteInteractionTask : InteractionTask
     {
-        private Action<BaseInputEventData> _executeAction = delegate { };
+        private Action<GestureInputEventArgs> _executeAction = delegate { };
 
-        public DiscreteInteractionTask()
+        public DiscreteInteractionTask() { }
+        public DiscreteInteractionTask(Action<GestureInputEventArgs> action)
         {
-
+            _executeAction = action;
         }
 
-        public override void Pass(BaseInputEventData eventData)
+        public override void Pass(GestureInputEventArgs eventData)
             => _executeAction.Invoke(eventData);
 
-        public void SetInteraction(Action<BaseInputEventData> action)
+        public void SetInteraction(Action<GestureInputEventArgs> action)
             => _executeAction = action;
     }
 }

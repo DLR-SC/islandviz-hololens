@@ -1,54 +1,88 @@
 ﻿using HoloIslandVis.Automaton;
+using HoloIslandVis.Component.UI;
 using HoloIslandVis.Interaction.Input;
 using HoloIslandVis.Mapping;
 using HoloToolkit.Unity.InputModule;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace HoloIslandVis
 {
     public class AppManager : SingletonComponent<AppManager>
     {
+        private bool _isScanning;
+        private bool _isUpdating;
 
         // Use this for initialization
         void Start()
         {
-            SpatialScan.Instance.RequestBeginScanning();
+            _isUpdating = false;
+            _isScanning = false;
+
             SpeechInputListener.Instance.speechResponse += (EventArgs eventData) => Debug.Log("speechEvent");
-            //stateMachineDebug();
+
+            initScene();
             //inputListenerDebug();
         }
 
-        // Update is called once per frame
-        void Update()
+        public void initScene()
         {
+            SpatialScan.Instance.RequestBeginScanning();
 
-        }
+            UserInterface.Instance.ScanInstructionText.SetActive(true);
+            UserInterface.Instance.ScanProgressBar.SetActive(true);
+            _isScanning = true;
 
-        public void stateMachineDebug()
-        {
-            BaseState state1 = new BaseState("State1");
-            Command commandA = new Command(GestureType.Tap, KeywordType.Tap, InteractableType.Island);
-            Command commandB = new Command(GestureType.DoubleTap, KeywordType.Tap, InteractableType.Panel);
-
-            BaseState state2 = new BaseState("State2");
-            BaseState state3 = new BaseState("State3");
-
-            state1.AddStateTransition(commandA, state2);
-            state1.StateOpened += (object sender, EventArgs args) =>
+            GestureInputListener.Instance.OneHandTap += (GestureInputEventArgs eventArgs) =>
             {
-                SpatialScan.Instance.RequestBeginScanning();
+                if (_isUpdating)
+                {
+                    Debug.Log("Set inactive");
+                    UserInterface.Instance.ScanInstructionText.SetActive(false);
+                    _isUpdating = false;
+                }
             };
 
-            StateMachine stateMachine = new StateMachine(state1);
-            stateMachine.AddState(state2);
-            stateMachine.AddState(state3);
+            GestureInputListener.Instance.OneHandTap += (GestureInputEventArgs eventArgs) =>
+            {
+                if (SpatialScan.Instance.TargetPlatformCellCount <= SpatialScan.Instance.PlatformCellCount && _isScanning)
+                {
+                    SpatialScan.Instance.RequestFinishScanning();
+                    UserInterface.Instance.ScanProgressBar.SetActive(false);
+                    //UserInterface.Instance.ContentSurface.SetActive(true);
+                    new Task(() => updateSurfacePosition()).Start();
+                    _isScanning = false;
+                }
+            };
+        }
 
-            Debug.Log("Current state: " + stateMachine.CurrentState.Name);
-            stateMachine.IssueCommand(commandA);
-            Debug.Log("Current state: " + stateMachine.CurrentState.Name);
+        private async void updateSurfacePosition()
+        {
+            _isUpdating = true;
+            while (_isUpdating)
+            {
+                await Task.Delay(50);
+                UnityMainThreadDispatcher.Instance.Enqueue(() => {
+                    if (GazeManager.Instance.HitObject.name.Contains("SurfaceUnderstanding Mesh"))
+                    {
+                        if (!UserInterface.Instance.ContentSurface.activeInHierarchy)
+                            UserInterface.Instance.ContentSurface.SetActive(true);
+
+                            UserInterface.Instance.ContentSurface.transform.position =
+                            Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.position, GazeManager.Instance.HitPosition, 0.1f);
+                            UserInterface.Instance.ContentSurface.transform.up =
+                            Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.up, GazeManager.Instance.HitNormal, 0.1f);
+                    }
+                });
+            }
+
+            UnityMainThreadDispatcher.Instance.Enqueue(() => {
+                UserInterface.Instance.ContentSurface.layer = LayerMask.NameToLayer("Default");
+                GameObject.Find("SpatialUnderstanding").SetActive(false);
+            });
         }
 
         public void inputListenerDebug()
@@ -62,5 +96,4 @@ namespace HoloIslandVis
             GestureInputListener.Instance.ManipulationEnd += (GestureInputEventArgs eventData) => Debug.Log("ManipulationEnd");
         }
     }
-
 }

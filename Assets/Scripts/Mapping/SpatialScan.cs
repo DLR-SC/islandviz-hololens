@@ -48,7 +48,7 @@ namespace HoloIslandVis.Mapping
         }
 
         // TODO: No magic number?
-        public int TargetPlatformCellCount { get; } = 50;
+        public int TargetPlatformCellCount { get; } = 20;
 
         public SpatialUnderstanding.ScanStates ScanState {
             get {
@@ -105,22 +105,18 @@ namespace HoloIslandVis.Mapping
             }
         }
 
-        private void updateScanStats()
+        private async void updateScanStats()
         {
             while (IsScanning && !_finishScanRequested)
             {
                 // TODO: No magic number here?
-                Task.Delay(250);
+                await Task.Delay(250);
                 UnityMainThreadDispatcher.Instance.Enqueue(() => {
                     SpatialUnderstandingDll.Imports.PlayspaceStats stats;
                     if(!tryGetPlayspaceStats(out stats))
                         return;
 
-                    if(PlatformCellCount != stats.NumPlatform)
-                        PlatformCellCount = stats.NumPlatform;
-
-                    if(PlatformCellCount >= TargetPlatformCellCount)
-                        RequestFinishScanning();
+                    PlatformCellCount = stats.NumPlatform;
                 });
             }
 
@@ -147,7 +143,7 @@ namespace HoloIslandVis.Mapping
             if(_beginScanRequested && IsScanning)
             {
                 _beginScanRequested = false;
-                Task.Factory.StartNew(() => updateScanStats());
+                new Task(() => updateScanStats()).Start();
             }
         }
     }
