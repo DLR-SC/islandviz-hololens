@@ -5,6 +5,7 @@ using HoloIslandVis.Interaction.Input;
 using HoloIslandVis.Mapping;
 using HoloIslandVis.OSGiParser;
 using HoloIslandVis.Utility;
+using HoloIslandVis.Visualization;
 using HoloToolkit.Unity.InputModule;
 using System;
 using System.Collections;
@@ -18,6 +19,8 @@ namespace HoloIslandVis
     public class AppManager : SingletonComponent<AppManager>
     {
         private OSGiProject _osgiProject;
+        private List<CartographicIsland> _islandStructures;
+
         private string _filepath;
         private bool _isScanning;
         private bool _isUpdating;
@@ -40,6 +43,21 @@ namespace HoloIslandVis
 
             _osgiProject = OSGiProjectParser.Instance.Parse(modelData);
             UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done parsing OSGiProject data."));
+
+            // TODO: Refactor IslandStructureBuilder.
+            _islandStructures = IslandStructureBuilder.Instance.BuildFromProject(_osgiProject);
+            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done building island structures."));
+
+            // TODO: Refactor GraphLayoutBuilder.
+            GraphLayoutBuilder.Instance.ConstructFDLayout(_osgiProject, 0.25f, 70000);
+            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done building dependency graph."));
+
+            UnityMainThreadDispatcher.Instance.Enqueue(() => buildGameObjects());
+        }
+
+        public void buildGameObjects()
+        {
+
         }
 
         public void initScene()
