@@ -89,5 +89,29 @@ namespace HoloIslandVis.Automaton
             if(CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, command);
         }
+
+        public override void OnOneHandManipStart(GestureInputEventArgs eventArgs)
+        {
+            Command command = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
+
+            if (CurrentState != null)
+                CurrentState.ProcessCommand(eventArgs, command);
+        }
+
+        public override void OnManipulationUpdate(GestureInputEventArgs eventArgs)
+        {
+            Command command = new Command(GestureType.ManipulationUpdate, KeywordType.Invariant, InteractableType.Invariant);
+
+            if (CurrentState != null)
+                CurrentState.ProcessCommand(eventArgs, command);
+        }
+
+        public override void OnManipulationEnd(GestureInputEventArgs eventArgs)
+        {
+            Command command = new Command(GestureType.ManipulationEnd, KeywordType.Invariant, InteractableType.Invariant);
+
+            if (CurrentState != null)
+                CurrentState.ProcessCommand(eventArgs, command);
+        }
     }
 }

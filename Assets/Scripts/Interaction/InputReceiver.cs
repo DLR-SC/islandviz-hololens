@@ -10,8 +10,14 @@ public abstract class InputReceiver
     {
         GestureInputListener.Instance.OneHandTap += OnOneHandTap;
         GestureInputListener.Instance.OneHandDoubleTap += OnOneHandDoubleTap;
+        GestureInputListener.Instance.OneHandManipStart += OnOneHandManipStart;
+        GestureInputListener.Instance.ManipulationUpdate += OnManipulationUpdate;
+        GestureInputListener.Instance.ManipulationEnd += OnManipulationEnd;
     }
 
     public abstract void OnOneHandTap(GestureInputEventArgs eventArgs);
     public abstract void OnOneHandDoubleTap(GestureInputEventArgs eventArgs);
+    public abstract void OnOneHandManipStart(GestureInputEventArgs eventArgs);
+    public abstract void OnManipulationUpdate(GestureInputEventArgs eventArgs);
+    public abstract void OnManipulationEnd(GestureInputEventArgs eventArgs);
 }

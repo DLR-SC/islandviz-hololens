@@ -7,20 +7,13 @@ using UnityEngine;
 
 namespace HoloIslandVis.Interaction.Tasking
 {
-    public class DiscreteInteractionTask : InteractionTask
+    public abstract class DiscreteInteractionTask : InteractionTask
     {
-        private Action<GestureInputEventArgs> _executeAction = delegate { };
-
-        public DiscreteInteractionTask() { }
-        public DiscreteInteractionTask(Action<GestureInputEventArgs> action)
+        public DiscreteInteractionTask()
         {
-            _executeAction = action;
+
         }
 
-        public override void Pass(GestureInputEventArgs eventData)
-            => _executeAction.Invoke(eventData);
-
-        public void SetInteraction(Action<GestureInputEventArgs> action)
-            => _executeAction = action;
+        public abstract void Perform(InputEventArgs eventArgs);
     }
 }

@@ -59,8 +59,10 @@ namespace HoloIslandVis.Interaction.Input
                 if(source.IsManipulating && !source.IsEvaluating)
                 {
                     GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
+                    short gestureUpdate = Convert.ToInt16("1111111111111111", 2);
                     _gestureSources.Values.CopyTo(gestureSources, 0);
-                    ManipulationUpdate(new GestureInputEventArgs(gestureSources));
+
+                    ManipulationUpdate(new GestureInputEventArgs(gestureUpdate, gestureSources));
                 }
             }
         }
@@ -120,7 +122,7 @@ namespace HoloIslandVis.Interaction.Input
             Action<GestureInputEventArgs> action;
             if(_gestureEventTable.TryGetValue(inputData, out action))
             {
-                GestureInputEventArgs eventArgs = new GestureInputEventArgs(gestureSources);
+                GestureInputEventArgs eventArgs = new GestureInputEventArgs(inputData, gestureSources);
                 UnityMainThreadDispatcher.Instance.Enqueue(action, eventArgs);
             }
         }

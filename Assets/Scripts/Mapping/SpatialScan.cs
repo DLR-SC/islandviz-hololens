@@ -48,7 +48,7 @@ namespace HoloIslandVis.Mapping
         }
 
         // TODO: No magic number?
-        public int TargetPlatformCellCount { get; } = 20;
+        public int TargetPlatformCellCount { get; } = 5;
 
         public SpatialUnderstanding.ScanStates ScanState {
             get {

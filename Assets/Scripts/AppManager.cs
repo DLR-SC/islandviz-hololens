@@ -1,5 +1,6 @@
 ﻿using HoloIslandVis.Automaton;
 using HoloIslandVis.Component.UI;
+using HoloIslandVis.Interaction;
 using HoloIslandVis.Interaction.Input;
 using HoloIslandVis.Mapping;
 using HoloToolkit.Unity.InputModule;
@@ -25,7 +26,6 @@ namespace HoloIslandVis
             SpeechInputListener.Instance.SpeechResponse += (EventArgs eventData) => Debug.Log("speechEvent");
 
             initScene();
-            //inputListenerDebug();
         }
 
         public void initScene()
@@ -83,6 +83,25 @@ namespace HoloIslandVis
                 UserInterface.Instance.ContentSurface.layer = LayerMask.NameToLayer("Default");
                 GameObject.Find("SpatialUnderstanding").SetActive(false);
             });
+
+            setupStateMachine();
+        }
+
+        public void setupStateMachine()
+        {
+            StateMachine stateMachine = new StateMachine();
+            State testState = new State("test");
+
+            Command commandStart = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
+            Command commandUpdate = new Command(GestureType.ManipulationUpdate, KeywordType.Invariant, InteractableType.Invariant);
+            Command commandEnd = new Command(GestureType.ManipulationEnd, KeywordType.Invariant, InteractableType.Invariant);
+            ContentSurfaceDrag contentSurfaceDrag = new ContentSurfaceDrag();
+
+            testState.AddInteractionTask(commandStart, contentSurfaceDrag);
+            testState.AddInteractionTask(commandUpdate, contentSurfaceDrag);
+            testState.AddInteractionTask(commandEnd, contentSurfaceDrag);
+            stateMachine.AddState(testState);
+            stateMachine.Init(testState);
         }
 
         public void inputListenerDebug()

@@ -36,15 +36,7 @@ namespace HoloIslandVis.Automaton
         }
 
         public void AddStateTransition(Command command, State state)
-        {
-            if(command is TransitionConditionCommand)
-            {
-                TransitionConditionCommand transitionConditionCommand = (TransitionConditionCommand) command;
-                transitionConditionCommand.ConditionMet += OnConditionMet;
-            }
-
-            _stateTransitionTable.Add(command, state);
-        }
+            => _stateTransitionTable.Add(command, state);
 
         public void AddInteractionTask(Command command, InteractionTask task)
             => _interactionTaskTable.Add(command, task);
@@ -71,9 +63,6 @@ namespace HoloIslandVis.Automaton
             // Command not found.
             return false;
         }
-
-        public void OnConditionMet(TransitionConditionCommand command)
-            => processStateTransition(null, command);
 
         public void InitState()
             => _openAction(this);

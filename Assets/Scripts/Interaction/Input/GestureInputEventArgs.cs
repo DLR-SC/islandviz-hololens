@@ -6,12 +6,14 @@ using UnityEngine;
 
 namespace HoloIslandVis.Interaction.Input
 {
-    public class GestureInputEventArgs : EventArgs
+    public class GestureInputEventArgs : InputEventArgs
     {
+        public short Gesture;
         public IInputSource[] InputSources;
 
-        public GestureInputEventArgs(GestureSource[] gestureSources)
+        public GestureInputEventArgs(short gesture, GestureSource[] gestureSources)
         {
+            Gesture = gesture;
             InputSources = new IInputSource[gestureSources.Length];
             for(int i = 0; i < gestureSources.Length; i++)
                 InputSources[i] = gestureSources[i].InputSource;
