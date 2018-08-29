@@ -174,7 +174,7 @@ namespace HoloIslandVis.Visualization
             {
                 VertexPositionData vpd = simulationData[vert];
                 Vector3 pos = new Vector3(vpd.position.x, 0, vpd.position.y);
-                vert.Position = pos / 3;
+                vert.Position = pos;
             }
             #endregion
 

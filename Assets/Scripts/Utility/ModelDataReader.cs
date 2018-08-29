@@ -1,8 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿#if NETFX_CORE
+using System;
+using System.Threading.Tasks;
+using Windows.Storage;
+#else
 using System.IO;
 using System.Text;
-using UnityEngine;
+#endif
 
 namespace HoloIslandVis.Utility
 {

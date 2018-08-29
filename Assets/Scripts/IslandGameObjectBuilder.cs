@@ -20,7 +20,7 @@ namespace HoloIslandVis.Visualization
     {
 
         // TODO: Refactor.
-        public const float ISLAND_ABOVE_OCEAN = 20.0f;
+        public const float ISLAND_ABOVE_OCEAN = 3.0f;
 
         private static IslandGameObjectBuilder _instance;
         public static IslandGameObjectBuilder Instance {
@@ -102,9 +102,9 @@ namespace HoloIslandVis.Visualization
 
                     // TODO: Refactor?
                     // TODO: Switch axis!
-                    float xPos = (float)packageCells[j].generator.X;
-                    float yPos = (float)packageCells[j].generator.Y;
-                    float zPos = (float)packageCells[j].generator.Z;
+                    float xPos = (float) packageCells[j].generator.X;
+                    float yPos = (float) packageCells[j].generator.Y;
+                    float zPos = (float) packageCells[j].generator.Z;
                     building.transform.position = new Vector3(xPos, zPos, yPos);
                     Vector3 randomRotation = new Vector3(0f, UnityEngine.Random.Range(-180, 180), 0f);
                     building.transform.localEulerAngles = randomRotation;
@@ -213,7 +213,7 @@ namespace HoloIslandVis.Visualization
                 dockDirection.Normalize();
                 dockDirection *= islandStructure.getRadius();
                 Vector3 dockPos = islandStructure.getWeightedCenter() + dockDirection;
-                dockPos.y -= Mathf.Abs(heightProfile[heightProfile.Length - 1]) * ISLAND_ABOVE_OCEAN;
+                dockPos.y -= Mathf.Abs(heightProfile[heightProfile.Length - 1]) * ISLAND_ABOVE_OCEAN - 0.2f;
 
                 dock = GameObject.Instantiate(RuntimeCache.Instance.DockPrefabs[dockType], dockPos, Quaternion.identity);
                 dock.name = islandStructure.Name + " " + Enum.GetName(typeof(DockType), dockType);
