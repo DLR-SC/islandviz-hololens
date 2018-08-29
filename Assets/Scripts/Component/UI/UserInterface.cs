@@ -18,9 +18,9 @@ namespace HoloIslandVis.Component.UI
             ScanInstructionText = GameObject.Find("ScanInstructionText");
             ScanProgressBar = GameObject.Find("ScanProgressBar");
 
-            ContentSurface.SetActive(false);
-            ScanInstructionText.SetActive(false);
-            ScanProgressBar.SetActive(false);
+            //ContentSurface.SetActive(false);
+            //ScanInstructionText.SetActive(false);
+            //ScanProgressBar.SetActive(false);
 
         }
     }

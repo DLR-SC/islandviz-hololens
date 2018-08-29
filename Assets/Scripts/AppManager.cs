@@ -20,6 +20,7 @@ namespace HoloIslandVis
     {
         private OSGiProject _osgiProject;
         private List<CartographicIsland> _islandStructures;
+        private List<GameObject> _islandGameObjects;
 
         private string _filepath;
         private bool _isScanning;
@@ -28,6 +29,8 @@ namespace HoloIslandVis
         // Use this for initialization
         void Start()
         {
+            _islandGameObjects = new List<GameObject>();
+            RuntimeCache cache = RuntimeCache.Instance;
             _isUpdating = false;
             _isScanning = false;
 
@@ -57,7 +60,17 @@ namespace HoloIslandVis
 
         public void buildGameObjects()
         {
+            foreach (CartographicIsland island in _islandStructures)
+            {
+                GameObject islandGameObject =
+                    IslandGameObjectBuilder.Instance.BuildFromIslandStructure(island);
+                _islandGameObjects.Add(islandGameObject);
+            }
 
+            RuntimeCache.Instance.IslandGameObjects = _islandGameObjects;
+
+            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done building island game objects."));
+            RuntimeCache.Instance.VisualizationContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
         }
 
         public void initScene()
