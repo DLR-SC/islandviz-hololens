@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using QuickGraph;
 
-namespace IslandVis.OSGiParser.Graph
+namespace HoloIslandVis.OSGiParser.Graph
 {
     public class GraphEdge : Edge<GraphVertex>
     {

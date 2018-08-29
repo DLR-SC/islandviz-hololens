@@ -5,7 +5,7 @@ using UnityEngine;
 
 
 
-namespace IslandVis.OSGiParser
+namespace HoloIslandVis.OSGiParser
 {
     public class Package
     {

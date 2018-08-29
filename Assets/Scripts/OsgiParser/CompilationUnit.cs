@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-namespace IslandVis.OSGiParser
+namespace HoloIslandVis.OSGiParser
 {
     public enum Type
     {

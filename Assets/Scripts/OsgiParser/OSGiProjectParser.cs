@@ -1,11 +1,11 @@
-﻿using IslandVis.OSGiParser.Graph;
+﻿using HoloIslandVis.OSGiParser.Graph;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace IslandVis.OSGiParser
+namespace HoloIslandVis.OSGiParser
 {
     public class OSGiProjectParser
     {
@@ -87,7 +87,10 @@ namespace IslandVis.OSGiParser
                 Bundle bundle = new Bundle(osgiProject, fieldBundleName, fieldBundleSymbolicName);
                 parsePackageFragments(bundle, fieldBundle.GetField("packageFragments"));
                 osgiProject.Bundles.Add(bundle);
+
+                Debug.Log(bundle.Name);
             }
+
 
             return osgiProject.Bundles;
         }

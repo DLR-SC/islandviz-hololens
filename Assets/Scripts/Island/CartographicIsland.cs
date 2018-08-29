@@ -1,5 +1,5 @@
-﻿using IslandVis.OSGiParser;
-using IslandVis.OSGiParser.Graph;
+﻿using HoloIslandVis.OSGiParser;
+using HoloIslandVis.OSGiParser.Graph;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;

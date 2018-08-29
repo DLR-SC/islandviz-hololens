@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace IslandVis.OSGiParser
+namespace HoloIslandVis.OSGiParser
 {
     public class Service
     {

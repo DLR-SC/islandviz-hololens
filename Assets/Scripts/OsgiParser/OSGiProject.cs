@@ -1,11 +1,11 @@
-﻿using IslandVis.OSGiParser.Graph;
+﻿using HoloIslandVis.OSGiParser.Graph;
 using QuickGraph;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace IslandVis.OSGiParser
+namespace HoloIslandVis.OSGiParser
 {
     public class OSGiProject
     {

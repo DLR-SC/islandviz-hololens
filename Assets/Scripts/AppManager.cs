@@ -3,6 +3,7 @@ using HoloIslandVis.Component.UI;
 using HoloIslandVis.Interaction;
 using HoloIslandVis.Interaction.Input;
 using HoloIslandVis.Mapping;
+using HoloIslandVis.OSGiParser;
 using HoloIslandVis.Utility;
 using HoloToolkit.Unity.InputModule;
 using System;
@@ -16,6 +17,7 @@ namespace HoloIslandVis
 {
     public class AppManager : SingletonComponent<AppManager>
     {
+        private OSGiProject _osgiProject;
         private string _filepath;
         private bool _isScanning;
         private bool _isUpdating;
@@ -35,6 +37,9 @@ namespace HoloIslandVis
         {
             JSONObject modelData = ModelDataReader.Instance.Read(new Uri(_filepath).AbsolutePath);
             UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done parsing model data."));
+
+            _osgiProject = OSGiProjectParser.Instance.Parse(modelData);
+            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done parsing OSGiProject data."));
         }
 
         public void initScene()

@@ -4,7 +4,7 @@ using UnityEngine;
 using QuickGraph;
 //using OsgiViz.Island;
 
-namespace IslandVis.OSGiParser.Graph
+namespace HoloIslandVis.OSGiParser.Graph
 {
     public class GraphVertex
     {
