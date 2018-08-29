@@ -8,14 +8,14 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: CombinedHoloMaterial
   m_Shader: {fileID: 4800000, guid: 0dfd583634d7665438cc76a91d8a3e5b, type: 3}
-  m_ShaderKeywords: _BORDER_LIGHT_USES_HOVER_COLOR _DIRECTIONAL_LIGHT _GLOSSYREFLECTIONS_OFF
-    _HOVER_LIGHT _SPECULARHIGHLIGHTS_OFF _SPECULAR_HIGHLIGHTS
+  m_ShaderKeywords: _ALPHABLEND_ON _BORDER_LIGHT_USES_HOVER_COLOR _DIRECTIONAL_LIGHT
+    _GLOSSYREFLECTIONS_OFF _HOVER_LIGHT _SPECULARHIGHLIGHTS_OFF _SPECULAR_HIGHLIGHTS
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2001
+  m_CustomRenderQueue: 3001
   stringTagMap:
-    RenderType: Opaque
+    RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -41,10 +41,10 @@ Material:
     - _ClippingPlaneBorderWidth: 0.025
     - _ColorWriteMask: 15
     - _CullMode: 2
-    - _CustomMode: 0
+    - _CustomMode: 2
     - _Cutoff: 0.5
     - _DirectionalLight: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _EdgeSmoothingValue: 0.002
     - _EnableEmission: 0
     - _EnableHoverColorOpaqueOverride: 0
@@ -59,13 +59,13 @@ Material:
     - _HoverLightOpaque: 0
     - _InnerGlow: 0
     - _Metallic: 0
-    - _Mode: 0
+    - _Mode: 2
     - _NearPlaneFade: 0
     - _ReferenceRadius: 0.25
     - _Reflections: 0
     - _Refraction: 0
     - _RefractiveIndex: 0
-    - _RenderQueueOverride: 2001
+    - _RenderQueueOverride: 3001
     - _RimLight: 0
     - _RimPower: 0.25
     - _RoundCornerMargin: 0
@@ -73,9 +73,9 @@ Material:
     - _RoundCorners: 0
     - _Smoothness: 0.5
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _ZTest: 4
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
     - _ClipPlane: {r: 0, g: 1, b: 0, a: 0}
     - _ClippingPlaneBorderColor: {r: 1, g: 0.2, b: 0, a: 1}
@@ -88,5 +88,5 @@ Material:
     - _HoverColorOverride: {r: 1, g: 1, b: 1, a: 1}
     - _InnerGlowColor: {r: 1, g: 1, b: 1, a: 0.75}
     - _ReferenceNormal: {r: 0, g: 1, b: 0, a: 0}
-    - _ReferencePosition: {r: 0, g: 0.0045159543, b: 0, a: 0}
+    - _ReferencePosition: {r: 0, g: 0, b: 0, a: 0}
     - _RimColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

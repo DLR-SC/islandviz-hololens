@@ -99,7 +99,6 @@ namespace HoloIslandVis.Utility
             _surfaceGlow = GameObject.Find("Glow");
 
             _contentSurface.SetActive(false);
-            
 
             // Stuff
             //_canvas = GameObject.Find("Canvas");
