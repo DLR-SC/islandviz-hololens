@@ -3,10 +3,12 @@ using HoloIslandVis.Component.UI;
 using HoloIslandVis.Interaction;
 using HoloIslandVis.Interaction.Input;
 using HoloIslandVis.Mapping;
+using HoloIslandVis.Utility;
 using HoloToolkit.Unity.InputModule;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -14,6 +16,7 @@ namespace HoloIslandVis
 {
     public class AppManager : SingletonComponent<AppManager>
     {
+        private string _filepath;
         private bool _isScanning;
         private bool _isUpdating;
 
@@ -23,9 +26,15 @@ namespace HoloIslandVis
             _isUpdating = false;
             _isScanning = false;
 
-            SpeechInputListener.Instance.SpeechResponse += (EventArgs eventData) => Debug.Log("speechEvent");
-
+            _filepath = Path.Combine(Application.streamingAssetsPath, "rce_lite.model");
+            new Task(() => loadVisualization()).Start();
             initScene();
+        }
+
+        public void loadVisualization()
+        {
+            JSONObject modelData = ModelDataReader.Instance.Read(new Uri(_filepath).AbsolutePath);
+            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done parsing model data."));
         }
 
         public void initScene()

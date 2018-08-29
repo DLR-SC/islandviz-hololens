@@ -1,4 +1,5 @@
 ﻿using HoloIslandVis;
+using HoloIslandVis.Utility;
 using HoloToolkit.Unity.InputModule;
 using System;
 using System.Collections;
