@@ -9,13 +9,16 @@ using System;
 using HoloToolkit.Unity;
 using System.Net;
 using UnityEngine.Networking;
+using System.Threading.Tasks;
+using HoloIslandVis.Automaton;
 
 namespace HoloIslandVis.Interaction.Input
 {
     public class SpeechInputListener : SingletonComponent<SpeechInputListener>
     {
-        public delegate void SpeechInputHandler(EventArgs eventData);
+        public delegate void SpeechInputHandler(string intentString);
         public event SpeechInputHandler SpeechResponse = delegate { };
+
         private readonly string baseURL = "http://localhost:5005/";
 
         private DictationRecognizer m_DictationRecognizer;
@@ -58,6 +61,7 @@ namespace HoloIslandVis.Interaction.Input
                 }
             };
             m_DictationRecognizer.Start();
+
         }
 
         IEnumerator GetAPIResponse(string voiceCommand)
@@ -80,10 +84,25 @@ namespace HoloIslandVis.Interaction.Input
                 }
                 else
                 {
-                    RasaResponse response = JsonUtility.FromJson<RasaResponse>(www.text);
-                    Debug.Log("next command would be:" + response.next_action);
+                    RasaResponse response = new RasaResponse(www.text);
+                    new Task(() => processInput(response)).Start();
                 }
             }
         }
+
+        private void processInput(RasaResponse response)
+        {
+            string debuggingResponse = "next command would be:" + response.IntentName + " [" + response.IntentConfidence + "]";
+
+            foreach (RasaResponse.Entity entity in response.Entities)
+            {
+                debuggingResponse += "Type: " + entity.EntityType + "| Value: " + entity.EntityValue + "| Confidence: " + entity.Confidence;
+            }
+
+            UnityMainThreadDispatcher.Instance.Enqueue(intentName => SpeechResponse(debuggingResponse), new EventArgs());
+            
+        
+        }
     }
+
 }
