@@ -75,7 +75,7 @@ Shader "Custom/MRTK_Standard_Fade"
 		// Custom properties.
 		_ReferencePosition("Reference Position", Vector) = (0.0, 0.0, 0.0, 0.0)
 		_ReferenceNormal("Reference Normal", Vector) = (0.0, 0.0, 0.0, 0.0)
-		_ReferenceRadius("Reference Radius", Float) = 0.25
+		_ReferenceRadius("Reference Radius", Float) = 1
     }
 
     SubShader
@@ -339,12 +339,12 @@ Shader "Custom/MRTK_Standard_Fade"
 				float3 vertRef = vertWorld - _ReferencePosition;
 				float distToPlane = dot(vertRef, _ReferenceNormal);
 				float3 vertProj = vertWorld - distToPlane * _ReferenceNormal;
-				float3 vertRefProj = vertProj - _ReferencePosition;
-				float distProj = distance(_ReferencePosition, vertRefProj);
+				//float3 vertRefProj = vertProj - _ReferencePosition;
+				float distProj = distance(_ReferencePosition, vertProj);
 
-				if (distToPlane < 0.005f)
+				if (distToPlane < -0.005f)
 					o.blend = 0.0f;
-				else if (distProj < _ReferenceRadius)
+				else if (distProj < _ReferenceRadius*2)
 					o.blend = 1.0f;
 				else
 					o.blend = pow(_ReferenceRadius / distProj, 20);

@@ -37,23 +37,28 @@ namespace HoloIslandVis
             _filepath = Path.Combine(Application.streamingAssetsPath, "rce_lite.model");
             new Task(() => loadVisualization()).Start();
             initScene();
+            //setupStateMachine();
         }
 
         public void loadVisualization()
         {
             JSONObject modelData = ModelDataReader.Instance.Read(new Uri(_filepath).AbsolutePath);
-            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done parsing model data."));
+            UnityMainThreadDispatcher.Instance.Enqueue(() => 
+                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done parsing model data.");
 
             _osgiProject = OSGiProjectParser.Instance.Parse(modelData);
-            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done parsing OSGiProject data."));
+            UnityMainThreadDispatcher.Instance.Enqueue(() => 
+                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done parsing OSGiProject data.");
 
             // TODO: Refactor IslandStructureBuilder.
             _islandStructures = IslandStructureBuilder.Instance.BuildFromProject(_osgiProject);
-            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done building island structures."));
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done building island structures.");
 
             // TODO: Refactor GraphLayoutBuilder.
             GraphLayoutBuilder.Instance.ConstructFDLayout(_osgiProject, 0.25f, 70000);
-            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done building dependency graph."));
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done building dependency graph.");
 
             UnityMainThreadDispatcher.Instance.Enqueue(() => buildGameObjects());
         }
@@ -68,8 +73,9 @@ namespace HoloIslandVis
             }
 
             RuntimeCache.Instance.IslandGameObjects = _islandGameObjects;
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done building island game objects.");
 
-            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Done building island game objects."));
             RuntimeCache.Instance.VisualizationContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
         }
 
@@ -97,7 +103,7 @@ namespace HoloIslandVis
                 {
                     SpatialScan.Instance.RequestFinishScanning();
                     UserInterface.Instance.ScanProgressBar.SetActive(false);
-                    //UserInterface.Instance.ContentSurface.SetActive(true);
+                    UserInterface.Instance.ContentSurface.SetActive(true);
                     new Task(() => updateSurfacePosition()).Start();
                     _isScanning = false;
                 }
