@@ -9,8 +9,8 @@ namespace HoloIslandVis.Automaton
 {
     public class State
     {
-        private Action<State> _openAction   = delegate { };
-        private Action<State> _closeAction  = delegate { };
+        private Action<State> _openAction = delegate { };
+        private Action<State> _closeAction = delegate { };
 
         private Dictionary<Command, State> _stateTransitionTable;
         private Dictionary<Command, InteractionTask> _interactionTaskTable;
@@ -25,12 +25,12 @@ namespace HoloIslandVis.Automaton
 
             _closeAction += new Action<State>((State value) => {
                 foreach (Delegate del in _openAction.GetInvocationList()) {
-                    _openAction -= (Action<State>) del;
+                    _openAction -= (Action<State>)del;
                 }
 
                 foreach (Delegate del in _openAction.GetInvocationList())
                 {
-                    _closeAction -= (Action<State>) del;
+                    _closeAction -= (Action<State>)del;
                 }
             });
         }

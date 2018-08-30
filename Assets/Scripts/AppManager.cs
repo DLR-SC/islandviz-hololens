@@ -112,6 +112,7 @@ namespace HoloIslandVis
 
         private async void updateSurfacePosition()
         {
+            Debug.Log("updateSurfcaePosition");
             _isUpdating = true;
             while (_isUpdating)
             {
@@ -140,6 +141,7 @@ namespace HoloIslandVis
 
         public void setupStateMachine()
         {
+            Debug.Log("setupStateMachine");
             StateMachine stateMachine = new StateMachine();
             State testState = new State("test");
 
@@ -151,12 +153,13 @@ namespace HoloIslandVis
             Command commandFind = new Command(GestureType.Invariant, KeywordType.Find, InteractableType.Invariant);
             FindEntitiesTask findEntitiesTask = new FindEntitiesTask();
 
-            testState.AddInteractionTask(commandStart, contentSurfaceDrag);
-            testState.AddInteractionTask(commandUpdate, contentSurfaceDrag);
-            testState.AddInteractionTask(commandEnd, contentSurfaceDrag);
+            //testState.AddInteractionTask(commandStart, contentSurfaceDrag);
+            //testState.AddInteractionTask(commandUpdate, contentSurfaceDrag);
+            //testState.AddInteractionTask(commandEnd, contentSurfaceDrag);
             testState.AddInteractionTask(commandFind, findEntitiesTask);
 
             stateMachine.AddState(testState);
+            Debug.Log("IsInitialized is called in AppManager");
             stateMachine.Init(testState);
         }
 

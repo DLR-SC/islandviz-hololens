@@ -88,7 +88,7 @@ namespace HoloIslandVis.OSGiParser
                 parsePackageFragments(bundle, fieldBundle.GetField("packageFragments"));
                 osgiProject.Bundles.Add(bundle);
 
-                Debug.Log(bundle.Name);
+                //Debug.Log(bundle.Name);
             }
 
 
