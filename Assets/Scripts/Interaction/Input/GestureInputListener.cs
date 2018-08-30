@@ -74,7 +74,7 @@ namespace HoloIslandVis.Interaction.Input
             if (_gestureSources.ContainsKey(inputSource))
                 return;
 
-            _gestureSources.Add(inputSource, new GestureSource(inputSource));
+            _gestureSources.Add(inputSource, new GestureSource(inputSource, eventData.SourceId));
         }
 
         public void OnSourceLost(SourceStateEventData eventData)

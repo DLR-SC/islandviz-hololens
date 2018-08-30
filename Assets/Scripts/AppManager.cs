@@ -36,8 +36,8 @@ namespace HoloIslandVis
 
             _filepath = Path.Combine(Application.streamingAssetsPath, "rce_lite.model");
             new Task(() => loadVisualization()).Start();
+            
             initScene();
-            //setupStateMachine();
         }
 
         public void loadVisualization()
@@ -135,7 +135,7 @@ namespace HoloIslandVis
                 GameObject.Find("SpatialUnderstanding").SetActive(false);
             });
 
-            setupStateMachine();
+            UnityMainThreadDispatcher.Instance.Enqueue(() => setupStateMachine());
         }
 
         public void setupStateMachine()

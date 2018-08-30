@@ -50,6 +50,8 @@ namespace HoloIslandVis.Visualization
             islandComponent.CartographicIsland = islandStructure;
             islandStructure.IslandGameObject = islandGameObject;
 
+            //islandGameObject.AddComponent<Highlightable>();
+
             List<List<TNetMesh>> tnetMeshList = islandStructure.getPackageMeshes();
             List<List<TNetFace>> allPackageCells = islandStructure.getPackageCells();
             List<Package> packageList = islandStructure.getPackages();
