@@ -1,8 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using HoloIslandVis.Interaction.Input;
 using UnityEngine;
+using static HoloIslandVis.Interaction.Input.RasaResponse;
 
-public class SpeechInputEventArgs : InputEventArgs
+namespace HoloIslandVis.Interaction.Input
 {
-    
+    public class SpeechInputEventArgs : InputEventArgs
+    {
+
+        public List<Entity> entities;
+        public string intention;
+        public double intentionConfidence;
+        public SpeechInputEventArgs(RasaResponse response)
+        {
+            this.entities = response.Entities;
+            this.intention = response.IntentName;
+            this.intentionConfidence = response.IntentConfidence;
+        }
+    }
 }

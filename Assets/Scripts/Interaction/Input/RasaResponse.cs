@@ -2,7 +2,7 @@
 
 namespace HoloIslandVis.Interaction.Input
 {
-    internal class RasaResponse
+    public class RasaResponse
     {
 
         public RasaResponse(string apiRequest)

@@ -47,7 +47,7 @@ namespace HoloIslandVis.Automaton
         public void AddCloseAction(Action<State> action)
             => _closeAction += action;
 
-        public bool ProcessCommand(GestureInputEventArgs eventArgs, Command command)
+        public bool ProcessCommand(InputEventArgs eventArgs, Command command)
         {
             if (_stateTransitionTable.ContainsKey(command))
             {
@@ -67,13 +67,13 @@ namespace HoloIslandVis.Automaton
         public void InitState()
             => _openAction(this);
 
-        private void processStateTransition(GestureInputEventArgs eventArgs, Command command)
+        private void processStateTransition(InputEventArgs eventArgs, Command command)
         {
             State newState = _stateTransitionTable[command];
             moveNext(newState);
         }
 
-        private void processInteractionTask(GestureInputEventArgs eventArgs, Command command)
+        private void processInteractionTask(InputEventArgs eventArgs, Command command)
         {
             InteractionTask interactionTask = _interactionTaskTable[command];
             interactionTask.Pass(eventArgs);

@@ -113,5 +113,28 @@ namespace HoloIslandVis.Automaton
             if (CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, command);
         }
+
+        public override void OnSpeechResponse(SpeechInputEventArgs eventArgs)
+        {
+            KeywordType kt; 
+            switch (eventArgs.intention)
+            {
+                case "find_entity_by_name_or_id":
+                    kt = KeywordType.Find;
+                    break;
+                case "show_entity":
+                    kt = KeywordType.Show;
+                    break;
+                case "hide_entity":
+                    kt = KeywordType.Hide;
+                    break;
+                default:
+                    kt = KeywordType.Invariant;
+                    break;
+            }
+
+            if (CurrentState != null)
+                CurrentState.ProcessCommand(eventArgs, new Command(GestureType.Invariant, kt, InteractableType.Invariant));
+        }
     }
 }

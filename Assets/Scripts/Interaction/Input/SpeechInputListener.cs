@@ -1,5 +1,6 @@
 ﻿using HoloIslandVis;
 using HoloIslandVis.Utility;
+using HoloToolkit.Unity.InputModule;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace HoloIslandVis.Interaction.Input
 {
     public class SpeechInputListener : SingletonComponent<SpeechInputListener>
     {
-        public delegate void SpeechInputHandler(string intentString);
+        public delegate void SpeechInputHandler(SpeechInputEventArgs eventArgs);
         public event SpeechInputHandler SpeechResponse = delegate { };
 
         private readonly string baseURL = "http://localhost:5005/";
@@ -86,24 +87,12 @@ namespace HoloIslandVis.Interaction.Input
                 else
                 {
                     RasaResponse response = new RasaResponse(www.text);
-                    new Task(() => processInput(response)).Start();
+                    SpeechInputEventArgs eventArgs = new SpeechInputEventArgs(response);
+                    UnityMainThreadDispatcher.Instance.Enqueue(intentName => SpeechResponse(eventArgs), eventArgs);
                 }
             }
         }
 
-        private void processInput(RasaResponse response)
-        {
-            string debuggingResponse = "next command would be:" + response.IntentName + " [" + response.IntentConfidence + "]";
-
-            foreach (RasaResponse.Entity entity in response.Entities)
-            {
-                debuggingResponse += "Type: " + entity.EntityType + "| Value: " + entity.EntityValue + "| Confidence: " + entity.Confidence;
-            }
-
-            UnityMainThreadDispatcher.Instance.Enqueue(intentName => SpeechResponse(debuggingResponse), new EventArgs());
-            
-        
-        }
     }
 
 }

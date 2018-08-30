@@ -148,9 +148,14 @@ namespace HoloIslandVis
             Command commandEnd = new Command(GestureType.ManipulationEnd, KeywordType.Invariant, InteractableType.Invariant);
             ContentSurfaceDrag contentSurfaceDrag = new ContentSurfaceDrag();
 
+            Command commandFind = new Command(GestureType.Invariant, KeywordType.Find, InteractableType.Invariant);
+            FindEntitiesTask findEntitiesTask = new FindEntitiesTask();
+
             testState.AddInteractionTask(commandStart, contentSurfaceDrag);
             testState.AddInteractionTask(commandUpdate, contentSurfaceDrag);
             testState.AddInteractionTask(commandEnd, contentSurfaceDrag);
+            testState.AddInteractionTask(commandFind, findEntitiesTask);
+
             stateMachine.AddState(testState);
             stateMachine.Init(testState);
         }

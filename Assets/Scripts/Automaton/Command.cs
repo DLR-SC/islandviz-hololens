@@ -16,7 +16,10 @@ namespace HoloIslandVis.Automaton
 
     public enum KeywordType
     {
-        Invariant = 0
+        Invariant = 0,
+        Find = 1,
+        Show = 2,
+        Hide = 4
     }
 
     public enum InteractableType
