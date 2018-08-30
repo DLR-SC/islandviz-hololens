@@ -24,6 +24,7 @@ namespace HoloIslandVis.Utility
 
         private Text _progressInfo;
         private Material _combinedHoloMaterial;
+        private Material _highlightMaterial;
 
         private List<GameObject> _cuPrefabs;
         private List<GameObject> _siPrefabs;
@@ -68,6 +69,11 @@ namespace HoloIslandVis.Utility
             private set { }
         }
 
+        public Material HighlightMaterial {
+            get { return _highlightMaterial; }
+            private set { }
+        }
+
         public List<GameObject> CUPrefabs {
             get { return _cuPrefabs; }
             private set { }
@@ -106,6 +112,7 @@ namespace HoloIslandVis.Utility
             //_progressInfo = _canvas.GetComponentInChildren<Text>();
 
             _combinedHoloMaterial = (Material) Resources.Load("Materials/CombinedHoloMaterial");
+            _highlightMaterial = (Material) Resources.Load("Materials/Glow");
 
             // Prefabs
             _cuPrefabs = Resources.LoadAll<GameObject>("Prefabs/CompilationUnit/LOD0").ToList();
