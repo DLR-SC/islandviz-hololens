@@ -40,12 +40,12 @@ namespace HoloIslandVis
             _isScanning = false;
 
             _filepath = Path.Combine(Application.streamingAssetsPath, "rce_lite.model");
-            new Task(() => loadVisualization()).Start();
+            //new Task(() => loadVisualization()).Start();
 
-            UserInterface.Instance.ContentSurface.SetActive(true);
-            setupStateMachine();
+            //UserInterface.Instance.ContentSurface.SetActive(true);
+            //setupStateMachine();
             //inputListenerDebug();
-            //initScene();
+            initScene();
         }
 
         public void loadVisualization()
@@ -119,7 +119,6 @@ namespace HoloIslandVis
             {
                 if (_isUpdating)
                 {
-                    Debug.Log("Set inactive");
                     UserInterface.Instance.ScanInstructionText.SetActive(false);
                     _isUpdating = false;
                 }
@@ -137,6 +136,7 @@ namespace HoloIslandVis
                 }
             };
 
+
         }
 
         private async void updateSurfacePosition()
@@ -145,7 +145,7 @@ namespace HoloIslandVis
             _isUpdating = true;
             while (_isUpdating)
             {
-                await Task.Delay(50);
+                await Task.Delay(25);
                 UnityMainThreadDispatcher.Instance.Enqueue(() => {
                     if (GazeManager.Instance.HitObject.name.Contains("SurfaceUnderstanding Mesh"))
                     {
@@ -153,19 +153,22 @@ namespace HoloIslandVis
                             UserInterface.Instance.ContentSurface.SetActive(true);
 
                             UserInterface.Instance.ContentSurface.transform.position =
-                            Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.position, GazeManager.Instance.HitPosition, 0.1f);
+                            Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.position, GazeManager.Instance.HitPosition, 0.2f);
                             UserInterface.Instance.ContentSurface.transform.up =
-                            Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.up, GazeManager.Instance.HitNormal, 0.1f);
+                            Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.up, GazeManager.Instance.HitNormal, 0.5f);
                     }
                 });
             }
 
             UnityMainThreadDispatcher.Instance.Enqueue(() => {
                 UserInterface.Instance.ContentSurface.layer = LayerMask.NameToLayer("Default");
+                GameObject.Find("Water").layer = LayerMask.NameToLayer("Default");
+                GameObject.Find("Glow").layer = LayerMask.NameToLayer("Default");
                 GameObject.Find("SpatialUnderstanding").SetActive(false);
             });
 
             UnityMainThreadDispatcher.Instance.Enqueue(() => setupStateMachine());
+            new Task(() => loadVisualization()).Start();
         }
 
         public void setupStateMachine()
