@@ -7,6 +7,7 @@ using HoloIslandVis.OSGiParser;
 using HoloIslandVis.Utility;
 using HoloIslandVis.Visualization;
 using HoloToolkit.Unity.InputModule;
+using HoloToolkit.UX.ToolTips;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,6 +32,10 @@ namespace HoloIslandVis
         {
             _islandGameObjects = new List<GameObject>();
             RuntimeCache cache = RuntimeCache.Instance;
+            ToolTipManager ttm = gameObject.AddComponent<ToolTipManager>();
+            cache.toolTipManager = ttm;
+            GameObject infoPanel = GameObject.Find("panel");
+            cache.infoPanel = infoPanel;
             _isUpdating = false;
             _isScanning = false;
 
@@ -131,6 +136,7 @@ namespace HoloIslandVis
                     _isScanning = false;
                 }
             };
+
         }
 
         private async void updateSurfacePosition()
