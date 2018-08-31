@@ -24,6 +24,7 @@ namespace HoloIslandVis.Utility
 
         private Text _progressInfo;
         private Material _combinedHoloMaterial;
+        private Material _wireFrame;
         private Material _highlightMaterial;
 
         private List<GameObject> _cuPrefabs;
@@ -39,10 +40,8 @@ namespace HoloIslandVis.Utility
             private set { }
         }
 
-        public List<GameObject> IslandGameObjects {
-            get;
-            set;
-        }
+        public List<GameObject> IslandGameObjects { get; set; }
+        public GameObject CurrentFocus { get; set; }
 
         public GameObject VisualizationContainer {
             get { return _visualizationContainer; }
@@ -61,6 +60,11 @@ namespace HoloIslandVis.Utility
 
         public Text ProgressInfo {
             get { return _progressInfo; }
+            private set { }
+        }
+
+        public Material WireFrame {
+            get { return _wireFrame; }
             private set { }
         }
 
@@ -112,6 +116,7 @@ namespace HoloIslandVis.Utility
             //_progressInfo = _canvas.GetComponentInChildren<Text>();
 
             _combinedHoloMaterial = (Material) Resources.Load("Materials/CombinedHoloMaterial");
+            _wireFrame = (Material) Resources.Load("Materials/WireFrame");
             _highlightMaterial = (Material) Resources.Load("Materials/Glow");
 
             // Prefabs

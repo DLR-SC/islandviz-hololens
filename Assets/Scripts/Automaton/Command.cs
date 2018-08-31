@@ -27,7 +27,9 @@ namespace HoloIslandVis.Automaton
 
     public enum InteractableType
     {
-        Invariant = 0
+        None = 0,
+        Island = 1,
+        Invariant = 2
     }
 
     public struct Command

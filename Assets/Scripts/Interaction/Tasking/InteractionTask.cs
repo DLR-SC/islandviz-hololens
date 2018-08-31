@@ -1,4 +1,5 @@
-﻿using HoloIslandVis.Interaction.Input;
+﻿using HoloIslandVis.Component.UI;
+using HoloIslandVis.Interaction.Input;
 using HoloToolkit.Unity.InputModule;
 using System;
 using System.Collections;
@@ -24,11 +25,20 @@ namespace HoloIslandVis.Interaction.Tasking
 
                 gestureEventArgs = (GestureInputEventArgs) eventArgs;
 
+
+                //UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "EventArgs: " + Convert.ToString(gestureEventArgs.Gesture, 2);
+
                 if (gestureEventArgs.Gesture == Convert.ToInt16("0000000011000001", 2))
+                {
+                    UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TryStartManipulation.";
                     continuousInteractionTask.StartInteraction(gestureEventArgs);
+                }
 
                 if (gestureEventArgs.Gesture == Convert.ToInt16("1100000111000001", 2))
+                {
+                    UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TryStartManipulation.";
                     continuousInteractionTask.StartInteraction(gestureEventArgs);
+                }
 
                 if (gestureEventArgs.Gesture == Convert.ToInt16("1111111111111111", 2))
                     continuousInteractionTask.UpdateInteraction(gestureEventArgs);

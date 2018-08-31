@@ -1,4 +1,5 @@
-﻿using HoloIslandVis.Interaction.Input;
+﻿using HoloIslandVis.Component.UI;
+using HoloIslandVis.Interaction.Input;
 using HoloIslandVis.Interaction.Tasking;
 using HoloIslandVis.Utility;
 using HoloIslandVis.Visualization;
@@ -6,6 +7,7 @@ using HoloToolkit.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using static HoloIslandVis.Interaction.Input.RasaResponse;
@@ -14,7 +16,7 @@ public class FindEntitiesTask : DiscreteInteractionTask
 {
     public List<GameObject> IslandGameObjects;
     private TextToSpeech tts;
-    private readonly float speed = 0.1f;
+    private readonly float speed = 0.2f;
 
     public GameObject FoundObject {
         get; private set;
@@ -86,15 +88,27 @@ public class FindEntitiesTask : DiscreteInteractionTask
 
             new Task(() =>
             {
+                int loopcount = 0;
+                bool dispatched = false;
                 while (Vector3.Distance(target, visualizationContainerPosition) > 0.1f)
                 {
+                    loopcount++;
+                    if (dispatched)
+                    {
+                        Task.Delay(50);
+                        continue;
+                    }
+
+                    dispatched = true;
                     UnityMainThreadDispatcher.Instance.Enqueue(() =>
                     {
+                        UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Loopcount: " + loopcount;
                         source = FoundObject.transform.position;
                         visualizationContainerPosition = RuntimeCache.Instance.VisualizationContainer.transform.position;
                         vectorToIsland = source - RuntimeCache.Instance.ContentSurface.transform.position;
                         target = visualizationContainerPosition - vectorToIsland;
                         RuntimeCache.Instance.VisualizationContainer.transform.position = Vector3.Lerp(RuntimeCache.Instance.VisualizationContainer.transform.position, new Vector3(target.x, RuntimeCache.Instance.VisualizationContainer.transform.position.y, target.z), speed);
+                        dispatched = false;
                     });
                 }
             }).Start();

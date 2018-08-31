@@ -37,7 +37,10 @@ namespace HoloIslandVis
             _filepath = Path.Combine(Application.streamingAssetsPath, "rce_lite.model");
             new Task(() => loadVisualization()).Start();
 
-            initScene();
+            UserInterface.Instance.ContentSurface.SetActive(true);
+            setupStateMachine();
+            //inputListenerDebug();
+            //initScene();
         }
 
         public void loadVisualization()
@@ -75,6 +78,26 @@ namespace HoloIslandVis
             RuntimeCache.Instance.IslandGameObjects = _islandGameObjects;
             UnityMainThreadDispatcher.Instance.Enqueue(() =>
                 UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done building island game objects.");
+
+            foreach (GameObject islandGameObject in _islandGameObjects)
+            {
+                islandGameObject.AddComponent<Interactable>();
+                MeshFilter[] islandMeshFilters = islandGameObject.GetComponentsInChildren<MeshFilter>();
+                CombineInstance[] combineInstance = new CombineInstance[islandMeshFilters.Length];
+
+                for (int i = 0; i < islandMeshFilters.Length; i++)
+                {
+                    combineInstance[i].mesh = islandMeshFilters[i].sharedMesh;
+                    combineInstance[i].transform = islandMeshFilters[i].transform.localToWorldMatrix;
+                }
+
+                GameObject highlight = new GameObject("Highlight");
+                highlight.transform.parent = islandGameObject.transform;
+                highlight.AddComponent<MeshFilter>().mesh.CombineMeshes(combineInstance);
+                MeshRenderer meshRenderer = highlight.AddComponent<MeshRenderer>();
+                meshRenderer.sharedMaterial = RuntimeCache.Instance.WireFrame;
+                meshRenderer.enabled = false;
+            }
 
             RuntimeCache.Instance.VisualizationContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
         }
@@ -156,8 +179,13 @@ namespace HoloIslandVis
             ContentSurfaceDrag contentSurfaceDrag = new ContentSurfaceDrag();
             ContentSurfaceZoom contentSurfaceZoom = new ContentSurfaceZoom();
 
-            //Command commandFind = new Command(GestureType.Invariant, KeywordType.Find, InteractableType.Invariant);
-            //FindEntitiesTask findEntitiesTask = new FindEntitiesTask();
+            Command commandFind = new Command(GestureType.Invariant, KeywordType.Find, InteractableType.Invariant);
+            FindEntitiesTask findEntitiesTask = new FindEntitiesTask();
+
+            Command commandSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);
+            Command commandDeselect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
+            IslandSelectTask islandSelectTask = new IslandSelectTask();
+            IslandDeselectTask islandDeselectTask = new IslandDeselectTask();
 
             testState.AddInteractionTask(commandDragStart, contentSurfaceDrag);
             testState.AddInteractionTask(commandDragUpdate, contentSurfaceDrag);
@@ -167,7 +195,10 @@ namespace HoloIslandVis
             testState.AddInteractionTask(commandZoomUpdate, contentSurfaceZoom);
             testState.AddInteractionTask(commandZoomEnd, contentSurfaceZoom);
 
-            //testState.AddInteractionTask(commandFind, findEntitiesTask);
+            testState.AddInteractionTask(commandFind, findEntitiesTask);
+
+            testState.AddInteractionTask(commandSelect, islandSelectTask);
+            testState.AddInteractionTask(commandDeselect, islandDeselectTask);
 
             stateMachine.AddState(testState);
             Debug.Log("IsInitialized is called in AppManager");
@@ -182,7 +213,8 @@ namespace HoloIslandVis
             GestureInputListener.Instance.TwoHandDoubleTap += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TwoHandDoubleTap";
             GestureInputListener.Instance.OneHandManipStart += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "OneHandManipulationStart";
             GestureInputListener.Instance.TwoHandManipStart += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TwoHandManipulationStart";
-            GestureInputListener.Instance.OneHandManipEnd += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ManipulationEnd";
+            GestureInputListener.Instance.OneHandManipEnd += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "OneHandManipEnd";
+            GestureInputListener.Instance.OneHandManipEnd += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TwoHandManipEnd";
         }
     }
 }

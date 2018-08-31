@@ -11,6 +11,9 @@ public class ContentSurfaceTransformTracker : MonoBehaviour
         {
             RuntimeCache.Instance.CombinedHoloMaterial.SetVector("_ReferencePosition", transform.position);
             RuntimeCache.Instance.CombinedHoloMaterial.SetVector("_ReferenceNormal", transform.up);
+
+            RuntimeCache.Instance.WireFrame.SetVector("_ReferencePosition", transform.position);
+            RuntimeCache.Instance.WireFrame.SetVector("_ReferenceNormal", transform.up);
         }
 	}
 }

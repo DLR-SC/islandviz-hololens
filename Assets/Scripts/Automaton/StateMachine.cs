@@ -1,4 +1,5 @@
 ﻿using HoloIslandVis.Interaction.Input;
+using HoloIslandVis.Utility;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -78,7 +79,13 @@ namespace HoloIslandVis.Automaton
         {
             Command command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Invariant);
 
-            if(CurrentState != null)
+            if (RuntimeCache.Instance.CurrentFocus != null)
+                command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);
+
+            if (RuntimeCache.Instance.CurrentFocus == null)
+                command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
+
+            if (CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, command);
         }
 

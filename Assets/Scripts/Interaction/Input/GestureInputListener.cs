@@ -116,7 +116,6 @@ namespace HoloIslandVis.Interaction.Input
         public void OnInputDown(InputEventData eventData)
         {
             _gestureSources[eventData.SourceId].InputDown++;
-
             if (!_timerSet)
             {
                 _timerSet = true;
@@ -127,9 +126,10 @@ namespace HoloIslandVis.Interaction.Input
         public void OnInputUp(InputEventData eventData)
         {
             _gestureSources[eventData.SourceId].InputUp++;
-
+            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "InputUp.";
             if (!_timerSet)
             {
+                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TryProcess.";
                 _timerSet = true;
                 new Task(() => processInput(eventData)).Start();
             }
@@ -148,10 +148,18 @@ namespace HoloIslandVis.Interaction.Input
 
             _timerSet = false;
             Action<GestureInputEventArgs> action;
-            if(_gestureEventTable.TryGetValue(inputData, out action))
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+            {
+                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Taskytask";
+            });
+            if (_gestureEventTable.TryGetValue(inputData, out action))
             {
                 GestureInputEventArgs eventArgs = new GestureInputEventArgs(inputData, gestureSources);
                 UnityMainThreadDispatcher.Instance.Enqueue(action, eventArgs);
+                UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                {
+                    UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ProcessingInput";
+                });
             }
         }
     }

@@ -29,7 +29,6 @@ namespace HoloIslandVis.Interaction
 
         public override void StartInteraction(GestureInputEventArgs eventArgs)
         {
-            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ZoomStart";
             _startPosition = RuntimeCache.Instance.VisualizationContainer.transform.position;
             _startScale = RuntimeCache.Instance.VisualizationContainer.transform.localScale;
             _hasStarted = true;
@@ -40,6 +39,7 @@ namespace HoloIslandVis.Interaction
                 _sourceId.Add(eventArgs.SourceIds[i]);
             }
 
+            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ZoomStart: " + _inputSources.Count;
             Vector3 handOnePos;
             Vector3 handTwoPos;
 
@@ -58,7 +58,7 @@ namespace HoloIslandVis.Interaction
             Vector3 handOnePos;
             Vector3 handTwoPos;
 
-            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ZoomUpdate: " + _inputSources.Count;
+            //UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ZoomUpdate: " + _inputSources.Count;
 
             if (_hasStarted && _inputSources[0].TryGetGripPosition(_sourceId[0], out handOnePos) &&
                         _inputSources[1].TryGetGripPosition(_sourceId[1], out handTwoPos))
