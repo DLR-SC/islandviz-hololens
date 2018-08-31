@@ -21,8 +21,7 @@ namespace HoloIslandVis.Interaction.Input
         public delegate void CustomSpeechInputHandler(SpeechInputEventArgs eventArgs);
         public event CustomSpeechInputHandler SpeechResponse = delegate { };
 
-        //private readonly string baseURL = "http://localhost:5005/";
-        private readonly string baseURL = "http://10.17.197.139:5005/";
+        private readonly string baseURL = "http://localhost:5005/";
 
         private DictationRecognizer m_DictationRecognizer;
         private TextToSpeech tts;

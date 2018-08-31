@@ -31,6 +31,7 @@ namespace HoloIslandVis.Utility
         private List<GameObject> _sdPrefabs;
         Dictionary<DockType, GameObject> _dockPrefabs;
 
+        public GameObject infoPanel { get; internal set; }
         public ToolTipManager toolTipManager { get; internal set; }
 
         private GameObject _importDockPrefab;

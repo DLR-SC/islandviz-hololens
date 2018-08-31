@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using TriangleNet.Voronoi;
 using TriangleNet.Topology;
 using UnityEngine;
+using HoloToolkit.Unity.InputModule;
+using HoloIslandVis.Utility;
 
 namespace HoloIslandVis.Visualization
 {
-    public class Island : MonoBehaviour
+    public class Island : MonoBehaviour, IFocusable
     {
         private CartographicIsland _cartographicIsland;
         private List<Region> _regions;
@@ -55,6 +57,16 @@ namespace HoloIslandVis.Visualization
             }
 
             return true;
+        }
+
+        public void OnFocusEnter()
+        {
+            RuntimeCache.Instance.toolTipManager.showToolTip(gameObject);
+        }
+
+        public void OnFocusExit()
+        {
+            RuntimeCache.Instance.toolTipManager.hideToolTip();
         }
     }
 }

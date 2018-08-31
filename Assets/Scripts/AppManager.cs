@@ -34,6 +34,8 @@ namespace HoloIslandVis
             RuntimeCache cache = RuntimeCache.Instance;
             ToolTipManager ttm = gameObject.AddComponent<ToolTipManager>();
             cache.toolTipManager = ttm;
+            GameObject infoPanel = GameObject.Find("panel");
+            cache.infoPanel = infoPanel;
             _isUpdating = false;
             _isScanning = false;
 
