@@ -43,17 +43,16 @@ namespace HoloIslandVis.Interaction.Input
             m_DictationRecognizer.DictationResult += (text, confidence) =>
             {
 
-                Debug.Log("I think you said, " + text);
                 if (!listening)
                 {
                     //words to activate the listening
-                    if (text.Equals("hello") || text.Equals("test") || text.Equals("wilson"))
+                    if (text.Equals("hello") || text.Equals("test") || text.Equals("wilson") || text.Equals("island voice"))
                     {
                         listening = true;
                         tts.StartSpeaking("I am listening");
                     }
                     else
-                    if (text.StartsWith("hello") || text.StartsWith("test") || text.StartsWith("wilson"))
+                    if (text.StartsWith("hello") || text.StartsWith("test") || text.StartsWith("wilson") || text.Equals("island voice"))
                     {
                         int i = text.IndexOf(" ") + 1;
                         string str = text.Substring(i);
@@ -68,8 +67,8 @@ namespace HoloIslandVis.Interaction.Input
             };
             m_DictationRecognizer.DictationComplete += (DictationCompletionCause cause) =>
             {
-                Debug.Log(cause);
-                //m_DictationRecognizer = new DictationRecognizer();
+                if(listening)
+                    tts.StartSpeaking("I did not understand");
                 m_DictationRecognizer.Start();
             };
             
@@ -79,8 +78,6 @@ namespace HoloIslandVis.Interaction.Input
 
         IEnumerator GetAPIResponse(string voiceCommand)
         {
-            Debug.Log("trying to connect to API");
-
             Dictionary<string, string> headers = new Dictionary<string, string>
             {
                 { "Content-Type", "application/json" }
@@ -95,12 +92,9 @@ namespace HoloIslandVis.Interaction.Input
                 if (!string.IsNullOrEmpty(www.error))
                 {
                     tts.StartSpeaking("somethings wrong with the API.");
-                    Debug.Log(www.error);
                 }
                 else
                 {
-                    Debug.Log("connecting to API.");
-                    Debug.Log("voiceCommand: " + voiceCommand);
                     RasaResponse response = new RasaResponse(www.text);
                     Debug.Log("www.text: " + www.text);
                     SpeechInputEventArgs eventArgs = new SpeechInputEventArgs(response);

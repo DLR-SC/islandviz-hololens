@@ -6,6 +6,7 @@ using HoloToolkit.Unity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using static HoloIslandVis.Interaction.Input.RasaResponse;
 
@@ -13,6 +14,7 @@ public class FindEntitiesTask : DiscreteInteractionTask
 {
     public List<GameObject> IslandGameObjects;
     private TextToSpeech tts;
+    private readonly float speed = 0.1f;
 
     public GameObject FoundObject {
         get; private set;
@@ -76,10 +78,29 @@ public class FindEntitiesTask : DiscreteInteractionTask
         Debug.Log("Looking for Bundle/Island");
         FoundObject = IslandGameObjects.Find(island => island.GetComponent<Island>().CartographicIsland.Bundle.Name.ToLower().Contains(islandName));
         if (FoundObject != null)
-            tts.StartSpeaking("FounObject: " + FoundObject.ToString());
+        {
+            Vector3 source = FoundObject.transform.position;
+            Vector3 visualizationContainerPosition = RuntimeCache.Instance.VisualizationContainer.transform.position;
+            Vector3 vectorToIsland = source - RuntimeCache.Instance.ContentSurface.transform.position;
+            Vector3 target = visualizationContainerPosition - vectorToIsland;
+
+            new Task(() =>
+            {
+                while (Vector3.Distance(target, visualizationContainerPosition) > 0.1f)
+                {
+                    UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                    {
+                        source = FoundObject.transform.position;
+                        visualizationContainerPosition = RuntimeCache.Instance.VisualizationContainer.transform.position;
+                        vectorToIsland = source - RuntimeCache.Instance.ContentSurface.transform.position;
+                        target = visualizationContainerPosition - vectorToIsland;
+                        RuntimeCache.Instance.VisualizationContainer.transform.position = Vector3.Lerp(RuntimeCache.Instance.VisualizationContainer.transform.position, new Vector3(target.x, RuntimeCache.Instance.VisualizationContainer.transform.position.y, target.z), speed);
+                    });
+                }
+            }).Start();
+        }
         else
             tts.StartSpeaking("Nothing found for this name");
-            //Debug.Log("Nothing found for this name");
     }
 
     private void findRegion(string regionName)
@@ -87,15 +108,4 @@ public class FindEntitiesTask : DiscreteInteractionTask
         FoundObject = IslandGameObjects.Find(island => island.GetComponent<Island>().Regions.Find(region => region.Package.Name.ToLower().Contains(regionName)));
         Debug.Log("found a Region: " + FoundObject.name + "[" + FoundObject.tag + "]");
     }
-
-
-    // Use this for initialization
-    void Start () {
- 
-    }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
