@@ -27,10 +27,16 @@ namespace HoloIslandVis.Interaction.Tasking
                 if (gestureEventArgs.Gesture == Convert.ToInt16("0000000011000001", 2))
                     continuousInteractionTask.StartInteraction(gestureEventArgs);
 
+                if (gestureEventArgs.Gesture == Convert.ToInt16("1100000111000001", 2))
+                    continuousInteractionTask.StartInteraction(gestureEventArgs);
+
                 if (gestureEventArgs.Gesture == Convert.ToInt16("1111111111111111", 2))
                     continuousInteractionTask.UpdateInteraction(gestureEventArgs);
 
                 if (gestureEventArgs.Gesture == Convert.ToInt16("0000000010001000", 2))
+                    continuousInteractionTask.EndInteraction(gestureEventArgs);
+
+                if (gestureEventArgs.Gesture == Convert.ToInt16("1000100010001000", 2))
                     continuousInteractionTask.EndInteraction(gestureEventArgs);
             }
         }

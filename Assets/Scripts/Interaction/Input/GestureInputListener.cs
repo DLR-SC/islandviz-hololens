@@ -1,4 +1,5 @@
 ﻿using HoloIslandVis;
+using HoloIslandVis.Component.UI;
 using HoloIslandVis.Utility;
 using HoloToolkit.Unity.InputModule;
 using System;
@@ -25,7 +26,7 @@ namespace HoloIslandVis.Interaction.Input
         public event GestureInputHandler ManipulationUpdate     = delegate { };
         public event GestureInputHandler ManipulationEnd        = delegate { };
 
-        private Dictionary<IInputSource, GestureSource> _gestureSources;
+        private Dictionary<uint, GestureSource> _gestureSources;
         private Dictionary<short, Action<GestureInputEventArgs>> _gestureEventTable;
         private int _inputTimeout;
         private bool _timerSet;
@@ -47,7 +48,7 @@ namespace HoloIslandVis.Interaction.Input
                 { Convert.ToInt16("1000100010000000", 2), eventArgs => ManipulationEnd(eventArgs) }
             };
 
-            _gestureSources = new Dictionary<IInputSource, GestureSource>(2);
+            _gestureSources = new Dictionary<uint, GestureSource>(2);
             InputManager.Instance.AddGlobalListener(gameObject);
             _inputTimeout = 250;
             _timerSet = false;
@@ -57,13 +58,16 @@ namespace HoloIslandVis.Interaction.Input
         {
             foreach(GestureSource source in _gestureSources.Values)
             {
-                if(source.IsManipulating && !source.IsEvaluating)
+                if (source.IsManipulating && !source.IsEvaluating)
                 {
                     GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
                     short gestureUpdate = Convert.ToInt16("1111111111111111", 2);
                     _gestureSources.Values.CopyTo(gestureSources, 0);
 
+                    
+
                     ManipulationUpdate(new GestureInputEventArgs(gestureUpdate, gestureSources));
+                    break;
                 }
             }
         }
@@ -71,24 +75,34 @@ namespace HoloIslandVis.Interaction.Input
         public void OnSourceDetected(SourceStateEventData eventData)
         {
             IInputSource inputSource = eventData.InputSource;
-            if (_gestureSources.ContainsKey(inputSource))
+            if (_gestureSources.ContainsKey(eventData.SourceId))
                 return;
 
-            _gestureSources.Add(inputSource, new GestureSource(inputSource, eventData.SourceId));
+            _gestureSources.Add(eventData.SourceId, new GestureSource(inputSource, eventData.SourceId));
+            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "InputSource: " + _gestureSources.Count + "   SourceId: " + eventData.SourceId + "  detected";
         }
 
         public void OnSourceLost(SourceStateEventData eventData)
         {
             IInputSource inputSource = eventData.InputSource;
-            if (!_gestureSources.ContainsKey(inputSource))
+            if (!_gestureSources.ContainsKey(eventData.SourceId))
                 return;
 
-            _gestureSources.Remove(inputSource);
+            if (_gestureSources[eventData.SourceId].IsManipulating)
+            {
+                GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
+                _gestureSources.Values.CopyTo(gestureSources, 0);
+
+                ManipulationEnd(new GestureInputEventArgs(Convert.ToInt16("0000000010001000", 2), gestureSources));
+            }
+
+            _gestureSources.Remove(eventData.SourceId);
+            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "InputSources: " + _gestureSources.Count + "   SourceId: " + eventData.SourceId + "  lost";
         }
 
         public void OnInputDown(InputEventData eventData)
         {
-            _gestureSources[eventData.InputSource].InputDown++;
+            _gestureSources[eventData.SourceId].InputDown++;
 
             if (!_timerSet)
             {
@@ -99,7 +113,7 @@ namespace HoloIslandVis.Interaction.Input
 
         public void OnInputUp(InputEventData eventData)
         {
-            _gestureSources[eventData.InputSource].InputUp++;
+            _gestureSources[eventData.SourceId].InputUp++;
 
             if (!_timerSet)
             {
@@ -110,7 +124,7 @@ namespace HoloIslandVis.Interaction.Input
 
         private async void processInput(InputEventData eventData)
         {
-            await Task.Delay(_gestureSources[eventData.InputSource].InputTimeout);
+            await Task.Delay(_gestureSources[eventData.SourceId].InputTimeout);
 
             GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
             _gestureSources.Values.CopyTo(gestureSources, 0);

@@ -10,8 +10,9 @@ namespace HoloIslandVis.Automaton
         OneHandTap = 1,
         OneHandDoubleTap = 2,
         OneHandManipStart = 4,
-        ManipulationUpdate = 8,
-        ManipulationEnd = 16
+        TwoHandManipStart = 8,
+        ManipulationUpdate = 16,
+        ManipulationEnd = 32
     }
 
     public enum KeywordType
@@ -45,30 +46,30 @@ namespace HoloIslandVis.Automaton
             FocusedObject = focusedObject;
         }
 
-        public override bool Equals(object obj)
-        {
-            if(!GetType().Equals(obj.GetType()))
-                return false;
+        //public override bool Equals(object obj)
+        //{
+        //    if(!GetType().Equals(obj.GetType()))
+        //        return false;
 
-            Command other = (Command) obj;
+        //    Command other = (Command) obj;
 
-            if (Gesture != other.Gesture && other.Gesture != GestureType.Invariant && Gesture != GestureType.Invariant)
-                return false;
+        //    if (Gesture != other.Gesture && other.Gesture != GestureType.Invariant && Gesture != GestureType.Invariant)
+        //        return false;
 
-            if (Keyword != other.Keyword && other.Keyword != KeywordType.Invariant && Keyword != KeywordType.Invariant)
-                return false;
+        //    if (Keyword != other.Keyword && other.Keyword != KeywordType.Invariant && Keyword != KeywordType.Invariant)
+        //        return false;
 
-            if (FocusedObject != other.FocusedObject && other.FocusedObject != InteractableType.Invariant 
-                && FocusedObject != InteractableType.Invariant)
-                return false;
+        //    if (FocusedObject != other.FocusedObject && other.FocusedObject != InteractableType.Invariant 
+        //        && FocusedObject != InteractableType.Invariant)
+        //        return false;
 
-            return true;
-        }
+        //    return true;
+        //}
 
-        public override int GetHashCode()
-        {
-            // TODO     Implement!
-            return 0;
-        }
+        //public override int GetHashCode()
+        //{
+        //    // TODO     Implement!
+        //    return 0;
+        //}
     }
 }
