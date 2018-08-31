@@ -339,12 +339,11 @@ Shader "Custom/MRTK_Standard_Fade"
 				float3 vertRef = vertWorld - _ReferencePosition;
 				float distToPlane = dot(vertRef, _ReferenceNormal);
 				float3 vertProj = vertWorld - distToPlane * _ReferenceNormal;
-				//float3 vertRefProj = vertProj - _ReferencePosition;
 				float distProj = distance(_ReferencePosition, vertProj);
 
 				if (distToPlane < -0.005f)
 					o.blend = 0.0f;
-				else if (distProj < _ReferenceRadius*2)
+				else if (distProj < _ReferenceRadius * 2)
 					o.blend = 1.0f;
 				else
 					o.blend = pow(_ReferenceRadius / distProj, 20);

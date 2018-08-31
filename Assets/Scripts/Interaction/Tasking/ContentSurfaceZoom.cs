@@ -100,7 +100,5 @@ namespace HoloIslandVis.Interaction
             target.transform.localScale = newScale;
             target.transform.localPosition = FP;
         }
-
-
     }
 }
