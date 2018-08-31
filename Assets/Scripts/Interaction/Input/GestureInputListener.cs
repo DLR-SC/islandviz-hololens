@@ -65,8 +65,6 @@ namespace HoloIslandVis.Interaction.Input
                     sourcesManipulating++;
             }
 
-            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Manipulating: " + sourcesManipulating;
-
             if (sourcesManipulating == 1)
             {
                 GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
