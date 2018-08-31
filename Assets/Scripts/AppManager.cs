@@ -7,6 +7,7 @@ using HoloIslandVis.OSGiParser;
 using HoloIslandVis.Utility;
 using HoloIslandVis.Visualization;
 using HoloToolkit.Unity.InputModule;
+using HoloToolkit.UX.ToolTips;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,6 +32,8 @@ namespace HoloIslandVis
         {
             _islandGameObjects = new List<GameObject>();
             RuntimeCache cache = RuntimeCache.Instance;
+            ToolTipManager ttm = gameObject.AddComponent<ToolTipManager>();
+            cache.toolTipManager = ttm;
             _isUpdating = false;
             _isScanning = false;
 
@@ -108,6 +111,7 @@ namespace HoloIslandVis
                     _isScanning = false;
                 }
             };
+
         }
 
         private async void updateSurfacePosition()
@@ -156,8 +160,8 @@ namespace HoloIslandVis
             ContentSurfaceDrag contentSurfaceDrag = new ContentSurfaceDrag();
             ContentSurfaceZoom contentSurfaceZoom = new ContentSurfaceZoom();
 
-            //Command commandFind = new Command(GestureType.Invariant, KeywordType.Find, InteractableType.Invariant);
-            //FindEntitiesTask findEntitiesTask = new FindEntitiesTask();
+            Command commandFind = new Command(GestureType.Invariant, KeywordType.Find, InteractableType.Invariant);
+            FindEntitiesTask findEntitiesTask = new FindEntitiesTask();
 
             testState.AddInteractionTask(commandDragStart, contentSurfaceDrag);
             testState.AddInteractionTask(commandDragUpdate, contentSurfaceDrag);
@@ -167,7 +171,7 @@ namespace HoloIslandVis
             testState.AddInteractionTask(commandZoomUpdate, contentSurfaceZoom);
             testState.AddInteractionTask(commandZoomEnd, contentSurfaceZoom);
 
-            //testState.AddInteractionTask(commandFind, findEntitiesTask);
+            testState.AddInteractionTask(commandFind, findEntitiesTask);
 
             stateMachine.AddState(testState);
             Debug.Log("IsInitialized is called in AppManager");
