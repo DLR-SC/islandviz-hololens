@@ -28,16 +28,11 @@ namespace HoloIslandVis.Automaton
         Invariant = 0
     }
 
-    public class Command
+    public struct Command
     {
         public GestureType Gesture { get; private set; }
         public KeywordType Keyword { get; private set; }
         public InteractableType FocusedObject { get; private set; }
-
-        public Command()
-        {
-
-        }
 
         public Command(GestureType gesture, KeywordType keyword, InteractableType focusedObject)
         {
