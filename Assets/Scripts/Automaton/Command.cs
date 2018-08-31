@@ -10,9 +10,11 @@ namespace HoloIslandVis.Automaton
         OneHandTap = 1,
         OneHandDoubleTap = 2,
         OneHandManipStart = 4,
-        TwoHandManipStart = 8,
-        ManipulationUpdate = 16,
-        ManipulationEnd = 32
+        OneHandManipUpdate = 8,
+        OneHandManipEnd = 16,
+        TwoHandManipStart = 36,
+        TwoHandManipUpdate = 64,
+        TwoHandManipEnd = 128
     }
 
     public enum KeywordType

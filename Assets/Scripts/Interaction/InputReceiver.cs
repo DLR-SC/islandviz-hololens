@@ -12,16 +12,20 @@ public abstract class InputReceiver
         GestureInputListener.Instance.OneHandTap += OnOneHandTap;
         GestureInputListener.Instance.OneHandDoubleTap += OnOneHandDoubleTap;
         GestureInputListener.Instance.OneHandManipStart += OnOneHandManipStart;
+        GestureInputListener.Instance.OneHandManipUpdate += OnOneHandManipUpdate;
+        GestureInputListener.Instance.OneHandManipEnd += OnOneHandManipEnd;
         GestureInputListener.Instance.TwoHandManipStart += OnTwoHandManipStart;
-        GestureInputListener.Instance.ManipulationUpdate += OnManipulationUpdate;
-        GestureInputListener.Instance.ManipulationEnd += OnManipulationEnd;
+        GestureInputListener.Instance.TwoHandManipUpdate += OnTwoHandManipUpdate;
+        GestureInputListener.Instance.TwoHandManipEnd += OnTwoHandManipEnd;
     }
 
     public abstract void OnSpeechResponse(SpeechInputEventArgs eventArgs);
     public abstract void OnOneHandTap(GestureInputEventArgs eventArgs);
     public abstract void OnOneHandDoubleTap(GestureInputEventArgs eventArgs);
     public abstract void OnOneHandManipStart(GestureInputEventArgs eventArgs);
+    public abstract void OnOneHandManipUpdate(GestureInputEventArgs eventArgs);
+    public abstract void OnOneHandManipEnd(GestureInputEventArgs eventArgs);
     public abstract void OnTwoHandManipStart(GestureInputEventArgs eventArgs);
-    public abstract void OnManipulationUpdate(GestureInputEventArgs eventArgs);
-    public abstract void OnManipulationEnd(GestureInputEventArgs eventArgs);
+    public abstract void OnTwoHandManipUpdate(GestureInputEventArgs eventArgs);
+    public abstract void OnTwoHandManipEnd(GestureInputEventArgs eventArgs);
 }

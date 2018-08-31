@@ -23,8 +23,10 @@ namespace HoloIslandVis.Interaction.Input
 
         public event GestureInputHandler OneHandManipStart      = delegate { };
         public event GestureInputHandler TwoHandManipStart      = delegate { };
-        public event GestureInputHandler ManipulationUpdate     = delegate { };
-        public event GestureInputHandler ManipulationEnd        = delegate { };
+        public event GestureInputHandler OneHandManipUpdate     = delegate { };
+        public event GestureInputHandler TwoHandManipUpdate     = delegate { };
+        public event GestureInputHandler OneHandManipEnd        = delegate { };
+        public event GestureInputHandler TwoHandManipEnd        = delegate { };
 
         private Dictionary<uint, GestureSource> _gestureSources;
         private Dictionary<short, Action<GestureInputEventArgs>> _gestureEventTable;
@@ -42,10 +44,10 @@ namespace HoloIslandVis.Interaction.Input
                 { Convert.ToInt16("1001001010010010", 2), eventArgs => TwoHandDoubleTap(eventArgs) },
                 { Convert.ToInt16("0000000011000001", 2), eventArgs => OneHandManipStart(eventArgs) },
                 { Convert.ToInt16("1100000111000001", 2), eventArgs => TwoHandManipStart(eventArgs) },
-                { Convert.ToInt16("0000000010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
-                { Convert.ToInt16("1000100010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
-                { Convert.ToInt16("1000000010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
-                { Convert.ToInt16("1000100010000000", 2), eventArgs => ManipulationEnd(eventArgs) }
+                { Convert.ToInt16("0000000010001000", 2), eventArgs => OneHandManipEnd(eventArgs) },
+                { Convert.ToInt16("1000100010001000", 2), eventArgs => TwoHandManipEnd(eventArgs) },
+                { Convert.ToInt16("1000000010001000", 2), eventArgs => TwoHandManipEnd(eventArgs) },
+                { Convert.ToInt16("1000100010000000", 2), eventArgs => TwoHandManipEnd(eventArgs) }
             };
 
             _gestureSources = new Dictionary<uint, GestureSource>(2);
@@ -56,19 +58,31 @@ namespace HoloIslandVis.Interaction.Input
 
         private void Update()
         {
+            int sourcesManipulating = 0;
             foreach(GestureSource source in _gestureSources.Values)
             {
                 if (source.IsManipulating && !source.IsEvaluating)
-                {
-                    GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
-                    short gestureUpdate = Convert.ToInt16("1111111111111111", 2);
-                    _gestureSources.Values.CopyTo(gestureSources, 0);
+                    sourcesManipulating++;
+            }
 
-                    
+            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Manipulating: " + sourcesManipulating;
 
-                    ManipulationUpdate(new GestureInputEventArgs(gestureUpdate, gestureSources));
-                    break;
-                }
+            if (sourcesManipulating == 1)
+            {
+                GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
+                short gestureUpdate = Convert.ToInt16("1111111111111111", 2);
+                _gestureSources.Values.CopyTo(gestureSources, 0);
+
+                OneHandManipUpdate(new GestureInputEventArgs(gestureUpdate, gestureSources));
+            }
+
+            if (sourcesManipulating == 2)
+            {
+                GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
+                short gestureUpdate = Convert.ToInt16("1111111111111111", 2);
+                _gestureSources.Values.CopyTo(gestureSources, 0);
+
+                TwoHandManipUpdate(new GestureInputEventArgs(gestureUpdate, gestureSources));
             }
         }
 
@@ -93,7 +107,8 @@ namespace HoloIslandVis.Interaction.Input
                 GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
                 _gestureSources.Values.CopyTo(gestureSources, 0);
 
-                ManipulationEnd(new GestureInputEventArgs(Convert.ToInt16("0000000010001000", 2), gestureSources));
+                OneHandManipEnd(new GestureInputEventArgs(Convert.ToInt16("0000000010001000", 2), gestureSources));
+                TwoHandManipEnd(new GestureInputEventArgs(Convert.ToInt16("1000100010001000", 2), gestureSources));
             }
 
             _gestureSources.Remove(eventData.SourceId);

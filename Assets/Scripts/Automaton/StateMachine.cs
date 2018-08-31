@@ -98,6 +98,22 @@ namespace HoloIslandVis.Automaton
                 CurrentState.ProcessCommand(eventArgs, command);
         }
 
+        public override void OnOneHandManipUpdate(GestureInputEventArgs eventArgs)
+        {
+            Command command = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
+
+            if (CurrentState != null)
+                CurrentState.ProcessCommand(eventArgs, command);
+        }
+
+        public override void OnOneHandManipEnd(GestureInputEventArgs eventArgs)
+        {
+            Command command = new Command(GestureType.OneHandManipEnd, KeywordType.Invariant, InteractableType.Invariant);
+
+            if (CurrentState != null)
+                CurrentState.ProcessCommand(eventArgs, command);
+        }
+
         public override void OnTwoHandManipStart(GestureInputEventArgs eventArgs)
         {
             Command command = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
@@ -106,17 +122,17 @@ namespace HoloIslandVis.Automaton
                 CurrentState.ProcessCommand(eventArgs, command);
         }
 
-        public override void OnManipulationUpdate(GestureInputEventArgs eventArgs)
+        public override void OnTwoHandManipUpdate(GestureInputEventArgs eventArgs)
         {
-            Command command = new Command(GestureType.ManipulationUpdate, KeywordType.Invariant, InteractableType.Invariant);
+            Command command = new Command(GestureType.TwoHandManipUpdate, KeywordType.Invariant, InteractableType.Invariant);
 
             if (CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, command);
         }
 
-        public override void OnManipulationEnd(GestureInputEventArgs eventArgs)
+        public override void OnTwoHandManipEnd(GestureInputEventArgs eventArgs)
         {
-            Command command = new Command(GestureType.ManipulationEnd, KeywordType.Invariant, InteractableType.Invariant);
+            Command command = new Command(GestureType.TwoHandManipEnd, KeywordType.Invariant, InteractableType.Invariant);
 
             if (CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, command);

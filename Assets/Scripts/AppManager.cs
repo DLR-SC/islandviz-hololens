@@ -146,12 +146,12 @@ namespace HoloIslandVis
             State testState = new State("test");
 
             Command commandDragStart = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
-            Command commandDragUpdate = new Command(GestureType.ManipulationUpdate, KeywordType.Invariant, InteractableType.Invariant);
-            Command commandDragEnd = new Command(GestureType.ManipulationEnd, KeywordType.Invariant, InteractableType.Invariant);
+            Command commandDragUpdate = new Command(GestureType.OneHandManipUpdate, KeywordType.Invariant, InteractableType.Invariant);
+            Command commandDragEnd = new Command(GestureType.OneHandManipEnd, KeywordType.Invariant, InteractableType.Invariant);
 
             Command commandZoomStart = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
-            Command commandZoomUpdate = new Command(GestureType.ManipulationUpdate, KeywordType.Invariant, InteractableType.Invariant);
-            Command commandZoomEnd = new Command(GestureType.ManipulationEnd, KeywordType.Invariant, InteractableType.Invariant);
+            Command commandZoomUpdate = new Command(GestureType.TwoHandManipUpdate, KeywordType.Invariant, InteractableType.Invariant);
+            Command commandZoomEnd = new Command(GestureType.TwoHandManipEnd, KeywordType.Invariant, InteractableType.Invariant);
 
             ContentSurfaceDrag contentSurfaceDrag = new ContentSurfaceDrag();
             ContentSurfaceZoom contentSurfaceZoom = new ContentSurfaceZoom();
@@ -159,15 +159,15 @@ namespace HoloIslandVis
             //Command commandFind = new Command(GestureType.Invariant, KeywordType.Find, InteractableType.Invariant);
             //FindEntitiesTask findEntitiesTask = new FindEntitiesTask();
 
-            //testState.AddInteractionTask(commandDragStart, contentSurfaceDrag);
-            //testState.AddInteractionTask(commandDragUpdate, contentSurfaceDrag);
-            //testState.AddInteractionTask(commandDragEnd, contentSurfaceDrag);
+            testState.AddInteractionTask(commandDragStart, contentSurfaceDrag);
+            testState.AddInteractionTask(commandDragUpdate, contentSurfaceDrag);
+            testState.AddInteractionTask(commandDragEnd, contentSurfaceDrag);
 
             testState.AddInteractionTask(commandZoomStart, contentSurfaceZoom);
             testState.AddInteractionTask(commandZoomUpdate, contentSurfaceZoom);
             testState.AddInteractionTask(commandZoomEnd, contentSurfaceZoom);
 
-            testState.AddInteractionTask(commandFind, findEntitiesTask);
+            //testState.AddInteractionTask(commandFind, findEntitiesTask);
 
             stateMachine.AddState(testState);
             Debug.Log("IsInitialized is called in AppManager");
@@ -182,7 +182,7 @@ namespace HoloIslandVis
             GestureInputListener.Instance.TwoHandDoubleTap += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TwoHandDoubleTap";
             GestureInputListener.Instance.OneHandManipStart += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "OneHandManipulationStart";
             GestureInputListener.Instance.TwoHandManipStart += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TwoHandManipulationStart";
-            GestureInputListener.Instance.ManipulationEnd += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ManipulationEnd";
+            GestureInputListener.Instance.OneHandManipEnd += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ManipulationEnd";
         }
     }
 }
