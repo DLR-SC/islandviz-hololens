@@ -23,10 +23,8 @@ namespace HoloIslandVis.Interaction.Input
 
         public event GestureInputHandler OneHandManipStart      = delegate { };
         public event GestureInputHandler TwoHandManipStart      = delegate { };
-        public event GestureInputHandler OneHandManipUpdate     = delegate { };
-        public event GestureInputHandler TwoHandManipUpdate     = delegate { };
-        public event GestureInputHandler OneHandManipEnd        = delegate { };
-        public event GestureInputHandler TwoHandManipEnd        = delegate { };
+        public event GestureInputHandler ManipulationUpdate     = delegate { };
+        public event GestureInputHandler ManipulationEnd        = delegate { };
 
         private Dictionary<uint, GestureSource> _gestureSources;
         private Dictionary<short, Action<GestureInputEventArgs>> _gestureEventTable;
@@ -44,10 +42,10 @@ namespace HoloIslandVis.Interaction.Input
                 { Convert.ToInt16("1001001010010010", 2), eventArgs => TwoHandDoubleTap(eventArgs) },
                 { Convert.ToInt16("0000000011000001", 2), eventArgs => OneHandManipStart(eventArgs) },
                 { Convert.ToInt16("1100000111000001", 2), eventArgs => TwoHandManipStart(eventArgs) },
-                { Convert.ToInt16("0000000010001000", 2), eventArgs => OneHandManipEnd(eventArgs) },
-                { Convert.ToInt16("1000100010001000", 2), eventArgs => TwoHandManipEnd(eventArgs) },
-                { Convert.ToInt16("1000000010001000", 2), eventArgs => TwoHandManipEnd(eventArgs) },
-                { Convert.ToInt16("1000100010000000", 2), eventArgs => TwoHandManipEnd(eventArgs) }
+                { Convert.ToInt16("0000000010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
+                { Convert.ToInt16("1000100010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
+                { Convert.ToInt16("1000000010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
+                { Convert.ToInt16("1000100010000000", 2), eventArgs => ManipulationEnd(eventArgs) }
             };
 
             _gestureSources = new Dictionary<uint, GestureSource>(2);
@@ -65,22 +63,14 @@ namespace HoloIslandVis.Interaction.Input
                     sourcesManipulating++;
             }
 
-            if (sourcesManipulating == 1)
+            if (sourcesManipulating != 0)
             {
                 GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
                 short gestureUpdate = Convert.ToInt16("1111111111111111", 2);
                 _gestureSources.Values.CopyTo(gestureSources, 0);
 
-                OneHandManipUpdate(new GestureInputEventArgs(gestureUpdate, gestureSources));
-            }
-
-            if (sourcesManipulating == 2)
-            {
-                GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
-                short gestureUpdate = Convert.ToInt16("1111111111111111", 2);
-                _gestureSources.Values.CopyTo(gestureSources, 0);
-
-                TwoHandManipUpdate(new GestureInputEventArgs(gestureUpdate, gestureSources));
+                UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                    ManipulationUpdate(new GestureInputEventArgs(gestureUpdate, gestureSources)));
             }
         }
 
@@ -91,12 +81,10 @@ namespace HoloIslandVis.Interaction.Input
                 return;
 
             _gestureSources.Add(eventData.SourceId, new GestureSource(inputSource, eventData.SourceId));
-            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "InputSource: " + _gestureSources.Count + "   SourceId: " + eventData.SourceId + "  detected";
         }
 
         public void OnSourceLost(SourceStateEventData eventData)
         {
-            IInputSource inputSource = eventData.InputSource;
             if (!_gestureSources.ContainsKey(eventData.SourceId))
                 return;
 
@@ -105,17 +93,20 @@ namespace HoloIslandVis.Interaction.Input
                 GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
                 _gestureSources.Values.CopyTo(gestureSources, 0);
 
-                OneHandManipEnd(new GestureInputEventArgs(Convert.ToInt16("0000000010001000", 2), gestureSources));
-                TwoHandManipEnd(new GestureInputEventArgs(Convert.ToInt16("1000100010001000", 2), gestureSources));
+                UnityMainThreadDispatcher.Instance.Enqueue(() => 
+                    ManipulationEnd(new GestureInputEventArgs(Convert.ToInt16("0000000010001000", 2), gestureSources)));
             }
 
             _gestureSources.Remove(eventData.SourceId);
-            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "InputSources: " + _gestureSources.Count + "   SourceId: " + eventData.SourceId + "  lost";
         }
 
         public void OnInputDown(InputEventData eventData)
         {
+            if(!_gestureSources.ContainsKey(eventData.SourceId))
+                return;
+
             _gestureSources[eventData.SourceId].InputDown++;
+
             if (!_timerSet)
             {
                 _timerSet = true;
@@ -125,11 +116,13 @@ namespace HoloIslandVis.Interaction.Input
 
         public void OnInputUp(InputEventData eventData)
         {
+            if(!_gestureSources.ContainsKey(eventData.SourceId))
+                return;
+
             _gestureSources[eventData.SourceId].InputUp++;
-            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "InputUp.";
-            if (!_timerSet)
+
+            if(!_timerSet)
             {
-                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TryProcess.";
                 _timerSet = true;
                 new Task(() => processInput(eventData)).Start();
             }
@@ -143,23 +136,16 @@ namespace HoloIslandVis.Interaction.Input
             _gestureSources.Values.CopyTo(gestureSources, 0);
 
             short inputData = 0;
-            for (int i = 0; i < gestureSources.Length; i++)
+            for(int i = 0; i < gestureSources.Length; i++)
                 inputData += (short) (gestureSources[i].Evaluate() << i * 8);
 
             _timerSet = false;
             Action<GestureInputEventArgs> action;
-            UnityMainThreadDispatcher.Instance.Enqueue(() =>
-            {
-                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Taskytask";
-            });
-            if (_gestureEventTable.TryGetValue(inputData, out action))
+
+            if(_gestureEventTable.TryGetValue(inputData, out action))
             {
                 GestureInputEventArgs eventArgs = new GestureInputEventArgs(inputData, gestureSources);
                 UnityMainThreadDispatcher.Instance.Enqueue(action, eventArgs);
-                UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                {
-                    UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ProcessingInput";
-                });
             }
         }
     }

@@ -42,8 +42,6 @@ namespace HoloIslandVis
             _filepath = Path.Combine(Application.streamingAssetsPath, "rce_lite.model");
             //new Task(() => loadVisualization()).Start();
 
-            //UserInterface.Instance.ContentSurface.SetActive(true);
-            //setupStateMachine();
             //inputListenerDebug();
             initScene();
         }
@@ -135,8 +133,6 @@ namespace HoloIslandVis
                     _isScanning = false;
                 }
             };
-
-
         }
 
         private async void updateSurfacePosition()
@@ -168,7 +164,6 @@ namespace HoloIslandVis
             });
 
             UnityMainThreadDispatcher.Instance.Enqueue(() => setupStateMachine());
-            new Task(() => loadVisualization()).Start();
         }
 
         public void setupStateMachine()
@@ -177,40 +172,13 @@ namespace HoloIslandVis
             StateMachine stateMachine = new StateMachine();
             State testState = new State("test");
 
-            Command commandDragStart = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
-            Command commandDragUpdate = new Command(GestureType.OneHandManipUpdate, KeywordType.Invariant, InteractableType.Invariant);
-            Command commandDragEnd = new Command(GestureType.OneHandManipEnd, KeywordType.Invariant, InteractableType.Invariant);
+            Command commandDebugContinuousStart = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
 
-            Command commandZoomStart = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
-            Command commandZoomUpdate = new Command(GestureType.TwoHandManipUpdate, KeywordType.Invariant, InteractableType.Invariant);
-            Command commandZoomEnd = new Command(GestureType.TwoHandManipEnd, KeywordType.Invariant, InteractableType.Invariant);
+            DebugTaskContinuous debugTaskContinuous = new DebugTaskContinuous();
 
-            ContentSurfaceDrag contentSurfaceDrag = new ContentSurfaceDrag();
-            ContentSurfaceZoom contentSurfaceZoom = new ContentSurfaceZoom();
-
-            Command commandFind = new Command(GestureType.Invariant, KeywordType.Find, InteractableType.Invariant);
-            FindEntitiesTask findEntitiesTask = new FindEntitiesTask();
-
-            Command commandSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);
-            Command commandDeselect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
-            IslandSelectTask islandSelectTask = new IslandSelectTask();
-            IslandDeselectTask islandDeselectTask = new IslandDeselectTask();
-
-            testState.AddInteractionTask(commandDragStart, contentSurfaceDrag);
-            testState.AddInteractionTask(commandDragUpdate, contentSurfaceDrag);
-            testState.AddInteractionTask(commandDragEnd, contentSurfaceDrag);
-
-            testState.AddInteractionTask(commandZoomStart, contentSurfaceZoom);
-            testState.AddInteractionTask(commandZoomUpdate, contentSurfaceZoom);
-            testState.AddInteractionTask(commandZoomEnd, contentSurfaceZoom);
-
-            testState.AddInteractionTask(commandFind, findEntitiesTask);
-
-            testState.AddInteractionTask(commandSelect, islandSelectTask);
-            testState.AddInteractionTask(commandDeselect, islandDeselectTask);
+            testState.AddInteractionTask(commandDebugContinuousStart, debugTaskContinuous);
 
             stateMachine.AddState(testState);
-            Debug.Log("IsInitialized is called in AppManager");
             stateMachine.Init(testState);
         }
 
@@ -222,8 +190,7 @@ namespace HoloIslandVis
             GestureInputListener.Instance.TwoHandDoubleTap += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TwoHandDoubleTap";
             GestureInputListener.Instance.OneHandManipStart += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "OneHandManipulationStart";
             GestureInputListener.Instance.TwoHandManipStart += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TwoHandManipulationStart";
-            GestureInputListener.Instance.OneHandManipEnd += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "OneHandManipEnd";
-            GestureInputListener.Instance.OneHandManipEnd += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TwoHandManipEnd";
+            GestureInputListener.Instance.ManipulationEnd += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ManipulationEnd";
         }
     }
 }

@@ -53,8 +53,6 @@ namespace HoloIslandVis.Interaction.Input
 
         public byte Evaluate()
         {
-            IsEvaluating = true;
-
             InputData = getInputData(InputDown, InputUp);
             if(InputData == _stateBytes[SourceState.Pressed].Invoke(this))
                 IsManipulating = true;
@@ -64,17 +62,20 @@ namespace HoloIslandVis.Interaction.Input
 
             InputData = getInputData(InputDown, InputUp);
             resetInputData(this);
-            IsEvaluating = false;
             return InputData;
         }
 
         private byte getInputData(int inputDown, int inputUp)
         {
+            IsEvaluating = true;
+
             byte inputData = 0;
             inputData += (byte) (Math.Min(InputBufferSize, inputDown));
             inputData += (byte) (Math.Min(InputBufferSize, inputUp) << 3);
             inputData += (byte) ((IsManipulating ? 1 : 0) << 6);
-            inputData += (byte) ((IsEvaluating   ? 1 : 0) << 7);
+            inputData += (byte) ((IsEvaluating  ? 1 : 0) << 7);
+
+            IsEvaluating = false;
             return inputData;
         }
 

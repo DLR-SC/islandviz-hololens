@@ -11,12 +11,12 @@ namespace HoloIslandVis.Interaction.Tasking
     {
         public ContinuousInteractionTask()
         {
-
+            GestureInputListener.Instance.ManipulationUpdate += UpdateInteraction;
+            GestureInputListener.Instance.ManipulationEnd += EndInteraction;
         }
 
         public abstract void StartInteraction(GestureInputEventArgs eventArgs);
         public abstract void UpdateInteraction(GestureInputEventArgs eventArgs);
         public abstract void EndInteraction(GestureInputEventArgs eventArgs);
     }
-
 }

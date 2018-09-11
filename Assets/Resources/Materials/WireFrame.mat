@@ -76,5 +76,5 @@ Material:
     m_Colors:
     - _Color: {r: 0.16077948, g: 1, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ReferenceNormal: {r: 0, g: 1, b: 0, a: 0}
-    - _ReferencePosition: {r: 0, g: 0, b: 0, a: 0}
+    - _ReferenceNormal: {r: -0.006561662, g: 0.99987835, b: -0.014151832, a: 0}
+    - _ReferencePosition: {r: 0.12762548, g: -1.081379, b: 2.0822353, a: 0}

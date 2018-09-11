@@ -79,13 +79,13 @@ namespace HoloIslandVis.Automaton
         {
             Command command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Invariant);
 
-            if (RuntimeCache.Instance.CurrentFocus != null)
+            if(RuntimeCache.Instance.CurrentFocus != null)
                 command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);
 
-            if (RuntimeCache.Instance.CurrentFocus == null)
+            if(RuntimeCache.Instance.CurrentFocus == null)
                 command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
 
-            if (CurrentState != null)
+            if(CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, command);
         }
 
@@ -101,23 +101,7 @@ namespace HoloIslandVis.Automaton
         {
             Command command = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
 
-            if (CurrentState != null)
-                CurrentState.ProcessCommand(eventArgs, command);
-        }
-
-        public override void OnOneHandManipUpdate(GestureInputEventArgs eventArgs)
-        {
-            Command command = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
-
-            if (CurrentState != null)
-                CurrentState.ProcessCommand(eventArgs, command);
-        }
-
-        public override void OnOneHandManipEnd(GestureInputEventArgs eventArgs)
-        {
-            Command command = new Command(GestureType.OneHandManipEnd, KeywordType.Invariant, InteractableType.Invariant);
-
-            if (CurrentState != null)
+            if(CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, command);
         }
 
@@ -125,30 +109,14 @@ namespace HoloIslandVis.Automaton
         {
             Command command = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
 
-            if (CurrentState != null)
-                CurrentState.ProcessCommand(eventArgs, command);
-        }
-
-        public override void OnTwoHandManipUpdate(GestureInputEventArgs eventArgs)
-        {
-            Command command = new Command(GestureType.TwoHandManipUpdate, KeywordType.Invariant, InteractableType.Invariant);
-
-            if (CurrentState != null)
-                CurrentState.ProcessCommand(eventArgs, command);
-        }
-
-        public override void OnTwoHandManipEnd(GestureInputEventArgs eventArgs)
-        {
-            Command command = new Command(GestureType.TwoHandManipEnd, KeywordType.Invariant, InteractableType.Invariant);
-
-            if (CurrentState != null)
+            if(CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, command);
         }
 
         public override void OnSpeechResponse(SpeechInputEventArgs eventArgs)
         {
             KeywordType kt; 
-            switch (eventArgs.intention)
+            switch(eventArgs.intention)
             {
                 case "find_entity_by_name_or_id":
                     kt = KeywordType.Find;

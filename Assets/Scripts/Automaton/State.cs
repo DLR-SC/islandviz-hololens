@@ -24,14 +24,11 @@ namespace HoloIslandVis.Automaton
             _interactionTaskTable = new Dictionary<Command, InteractionTask>();
 
             _closeAction += new Action<State>((State value) => {
-                foreach (Delegate del in _openAction.GetInvocationList()) {
+                foreach (Delegate del in _openAction.GetInvocationList())
                     _openAction -= (Action<State>)del;
-                }
 
                 foreach (Delegate del in _openAction.GetInvocationList())
-                {
                     _closeAction -= (Action<State>)del;
-                }
             });
         }
 
@@ -76,7 +73,7 @@ namespace HoloIslandVis.Automaton
         private void processInteractionTask(InputEventArgs eventArgs, Command command)
         {
             InteractionTask interactionTask = _interactionTaskTable[command];
-            interactionTask.Pass(eventArgs);
+            interactionTask.Pass(eventArgs, command);
         }
 
         private void moveNext(State newState)

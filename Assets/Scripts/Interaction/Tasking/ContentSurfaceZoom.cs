@@ -58,8 +58,6 @@ namespace HoloIslandVis.Interaction
             Vector3 handOnePos;
             Vector3 handTwoPos;
 
-            //UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ZoomUpdate: " + _inputSources.Count;
-
             if (_hasStarted && _inputSources[0].TryGetGripPosition(_sourceId[0], out handOnePos) &&
                         _inputSources[1].TryGetGripPosition(_sourceId[1], out handTwoPos))
             {
