@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoloIslandVis.Interaction.Tasking
+namespace HoloIslandVis.Interaction
 {
     public abstract class DiscreteInteractionTask : InteractionTask
     {

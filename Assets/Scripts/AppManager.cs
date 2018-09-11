@@ -2,6 +2,7 @@
 using HoloIslandVis.Component.UI;
 using HoloIslandVis.Interaction;
 using HoloIslandVis.Interaction.Input;
+using HoloIslandVis.Interaction.Tasking;
 using HoloIslandVis.Mapping;
 using HoloIslandVis.OSGiParser;
 using HoloIslandVis.Utility;
@@ -40,7 +41,7 @@ namespace HoloIslandVis
             _isScanning = false;
 
             _filepath = Path.Combine(Application.streamingAssetsPath, "rce_lite.model");
-            //new Task(() => loadVisualization()).Start();
+            new Task(() => loadVisualization()).Start();
 
             //inputListenerDebug();
             initScene();
@@ -172,11 +173,14 @@ namespace HoloIslandVis
             StateMachine stateMachine = new StateMachine();
             State testState = new State("test");
 
-            Command commandDebugContinuousStart = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
+            Command commandSurfaceDrag = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
+            Command commandSurfaceZoom = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
 
-            DebugTaskContinuous debugTaskContinuous = new DebugTaskContinuous();
+            SurfaceDragTask surfaceDragTask = new SurfaceDragTask();
+            SurfaceZoomTask surfaceZoomTask = new SurfaceZoomTask();
 
-            testState.AddInteractionTask(commandDebugContinuousStart, debugTaskContinuous);
+            testState.AddInteractionTask(commandSurfaceDrag, surfaceDragTask);
+            testState.AddInteractionTask(commandSurfaceZoom, surfaceZoomTask);
 
             stateMachine.AddState(testState);
             stateMachine.Init(testState);

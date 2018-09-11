@@ -1,5 +1,5 @@
-﻿using HoloIslandVis.Interaction.Input;
-using HoloIslandVis.Interaction.Tasking;
+﻿using HoloIslandVis.Interaction;
+using HoloIslandVis.Interaction.Input;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

@@ -28,17 +28,39 @@ namespace HoloIslandVis.Interaction.Input
             }
         }
 
-        public bool TryGetSourcePosition(uint sourceId, out Vector3 sourcePosition)
+        public bool TryGetSingleGripPosition(out Vector3 sourceOnePos)
         {
-            sourcePosition = default(Vector3);
+            sourceOnePos = default(Vector3);
 
-            if(SourcePositions.ContainsKey(sourceId))
+            if(SourceIds.Count < 1)
+                return false;
+
+            if(!SourcePositions.ContainsKey(SourceIds[0]))
+                return false;
+
+            sourceOnePos = SourcePositions[SourceIds[0]];
+
+            return true;
+        }
+
+        public bool TryGetDoubleGripPosition(out Vector3 sourceOnePos, out Vector3 sourceTwoPos)
+        {
+            sourceOnePos = default(Vector3);
+            sourceTwoPos = default(Vector3);
+
+            if(SourceIds.Count < 2)
+                return false;
+
+            foreach(uint sourceId in SourceIds)
             {
-                sourcePosition = SourcePositions[sourceId];
-                return true;
+                if(!SourcePositions.ContainsKey(sourceId))
+                    return false;
             }
 
-            return false;
+            sourceOnePos = SourcePositions[SourceIds[0]];
+            sourceTwoPos = SourcePositions[SourceIds[1]];
+
+            return true;
         }
     }
 }

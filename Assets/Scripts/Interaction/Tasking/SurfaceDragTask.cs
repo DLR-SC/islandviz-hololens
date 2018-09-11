@@ -1,55 +1,36 @@
-﻿using HoloIslandVis;
-using HoloIslandVis.Utility;
+﻿using HoloIslandVis.Interaction;
 using HoloIslandVis.Interaction.Input;
-using HoloIslandVis.Interaction.Tasking;
-using HoloToolkit.Unity.InputModule;
-using System;
+using HoloIslandVis.Utility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoloIslandVis.Interaction
+namespace HoloIslandVis.Interaction.Tasking
 {
-    public class ContentSurfaceDrag : ContinuousInteractionTask
+    public class SurfaceDragTask : ContinuousInteractionTask
     {
-        private bool _hasStarted;
-        private IInputSource _source;
-        private uint _sourceId;
         private GameObject _visualizationContainer;
-        private Vector3 _lastPosition;
-        private Vector3 _currentPosition;
         private Vector3 _surfacePosition;
         private Vector3 _surfaceNormal;
 
-        public ContentSurfaceDrag()
-        {
-            _hasStarted = false;
-            _lastPosition = Vector3.zero;
-            _currentPosition = Vector3.zero;
-            _visualizationContainer = RuntimeCache.Instance.VisualizationContainer;
-            _surfacePosition = RuntimeCache.Instance.ContentSurface.transform.position;
-            _surfaceNormal = RuntimeCache.Instance.ContentSurface.transform.up;
-        }
+        private Vector3 _lastPosition;
+        private Vector3 _currentPosition;
 
         public override void StartInteraction(GestureInputEventArgs eventArgs)
         {
-            _hasStarted = true;
+            _visualizationContainer = RuntimeCache.Instance.VisualizationContainer;
+            _surfacePosition = RuntimeCache.Instance.ContentSurface.transform.position;
+            _surfaceNormal = RuntimeCache.Instance.ContentSurface.transform.up;
 
             _lastPosition = Vector3.zero;
             _currentPosition = Vector3.zero;
 
-            //for (int i = 0; i < eventArgs.InputSources.Length; i++)
-            //{
-            //    _source = eventArgs.InputSources[i];
-            //    _sourceId = eventArgs.SourceIds[i];
-
-            //    _source.TryGetGripPosition(_sourceId, out _lastPosition);
-            //}
+            eventArgs.TryGetSingleGripPosition(out _lastPosition);
         }
 
         public override void UpdateInteraction(GestureInputEventArgs eventArgs)
         {
-            if(_hasStarted && _source.TryGetGripPosition(_sourceId, out _currentPosition))
+            if(eventArgs.TryGetSingleGripPosition(out _currentPosition))
             {
                 // Calcualte projection of difference vector onto content surface.
                 Vector3 positionDifference = _currentPosition - _lastPosition;
@@ -63,7 +44,7 @@ namespace HoloIslandVis.Interaction
 
         public override void EndInteraction(GestureInputEventArgs eventArgs)
         {
-            _hasStarted = false;
+            // Nothing to do!
         }
     }
 }

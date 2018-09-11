@@ -6,7 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoloIslandVis.Interaction.Tasking
+namespace HoloIslandVis.Interaction
 {
     public abstract class ContinuousInteractionTask : InteractionTask
     {
@@ -20,7 +20,8 @@ namespace HoloIslandVis.Interaction.Tasking
 
         private void OnManipulationUpdate(GestureInputEventArgs eventArgs)
         {
-            UpdateInteraction(eventArgs);
+            if(ValidateInput(eventArgs))
+                UpdateInteraction(eventArgs);
         }
 
         private void OnManipulationEnd(GestureInputEventArgs eventArgs)
@@ -28,6 +29,12 @@ namespace HoloIslandVis.Interaction.Tasking
             GestureInputListener.Instance.ManipulationUpdate -= OnManipulationUpdate;
             GestureInputListener.Instance.ManipulationEnd -= OnManipulationEnd;
             EndInteraction(eventArgs);
+        }
+
+        private bool ValidateInput(GestureInputEventArgs eventArgs)
+        {
+            // TODO: Implement validation!
+            return true;
         }
 
         public abstract void StartInteraction(GestureInputEventArgs eventArgs);

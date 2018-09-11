@@ -1,5 +1,5 @@
 ﻿using HoloIslandVis.Automaton;
-using HoloIslandVis.Interaction.Tasking;
+using HoloIslandVis.Interaction;
 using HoloIslandVis.Utility;
 using System.Collections;
 using System.Collections.Generic;

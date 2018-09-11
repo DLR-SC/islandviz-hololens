@@ -1,7 +1,7 @@
 ﻿using HoloIslandVis.Automaton;
 using HoloIslandVis.Component.UI;
 using HoloIslandVis.Interaction.Input;
-using HoloIslandVis.Interaction.Tasking;
+using HoloIslandVis.Interaction;
 using HoloIslandVis.Utility;
 using HoloIslandVis.Visualization;
 using HoloToolkit.Unity;
