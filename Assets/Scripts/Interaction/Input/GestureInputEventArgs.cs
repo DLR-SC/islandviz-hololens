@@ -8,22 +8,37 @@ namespace HoloIslandVis.Interaction.Input
 {
     public class GestureInputEventArgs : InputEventArgs
     {
-        public short Gesture;
-        public IInputSource[] InputSources;
-        public uint[] SourceIds;
+        public List<uint> SourceIds;
+        public Dictionary<uint, Vector3> SourcePositions;
 
-        public GestureInputEventArgs(short gesture, GestureSource[] gestureSources)
+        public GestureInputEventArgs(GestureSource[] gestureSources)
         {
-            Gesture = gesture;
-            InputSources = new IInputSource[gestureSources.Length];
-            SourceIds = new uint[gestureSources.Length];
+            SourceIds = new List<uint>();
+            SourcePositions = new Dictionary<uint, Vector3>();
 
-            for(int i = 0; i < gestureSources.Length; i++)
+            foreach (GestureSource source in gestureSources)
             {
-                InputSources[i] = gestureSources[i].InputSource;
-                SourceIds[i] = gestureSources[i].SourceId;
+                Vector3 sourcePosition;
+                uint sourceId = source.SourceId;
+
+                SourceIds.Add(sourceId);
+
+                if (source.InputSource.TryGetGripPosition(sourceId, out sourcePosition))
+                    SourcePositions.Add(source.SourceId, sourcePosition);
             }
-                
+        }
+
+        public bool TryGetSourcePosition(uint sourceId, out Vector3 sourcePosition)
+        {
+            sourcePosition = default(Vector3);
+
+            if(SourcePositions.ContainsKey(sourceId))
+            {
+                sourcePosition = SourcePositions[sourceId];
+                return true;
+            }
+
+            return false;
         }
     }
 }

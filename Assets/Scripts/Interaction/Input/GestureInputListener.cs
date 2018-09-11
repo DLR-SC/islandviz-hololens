@@ -66,11 +66,10 @@ namespace HoloIslandVis.Interaction.Input
             if (sourcesManipulating != 0)
             {
                 GestureSource[] gestureSources = new GestureSource[_gestureSources.Count];
-                short gestureUpdate = Convert.ToInt16("1111111111111111", 2);
                 _gestureSources.Values.CopyTo(gestureSources, 0);
 
                 UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                    ManipulationUpdate(new GestureInputEventArgs(gestureUpdate, gestureSources)));
+                    ManipulationUpdate(new GestureInputEventArgs(gestureSources)));
             }
         }
 
@@ -94,7 +93,7 @@ namespace HoloIslandVis.Interaction.Input
                 _gestureSources.Values.CopyTo(gestureSources, 0);
 
                 UnityMainThreadDispatcher.Instance.Enqueue(() => 
-                    ManipulationEnd(new GestureInputEventArgs(Convert.ToInt16("0000000010001000", 2), gestureSources)));
+                    ManipulationEnd(new GestureInputEventArgs(gestureSources)));
             }
 
             _gestureSources.Remove(eventData.SourceId);
@@ -128,6 +127,12 @@ namespace HoloIslandVis.Interaction.Input
             }
         }
 
+        public void ResetSubscriptions()
+        {
+            ManipulationUpdate = delegate { };
+            ManipulationEnd = delegate { };
+        }
+
         private async void processInput(InputEventData eventData)
         {
             await Task.Delay(_gestureSources[eventData.SourceId].InputTimeout);
@@ -144,7 +149,7 @@ namespace HoloIslandVis.Interaction.Input
 
             if(_gestureEventTable.TryGetValue(inputData, out action))
             {
-                GestureInputEventArgs eventArgs = new GestureInputEventArgs(inputData, gestureSources);
+                GestureInputEventArgs eventArgs = new GestureInputEventArgs(gestureSources);
                 UnityMainThreadDispatcher.Instance.Enqueue(action, eventArgs);
             }
         }

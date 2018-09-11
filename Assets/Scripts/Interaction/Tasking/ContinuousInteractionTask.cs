@@ -11,8 +11,11 @@ namespace HoloIslandVis.Interaction.Tasking
     {
         public ContinuousInteractionTask()
         {
-            GestureInputListener.Instance.ManipulationUpdate += UpdateInteraction;
-            GestureInputListener.Instance.ManipulationEnd += EndInteraction;
+            // TODO: Find other solution for unsubscribing prior Update and End events.
+            //GestureInputListener.Instance.ResetSubscriptions();
+
+            //GestureInputListener.Instance.ManipulationUpdate += UpdateInteraction;
+            //GestureInputListener.Instance.ManipulationEnd += EndInteraction;
         }
 
         public abstract void StartInteraction(GestureInputEventArgs eventArgs);

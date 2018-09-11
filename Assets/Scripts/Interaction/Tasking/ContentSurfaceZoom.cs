@@ -33,11 +33,11 @@ namespace HoloIslandVis.Interaction
             _startScale = RuntimeCache.Instance.VisualizationContainer.transform.localScale;
             _hasStarted = true;
 
-            for(int i = 0; i < eventArgs.InputSources.Length; i++)
-            {
-                _inputSources.Add(eventArgs.InputSources[i]);
-                _sourceId.Add(eventArgs.SourceIds[i]);
-            }
+            //for(int i = 0; i < eventArgs.InputSources.Length; i++)
+            //{
+            //    _inputSources.Add(eventArgs.InputSources[i]);
+            //    _sourceId.Add(eventArgs.SourceIds[i]);
+            //}
 
             UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ZoomStart: " + _inputSources.Count;
             Vector3 handOnePos;

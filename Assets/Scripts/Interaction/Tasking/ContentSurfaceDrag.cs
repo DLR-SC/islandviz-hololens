@@ -38,13 +38,13 @@ namespace HoloIslandVis.Interaction
             _lastPosition = Vector3.zero;
             _currentPosition = Vector3.zero;
 
-            for (int i = 0; i < eventArgs.InputSources.Length; i++)
-            {
-                _source = eventArgs.InputSources[i];
-                _sourceId = eventArgs.SourceIds[i];
+            //for (int i = 0; i < eventArgs.InputSources.Length; i++)
+            //{
+            //    _source = eventArgs.InputSources[i];
+            //    _sourceId = eventArgs.SourceIds[i];
 
-                _source.TryGetGripPosition(_sourceId, out _lastPosition);
-            }
+            //    _source.TryGetGripPosition(_sourceId, out _lastPosition);
+            //}
         }
 
         public override void UpdateInteraction(GestureInputEventArgs eventArgs)

@@ -24,8 +24,14 @@ namespace HoloIslandVis.Interaction.Tasking
                 if(!(eventArgs is GestureInputEventArgs))
                     return;
 
+                // TODO: Find other solution for unsubscribing prior Update and End events.
+                GestureInputListener.Instance.ResetSubscriptions();
+
                 gestureEventArgs = (GestureInputEventArgs) eventArgs;
                 continuousInteractionTask.StartInteraction(gestureEventArgs);
+
+                GestureInputListener.Instance.ManipulationUpdate += continuousInteractionTask.UpdateInteraction;
+                GestureInputListener.Instance.ManipulationEnd += continuousInteractionTask.EndInteraction;
             }
         }
     }
