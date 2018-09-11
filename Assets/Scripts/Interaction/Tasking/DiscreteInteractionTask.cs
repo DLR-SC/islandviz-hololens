@@ -1,4 +1,5 @@
-﻿using HoloIslandVis.Interaction.Input;
+﻿using HoloIslandVis.Automaton;
+using HoloIslandVis.Interaction.Input;
 using HoloToolkit.Unity.InputModule;
 using System;
 using System.Collections;
@@ -9,11 +10,9 @@ namespace HoloIslandVis.Interaction.Tasking
 {
     public abstract class DiscreteInteractionTask : InteractionTask
     {
-        public DiscreteInteractionTask()
+        public override void Perform(InputEventArgs eventArgs, Command command)
         {
 
         }
-
-        public abstract void Perform(InputEventArgs eventArgs);
     }
 }

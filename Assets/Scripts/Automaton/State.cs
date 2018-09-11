@@ -73,7 +73,7 @@ namespace HoloIslandVis.Automaton
         private void processInteractionTask(InputEventArgs eventArgs, Command command)
         {
             InteractionTask interactionTask = _interactionTaskTable[command];
-            interactionTask.Pass(eventArgs, command);
+            interactionTask.Perform(eventArgs, command);
         }
 
         private void moveNext(State newState)

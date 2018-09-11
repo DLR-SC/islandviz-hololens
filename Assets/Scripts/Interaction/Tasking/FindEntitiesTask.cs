@@ -1,4 +1,5 @@
-﻿using HoloIslandVis.Component.UI;
+﻿using HoloIslandVis.Automaton;
+using HoloIslandVis.Component.UI;
 using HoloIslandVis.Interaction.Input;
 using HoloIslandVis.Interaction.Tasking;
 using HoloIslandVis.Utility;
@@ -22,7 +23,7 @@ public class FindEntitiesTask : DiscreteInteractionTask
         get; private set;
     }
 
-    public override void Perform(InputEventArgs eventArgs)
+    public override void Perform(InputEventArgs eventArgs, Command command)
     {
         if(tts == null)
             tts = RuntimeCache.Instance.ContentSurface.AddComponent<TextToSpeech>();

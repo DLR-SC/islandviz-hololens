@@ -5,8 +5,5 @@ using UnityEngine;
 
 public class DebugTaskDiscrete : DiscreteInteractionTask
 {
-    public override void Perform(InputEventArgs eventArgs)
-    {
-        throw new System.NotImplementedException();
-    }
+
 }
