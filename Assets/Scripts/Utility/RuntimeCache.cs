@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using HoloIslandVis.Visualization;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -43,7 +44,7 @@ namespace HoloIslandVis.Utility
             private set { }
         }
 
-        public List<GameObject> IslandGameObjects { get; set; }
+        public List<Island> Islands { get; set; }
         public GameObject CurrentFocus { get; set; }
 
         public GameObject VisualizationContainer {

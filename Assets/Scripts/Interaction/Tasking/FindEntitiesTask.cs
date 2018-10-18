@@ -15,11 +15,11 @@ using static HoloIslandVis.Interaction.Input.RasaResponse;
 
 public class FindEntitiesTask : DiscreteInteractionTask
 {
-    public List<GameObject> IslandGameObjects;
+    public List<Island> Islands;
     private TextToSpeech tts;
     private readonly float speed = 0.2f;
 
-    public GameObject FoundObject {
+    public Island FoundObject {
         get; private set;
     }
 
@@ -28,12 +28,12 @@ public class FindEntitiesTask : DiscreteInteractionTask
         if(tts == null)
             tts = RuntimeCache.Instance.ContentSurface.AddComponent<TextToSpeech>();
 
-        if (IslandGameObjects == null)
-            IslandGameObjects = RuntimeCache.Instance.IslandGameObjects;
+        if (Islands == null)
+            Islands = RuntimeCache.Instance.Islands;
 
         Debug.Log("FindEntites.Perform()");
-        if (IslandGameObjects == null)
-            IslandGameObjects = RuntimeCache.Instance.IslandGameObjects;
+        if (Islands == null)
+            Islands = RuntimeCache.Instance.Islands;
 
         FoundObject = null;
         SpeechInputEventArgs siea = (SpeechInputEventArgs) eventArgs;
@@ -72,14 +72,14 @@ public class FindEntitiesTask : DiscreteInteractionTask
 
     private void findBuilding(string buildingName)
     {
-        FoundObject = IslandGameObjects.Find(island => island.GetComponent<Island>().Regions.Find(region => region.Buildings.Find(building => building.CompilationUnit.Name.ToLower().Contains(buildingName))));
+        FoundObject = Islands.Find(island => island.Regions.Find(region => region.Buildings.Find(building => building.CompilationUnit.Name.ToLower().Contains(buildingName))));
         Debug.Log("found a Building: " + FoundObject.name + "[" + FoundObject.tag + "]");
     }
 
     private void findIsland(string islandName)
     {
         Debug.Log("Looking for Bundle/Island");
-        FoundObject = IslandGameObjects.Find(island => island.GetComponent<Island>().CartographicIsland.Bundle.Name.ToLower().Contains(islandName));
+        FoundObject = Islands.Find(island => island.CartographicIsland.Bundle.Name.ToLower().Contains(islandName));
         if (FoundObject != null)
         {
             Vector3 source = FoundObject.transform.position;
@@ -120,7 +120,7 @@ public class FindEntitiesTask : DiscreteInteractionTask
 
     private void findRegion(string regionName)
     {
-        FoundObject = IslandGameObjects.Find(island => island.GetComponent<Island>().Regions.Find(region => region.Package.Name.ToLower().Contains(regionName)));
+        FoundObject = Islands.Find(island => island.Regions.Find(region => region.Package.Name.ToLower().Contains(regionName)));
         Debug.Log("found a Region: " + FoundObject.name + "[" + FoundObject.tag + "]");
     }
 }

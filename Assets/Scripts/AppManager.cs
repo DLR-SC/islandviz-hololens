@@ -22,7 +22,7 @@ namespace HoloIslandVis
     {
         private OSGiProject _osgiProject;
         private List<CartographicIsland> _islandStructures;
-        private List<GameObject> _islandGameObjects;
+        private List<Island> _islands;
 
         private string _filepath;
         private bool _isScanning;
@@ -31,7 +31,7 @@ namespace HoloIslandVis
         // Use this for initialization
         void Start()
         {
-            _islandGameObjects = new List<GameObject>();
+            _islands = new List<Island>();
             RuntimeCache cache = RuntimeCache.Instance;
             ToolTipManager ttm = gameObject.AddComponent<ToolTipManager>();
             cache.toolTipManager = ttm;
@@ -68,6 +68,7 @@ namespace HoloIslandVis
                 UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done building dependency graph.");
 
             UnityMainThreadDispatcher.Instance.Enqueue(() => buildGameObjects());
+            UnityMainThreadDispatcher.Instance.Enqueue(() => buildDocks());
         }
 
         public void buildGameObjects()
@@ -76,17 +77,17 @@ namespace HoloIslandVis
             {
                 GameObject islandGameObject =
                     IslandGameObjectBuilder.Instance.BuildFromIslandStructure(island);
-                _islandGameObjects.Add(islandGameObject);
+                _islands.Add(islandGameObject.GetComponent<Island>());
             }
 
-            RuntimeCache.Instance.IslandGameObjects = _islandGameObjects;
+            RuntimeCache.Instance.Islands = _islands;
             UnityMainThreadDispatcher.Instance.Enqueue(() =>
                 UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done building island game objects.");
 
-            foreach (GameObject islandGameObject in _islandGameObjects)
+            foreach(Island island in _islands)
             {
-                islandGameObject.AddComponent<Interactable>();
-                MeshFilter[] islandMeshFilters = islandGameObject.GetComponentsInChildren<MeshFilter>();
+                island.gameObject.AddComponent<Interactable>();
+                MeshFilter[] islandMeshFilters = island.gameObject.GetComponentsInChildren<MeshFilter>();
                 CombineInstance[] combineInstance = new CombineInstance[islandMeshFilters.Length];
 
                 for (int i = 0; i < islandMeshFilters.Length; i++)
@@ -96,7 +97,7 @@ namespace HoloIslandVis
                 }
 
                 GameObject highlight = new GameObject("Highlight");
-                highlight.transform.parent = islandGameObject.transform;
+                highlight.transform.parent = island.gameObject.transform;
                 highlight.AddComponent<MeshFilter>().mesh.CombineMeshes(combineInstance);
                 MeshRenderer meshRenderer = highlight.AddComponent<MeshRenderer>();
                 meshRenderer.sharedMaterial = RuntimeCache.Instance.WireFrame;
@@ -104,6 +105,16 @@ namespace HoloIslandVis
             }
 
             RuntimeCache.Instance.VisualizationContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+        }
+
+        public void buildDocks()
+        {
+            List<Island> islands = RuntimeCache.Instance.Islands;
+            for (int i = 0; i < islands.Count; i++)
+            {
+                IslandDockBuilder.Instance.BuildDockForIsland(islands[i]);
+                
+            }
         }
 
         public void initScene()
