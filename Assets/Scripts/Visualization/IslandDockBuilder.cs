@@ -6,13 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class IslandDockBuilder : MonoBehaviour
+public class IslandDockBuilder
 {
     private static IslandDockBuilder _instance;
     public static IslandDockBuilder Instance
     {
-        get
-        {
+        get{
             if (_instance == null)
                 _instance = new IslandDockBuilder();
 
@@ -115,7 +114,7 @@ public class IslandDockBuilder : MonoBehaviour
             MeshCollider mc = go.AddComponent<MeshCollider>();
             mc.sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
             mc.convex = true;
-            go.layer = LayerMask.NameToLayer("CalculationOnly");
+            //go.layer = LayerMask.NameToLayer("CalculationOnly");
         }
         #endregion
 

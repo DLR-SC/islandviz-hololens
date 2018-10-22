@@ -12,6 +12,13 @@ public class IslandSelectTask : DiscreteInteractionTask
 {
     public override void Perform(InputEventArgs eventArgs, Command command)
     {
+        GameObject[] highlights = GameObject.FindGameObjectsWithTag("Highlight");
+        foreach(GameObject highlight in highlights)
+        {
+            if (highlight.GetComponent<MeshRenderer>().enabled)
+                highlight.GetComponent<MeshRenderer>().enabled = false;
+        }
+
         GameObject currentFocus = RuntimeCache.Instance.CurrentFocus;
         GameObject infoPanel = UserInterface.Instance.Panel;
         RuntimeCache cache = RuntimeCache.Instance;

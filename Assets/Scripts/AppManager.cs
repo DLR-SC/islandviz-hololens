@@ -96,6 +96,7 @@ namespace HoloIslandVis
                 }
 
                 GameObject highlight = new GameObject("Highlight");
+                highlight.tag = "Highlight";
                 highlight.transform.parent = island.gameObject.transform;
                 highlight.AddComponent<MeshFilter>().mesh.CombineMeshes(combineInstance);
                 MeshRenderer meshRenderer = highlight.AddComponent<MeshRenderer>();
@@ -113,10 +114,7 @@ namespace HoloIslandVis
             RuntimeCache.Instance.Docks = docks;
 
             for (int i = 0; i < islands.Count; i++)
-            {
                 IslandDockBuilder.Instance.BuildDockForIsland(islands[i]);
-                
-            }
 
             for (int i = 0; i < islands.Count; i++)
             {

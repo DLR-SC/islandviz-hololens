@@ -123,7 +123,7 @@ namespace HoloIslandVis.Utility
             // Object references
             _visualizationContainer = GameObject.Find("VisualizationContainer");
             _dependencyContainer = GameObject.Find("DependencyContainer");
-            _connectionPool = _dependencyContainer.GetComponent<ConnectionPool>();
+            _connectionPool = GameObject.Find("Content").GetComponent<ConnectionPool>();
             _contentSurface = GameObject.Find("ContentSurface");
             _surfaceGlow = GameObject.Find("Glow");
 
