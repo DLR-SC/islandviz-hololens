@@ -1,4 +1,5 @@
 ﻿using HoloIslandVis.Automaton;
+using HoloIslandVis.Component.UI;
 using HoloIslandVis.Interaction;
 using HoloIslandVis.Utility;
 using HoloIslandVis.Visualization;
@@ -15,8 +16,10 @@ public class IslandDeselectTask : DiscreteInteractionTask
             Transform[] transforms = island.transform.GetComponentsInChildren<Transform>(true);
             foreach (Transform trans in transforms)
             {
-                if (trans.gameObject.name == "Highlight")
+                if (trans.gameObject.name == "Highlight") { 
                     trans.gameObject.GetComponent<MeshRenderer>().enabled = false;
+                    UserInterface.Instance.Panel.SetActive(false);
+                }
             }
         }
     }

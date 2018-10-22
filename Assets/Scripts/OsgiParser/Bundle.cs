@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace HoloIslandVis.OSGiParser
 {
@@ -9,7 +10,7 @@ namespace HoloIslandVis.OSGiParser
     {
         private string _name;
         private string _symbolicName;
-        private long? _compilationUnitCount;
+        private long _compilationUnitCount;
         private Package _largestPackage;
         private OSGiProject _project;
         private List<Package> _packages;
@@ -29,11 +30,10 @@ namespace HoloIslandVis.OSGiParser
 
         public long CompilationUnitCount {
             get {
-                if(!_compilationUnitCount.HasValue)
-                    foreach(Package package in _packages)
-                        _compilationUnitCount += package.CompilationUnitCount;
-
-                return _compilationUnitCount.Value;
+                if (_compilationUnitCount == 0.0)
+                    foreach (Package package in _packages)
+                        _compilationUnitCount += package.CompilationUnits.Count;
+                return _compilationUnitCount;
             }
 
             private set { }
