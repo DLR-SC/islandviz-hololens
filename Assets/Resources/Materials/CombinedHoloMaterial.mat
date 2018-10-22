@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: CombinedHoloMaterial
-  m_Shader: {fileID: 4800000, guid: 0dfd583634d7665438cc76a91d8a3e5b, type: 3}
+  m_Shader: {fileID: 4800000, guid: d45c0efca53019e43891b0f610f8146e, type: 3}
   m_ShaderKeywords: _ALPHABLEND_ON _BORDER_LIGHT_USES_HOVER_COLOR _DIRECTIONAL_LIGHT
     _GLOSSYREFLECTIONS_OFF _HOVER_LIGHT _SPECULARHIGHLIGHTS_OFF _SPECULAR_HIGHLIGHTS
   m_LightmapFlags: 4
@@ -87,6 +87,6 @@ Material:
     - _HoverColorOpaqueOverride: {r: 1, g: 1, b: 1, a: 1}
     - _HoverColorOverride: {r: 1, g: 1, b: 1, a: 1}
     - _InnerGlowColor: {r: 1, g: 1, b: 1, a: 0.75}
-    - _ReferenceNormal: {r: -0.012636802, g: 0.9997819, b: -0.016627073, a: 0}
-    - _ReferencePosition: {r: 0.17136075, g: -1.0827248, b: 2.0316393, a: 0}
+    - _ReferenceNormal: {r: -0.008826829, g: 0.9999229, b: -0.008735694, a: 0}
+    - _ReferencePosition: {r: 0.16426359, g: -1.0831827, b: 1.8960805, a: 0}
     - _RimColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

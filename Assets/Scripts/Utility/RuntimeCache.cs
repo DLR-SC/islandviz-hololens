@@ -18,10 +18,10 @@ namespace HoloIslandVis.Utility
         private const int _numBuildingLevels = 8;
 
         private GameObject _visualizationContainer;
+        private GameObject _dependencyContainer;
         private GameObject _contentSurface;
         private GameObject _surfaceGlow;
         private GameObject _canvas;
-
 
         private Text _progressInfo;
         private Material _combinedHoloMaterial;
@@ -35,6 +35,7 @@ namespace HoloIslandVis.Utility
 
         public GameObject infoPanel { get; internal set; }
         public ToolTipManager toolTipManager { get; internal set; }
+        private ConnectionPool _connectionPool;
 
         private GameObject _importDockPrefab;
         private GameObject _exportDockPrefab;
@@ -45,10 +46,23 @@ namespace HoloIslandVis.Utility
         }
 
         public List<Island> Islands { get; set; }
+        public List<GameObject> Docks { get; set; }
+
         public GameObject CurrentFocus { get; set; }
 
         public GameObject VisualizationContainer {
             get { return _visualizationContainer; }
+            private set { }
+        }
+
+        public GameObject DependencyContainer
+        {
+            get { return _dependencyContainer; }
+            private set { }
+        }
+
+        public ConnectionPool ConnectionPool {
+            get { return _connectionPool; }
             private set { }
         }
 
@@ -109,6 +123,8 @@ namespace HoloIslandVis.Utility
 
             // Object references
             _visualizationContainer = GameObject.Find("VisualizationContainer");
+            _dependencyContainer = GameObject.Find("DependencyContainer");
+            _connectionPool = _dependencyContainer.GetComponent<ConnectionPool>();
             _contentSurface = GameObject.Find("ContentSurface");
             _surfaceGlow = GameObject.Find("Glow");
 

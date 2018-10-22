@@ -110,11 +110,33 @@ namespace HoloIslandVis
         public void buildDocks()
         {
             List<Island> islands = RuntimeCache.Instance.Islands;
+            List<GameObject> docks = new List<GameObject>();
+            RuntimeCache.Instance.Docks = docks;
+
             for (int i = 0; i < islands.Count; i++)
             {
                 IslandDockBuilder.Instance.BuildDockForIsland(islands[i]);
                 
             }
+
+            for (int i = 0; i < islands.Count; i++)
+            {
+                Island island = islands[i].GetComponent<Island>();
+                GameObject eDock = island.ExportDock;
+                GameObject iDock = island.ImportDock;
+                if (eDock != null)
+                {
+                    docks.Add(eDock);
+                    eDock.GetComponent<DependencyDock>().constructConnectionArrows();
+                }
+                if (iDock != null)
+                {
+                    docks.Add(iDock);
+                    iDock.GetComponent<DependencyDock>().constructConnectionArrows();
+                }
+            }
+
+            Debug.Log("Finished with Dock-GameObject construction!");
         }
 
         public void initScene()
@@ -184,14 +206,17 @@ namespace HoloIslandVis
             StateMachine stateMachine = new StateMachine();
             State testState = new State("test");
 
+            Command commandIslandSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Invariant);
             Command commandSurfaceDrag = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command commandSurfaceZoom = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
 
+            IslandSelectTask islandSelectTask = new IslandSelectTask();
             SurfaceDragTask surfaceDragTask = new SurfaceDragTask();
             SurfaceZoomTask surfaceZoomTask = new SurfaceZoomTask();
 
             testState.AddInteractionTask(commandSurfaceDrag, surfaceDragTask);
             testState.AddInteractionTask(commandSurfaceZoom, surfaceZoomTask);
+            testState.AddInteractionTask(commandIslandSelect, islandSelectTask);
 
             stateMachine.AddState(testState);
             stateMachine.Init(testState);
