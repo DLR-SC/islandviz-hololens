@@ -16,6 +16,8 @@ namespace HoloIslandVis.Component.UI
         public GameObject ParsingProgressText { get; private set; }
         public GameObject ScanInstructionText { get; private set; }
         public GameObject ScanProgressBar { get; private set; }
+        public GameObject Panel { get; private set; }
+
 
         protected override void Awake()
         {
@@ -23,9 +25,11 @@ namespace HoloIslandVis.Component.UI
             ParsingProgressText = GameObject.Find("ParsingProgressText");
             ScanInstructionText = GameObject.Find("ScanInstructionText");
             ScanProgressBar = GameObject.Find("ScanProgressBar");
+            Panel = GameObject.Find("Panel");
 
             ScanInstructionText.SetActive(false);
             ScanProgressBar.SetActive(false);
+            Panel.SetActive(false);
 
         }
     }

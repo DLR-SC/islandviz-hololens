@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace HoloIslandVis
 {
@@ -32,11 +33,9 @@ namespace HoloIslandVis
         void Start()
         {
             _islands = new List<Island>();
-            RuntimeCache cache = RuntimeCache.Instance;
             ToolTipManager ttm = gameObject.AddComponent<ToolTipManager>();
+            RuntimeCache cache = RuntimeCache.Instance;
             cache.toolTipManager = ttm;
-            GameObject infoPanel = GameObject.Find("panel");
-            cache.infoPanel = infoPanel;
             _isUpdating = false;
             _isScanning = false;
 
@@ -149,7 +148,7 @@ namespace HoloIslandVis
 
         private async void updateSurfacePosition()
         {
-            Debug.Log("updateSurfcaePosition");
+            Debug.Log("updateSurfacePosition");
             _isUpdating = true;
             while (_isUpdating)
             {
@@ -167,6 +166,7 @@ namespace HoloIslandVis
                     }
                 });
             }
+            
 
             UnityMainThreadDispatcher.Instance.Enqueue(() => {
                 UserInterface.Instance.ContentSurface.layer = LayerMask.NameToLayer("Default");
@@ -184,12 +184,18 @@ namespace HoloIslandVis
             StateMachine stateMachine = new StateMachine();
             State testState = new State("test");
 
+            Command commandSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);
+            Command commandDeselect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
             Command commandSurfaceDrag = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command commandSurfaceZoom = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
 
+            IslandSelectTask islandSelectTask = new IslandSelectTask();
+            IslandDeselectTask islandDeselectTask = new IslandDeselectTask();
             SurfaceDragTask surfaceDragTask = new SurfaceDragTask();
             SurfaceZoomTask surfaceZoomTask = new SurfaceZoomTask();
 
+            testState.AddInteractionTask(commandSelect, islandSelectTask);
+            testState.AddInteractionTask(commandDeselect, islandDeselectTask);
             testState.AddInteractionTask(commandSurfaceDrag, surfaceDragTask);
             testState.AddInteractionTask(commandSurfaceZoom, surfaceZoomTask);
 
