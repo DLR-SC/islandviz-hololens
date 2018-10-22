@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - ContentSurface
+  - Island
+  - ExportDock
+  - ImportDock
   layers:
   - Default
   - TransparentFX

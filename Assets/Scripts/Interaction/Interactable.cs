@@ -9,6 +9,7 @@ public class Interactable : MonoBehaviour, IFocusable
     public void OnFocusEnter()
     {
         RuntimeCache.Instance.CurrentFocus = gameObject;
+        Debug.Log("Current focus: " + gameObject.tag);
     }
 
     public void OnFocusExit()

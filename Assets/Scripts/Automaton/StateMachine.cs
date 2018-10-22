@@ -85,6 +85,12 @@ namespace HoloIslandVis.Automaton
             if (RuntimeCache.Instance.CurrentFocus == null)
                 command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
 
+            if (RuntimeCache.Instance.CurrentFocus.tag == "ExportDock")
+                command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
+
+            if (RuntimeCache.Instance.CurrentFocus.tag == "ImportDock")
+                command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ImportDock);
+
             if (CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, command);
         }

@@ -206,22 +206,28 @@ namespace HoloIslandVis
             StateMachine stateMachine = new StateMachine();
             State testState = new State("test");
 
-            Command commandIslandSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Invariant);
+            Command commandImportDockSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ImportDock);
+            Command commandExportDockSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
+
             Command commandSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);
             Command commandDeselect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
             Command commandSurfaceDrag = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command commandSurfaceZoom = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
+
+            ShowArrowTask showArrowTask = new ShowArrowTask();
 
             IslandSelectTask islandSelectTask = new IslandSelectTask();
             IslandDeselectTask islandDeselectTask = new IslandDeselectTask();
             SurfaceDragTask surfaceDragTask = new SurfaceDragTask();
             SurfaceZoomTask surfaceZoomTask = new SurfaceZoomTask();
 
+            testState.AddInteractionTask(commandImportDockSelect, showArrowTask);
+            testState.AddInteractionTask(commandExportDockSelect, showArrowTask);
+
             testState.AddInteractionTask(commandSelect, islandSelectTask);
             testState.AddInteractionTask(commandDeselect, islandDeselectTask);
             testState.AddInteractionTask(commandSurfaceDrag, surfaceDragTask);
             testState.AddInteractionTask(commandSurfaceZoom, surfaceZoomTask);
-            testState.AddInteractionTask(commandIslandSelect, islandSelectTask);
 
             stateMachine.AddState(testState);
             stateMachine.Init(testState);

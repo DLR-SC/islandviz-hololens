@@ -26,7 +26,9 @@ namespace HoloIslandVis.Automaton
     {
         None = 0,
         Island = 1,
-        Invariant = 2
+        ExportDock = 2,
+        ImportDock = 4,
+        Invariant = 8
     }
 
     public struct Command
