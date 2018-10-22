@@ -206,20 +206,14 @@ namespace HoloIslandVis
             StateMachine stateMachine = new StateMachine();
             State testState = new State("test");
 
-<<<<<<< HEAD
             Command commandIslandSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Invariant);
-=======
             Command commandSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);
             Command commandDeselect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
->>>>>>> 99061ccdec0eb144b86e101e8829209554166bd6
             Command commandSurfaceDrag = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command commandSurfaceZoom = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
 
             IslandSelectTask islandSelectTask = new IslandSelectTask();
-<<<<<<< HEAD
-=======
             IslandDeselectTask islandDeselectTask = new IslandDeselectTask();
->>>>>>> 99061ccdec0eb144b86e101e8829209554166bd6
             SurfaceDragTask surfaceDragTask = new SurfaceDragTask();
             SurfaceZoomTask surfaceZoomTask = new SurfaceZoomTask();
 
