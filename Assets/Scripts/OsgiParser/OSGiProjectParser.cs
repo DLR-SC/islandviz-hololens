@@ -85,9 +85,14 @@ namespace HoloIslandVis.OSGiParser
                 string fieldBundleName = fieldBundle.GetField("name").str;
                 string fieldBundleSymbolicName = fieldBundle.GetField("symbolicName").str;
                 Bundle bundle = new Bundle(osgiProject, fieldBundleName, fieldBundleSymbolicName);
-                parsePackageFragments(bundle, fieldBundle.GetField("packageFragments"));
+                JSONObject fieldPackageFragments = fieldBundle.GetField("packageFragments");
+
+                if(fieldPackageFragments != null)
+                    parsePackageFragments(bundle, fieldPackageFragments);
+
                 osgiProject.Bundles.Add(bundle);
 
+                Debug.Log("Parsed bundle: " + bundle.Name);
                 //Debug.Log(bundle.Name);
             }
 
@@ -102,10 +107,11 @@ namespace HoloIslandVis.OSGiParser
                 JSONObject fieldPackageReference = fieldPackageFragment.GetField("package");
                 JSONObject fieldPackage = _referenceResolver.ResolvePackageReference(fieldPackageReference);
                 Package package = new Package(bundle, fieldPackage.GetField("qualifiedName").str);
-
                 JSONObject fieldCompilationUnits = fieldPackageFragment.GetField("compilationUnits");
+
                 if (fieldCompilationUnits != null)
                     parseCompilationUnits(package, fieldCompilationUnits);
+
                 bundle.Packages.Add(package);
             }
 

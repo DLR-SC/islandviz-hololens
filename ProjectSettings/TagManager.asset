@@ -8,6 +8,7 @@ TagManager:
   - Island
   - ExportDock
   - ImportDock
+  - Highlight
   layers:
   - Default
   - TransparentFX

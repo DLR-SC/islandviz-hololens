@@ -1,4 +1,5 @@
-﻿using HoloIslandVis.Interaction.Input;
+﻿using HoloToolkit.Unity.InputModule;
+using HoloIslandVis.Interaction.Input;
 using HoloIslandVis.Utility;
 using System;
 using System.Collections;
@@ -77,19 +78,17 @@ namespace HoloIslandVis.Automaton
 
         public override void OnOneHandTap(GestureInputEventArgs eventArgs)
         {
-            Command command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Invariant);
+            Command command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
 
             if (RuntimeCache.Instance.CurrentFocus != null)
-                command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);
-
-            if (RuntimeCache.Instance.CurrentFocus == null)
-                command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
-
-            if (RuntimeCache.Instance.CurrentFocus.tag == "ExportDock")
-                command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
-
-            if (RuntimeCache.Instance.CurrentFocus.tag == "ImportDock")
-                command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ImportDock);
+            {
+                if(RuntimeCache.Instance.CurrentFocus.tag == "Untagged")
+                    command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);
+                else if (RuntimeCache.Instance.CurrentFocus.tag == "ExportDock")
+                    command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
+                else if (RuntimeCache.Instance.CurrentFocus.tag == "ImportDock")
+                    command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ImportDock);
+            }
 
             if (CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, command);

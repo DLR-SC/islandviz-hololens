@@ -82,7 +82,7 @@ namespace HoloIslandVis.Visualization
             foreach (GraphVertex vert in graph.Vertices)
             {
                 float rr = 20f;
-                Vector2 startPos = new Vector2((float)RNG.NextDouble() * rr, (float)RNG.NextDouble() * rr);
+                Vector2 startPos = new Vector2((float)(RNG.NextDouble()-0.5f) * rr, (float)(RNG.NextDouble()-0.5f) * rr);
                 VertexPositionData vpd = new VertexPositionData(startPos, startPos);
                 simulationData.Add(vert, vpd);
             }
@@ -91,7 +91,6 @@ namespace HoloIslandVis.Visualization
 
             while (stepCounter < simulationSteps)
             {
-
                 foreach (GraphVertex thisVert in graph.Vertices)
                 {
                     // total force affecting "thisVert"
@@ -102,29 +101,19 @@ namespace HoloIslandVis.Visualization
                     graph.TryGetOutEdges(thisVert, out outEdges);
                     List<GraphEdge> edgeList = outEdges.ToList();
                     Vector2 springForce = Vector2.zero;
+
                     foreach (GraphEdge importEdge in edgeList)
                     {
                         GraphVertex otherVert = importEdge.Target;
                         Vector2 direction = simulationData[otherVert].position - simulationData[thisVert].position;
 
                         float springEquilibriumLength = (thisVert.Island.getRadius() + otherVert.Island.getRadius()) + c3 * (project.MaximalImportCount) / importEdge.Weight;
-
                         springForce += c1 * direction.normalized * Mathf.Log((direction.magnitude / springEquilibriumLength));
                     }
+
                     IEnumerable<GraphEdge> inEdges;
                     graph.TryGetInEdges(thisVert, out inEdges);
                     edgeList = inEdges.ToList();
-                    /*
-                    foreach (GraphEdge exportEdge in edgeList)
-                    {
-                        GraphVertex otherVert = exportEdge.Source;
-                        Vector2 direction = simulationData[otherVert].position - simulationData[thisVert].position;
-
-                        float springEquilibriumLength = (thisVert.getIsland().getRadius() + otherVert.getIsland().getRadius()) + c3 / exportEdge.getWeight();
-
-                        springForce += c1 * direction.normalized * Mathf.Log((direction.magnitude / springEquilibriumLength));
-                    }
-                    */
                     netForce += springForce;
                     #endregion
 
@@ -188,7 +177,6 @@ namespace HoloIslandVis.Visualization
 
             foreach (GraphVertex vertex in graph.Vertices)
             {
-
                 Vector3 diagonalVec = distrBoxEnd - distrBoxBegin;
                 Vector3 rndVec = distrBoxBegin + new Vector3(diagonalVec.x * (float)RNG.NextDouble(),
                                                                 diagonalVec.y * (float)RNG.NextDouble(),

@@ -4,7 +4,13 @@
 		_EmissionTex("Emission Texture", 2D) = "white" {}
 		_TextureAlbedo ("Diffuse Texture Multiplier", Color) = (1,1,1,1)
 		_EmissionAlbedo("Emission Texture Multiplier", Color) = (0,0,0,1)
+
+		// Custom properties.
+		_ReferencePosition("Reference Position", Vector) = (0.0, 0.0, 0.0, 0.0)
+		_ReferenceNormal("Reference Normal", Vector) = (0.0, 0.0, 0.0, 0.0)
+		_ReferenceRadius("Reference Radius", Float) = 1
 	}
+
 	SubShader {
 		Tags { "RenderType"="Opaque" }
 		LOD 200
@@ -39,10 +45,14 @@
 			// put more per-instance properties here
 		UNITY_INSTANCING_BUFFER_END(Props)
 
+		float3 _ReferencePosition;
+		float3 _ReferenceNormal;
+		float _ReferenceRadius;
+
 		void surf (Input IN, inout SurfaceOutput o)
 		{
 			//Clip fragments outside of the hologram center
-			circleClip(IN.worldPos, hologramCenter.xyz, hologramScale);
+			circleClip(IN.worldPos, _ReferencePosition, _ReferenceNormal, _ReferenceRadius);
 			o.Albedo   = (tex2D(_MainTex, IN.uv_MainTex) * _TextureAlbedo).rgb;
 			o.Emission = (tex2D(_EmissionTex, IN.uv_MainTex) * _EmissionAlbedo).rgb;
 
@@ -55,7 +65,7 @@
 			if (percentageDistanceFromBorderToOutlineWidth  <= 1.0f)
 			{
 				o.Emission = lerp(o.Emission, hologramOutlineColor, percentageDistanceFromBorderToOutlineWidth);
-				o.Albedo  *= 1.0 - percentageDistanceFromBorderToOutlineWidth;
+				o.Albedo *= 1.0 - percentageDistanceFromBorderToOutlineWidth;
 			}
 		}
 

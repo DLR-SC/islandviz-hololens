@@ -25,6 +25,9 @@ namespace HoloIslandVis.Utility
 
         private Text _progressInfo;
         private Material _combinedHoloMaterial;
+        private Material _arrowHeadMaterial;
+        private Material _exportArrowMaterial;
+        private Material _importArrowMaterial;
         private Material _wireFrame;
         private Material _highlightMaterial;
 
@@ -90,6 +93,24 @@ namespace HoloIslandVis.Utility
             private set { }
         }
 
+        public Material ArrowHeadMaterial
+        {
+            get { return _arrowHeadMaterial; }
+            private set { }
+        }
+
+        public Material ExportArrowMaterial
+        {
+            get { return _exportArrowMaterial; }
+            private set { }
+        }
+
+        public Material ImportArrowMaterial
+        {
+            get { return _importArrowMaterial; }
+            private set { }
+        }
+
         public Material HighlightMaterial {
             get { return _highlightMaterial; }
             private set { }
@@ -135,6 +156,9 @@ namespace HoloIslandVis.Utility
             //_progressInfo = _canvas.GetComponentInChildren<Text>();
 
             _combinedHoloMaterial = (Material) Resources.Load("Materials/CombinedHoloMaterial");
+            _arrowHeadMaterial = (Material)Resources.Load("Materials/ArrowHead");
+            _exportArrowMaterial = (Material)Resources.Load("Materials/ExportArrow");
+            _importArrowMaterial = (Material)Resources.Load("Materials/ImportArrow");
             _wireFrame = (Material) Resources.Load("Materials/WireFrame");
             _highlightMaterial = (Material) Resources.Load("Materials/Glow");
 

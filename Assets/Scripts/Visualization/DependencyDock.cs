@@ -7,6 +7,7 @@ using UnityEngine;
 public class DependencyDock : MonoBehaviour
 {
     private GameObject dependencyContainer;
+    private GameObject visualizationContainer;
     private ConnectionPool connectionPool;
     private GameObject rotPivot;
     private GameObject importArrowPrefab;
@@ -25,6 +26,7 @@ public class DependencyDock : MonoBehaviour
         connectedDocks = new List<DependencyDock>();
         dockWeights = new List<float>();
         dependencyContainer = RuntimeCache.Instance.DependencyContainer;
+        visualizationContainer = RuntimeCache.Instance.VisualizationContainer;
 
         expanded = false;
         dockType = DockType.Import;
@@ -75,19 +77,38 @@ public class DependencyDock : MonoBehaviour
                 GameObject arrowHead = Instantiate(arrowHeadPrefab, transform.position, Quaternion.identity);
                 conArrow = new GameObject();
                 conArrow.name = "Connection To " + dock.gameObject.name;
+
                 #region adjust transform
                 Vector3 dirVec = dock.transform.position - transform.position;
+                //Vector3 dirVecNorm = dirVec.normalized;
+                //float distance = dirVec.magnitude;
+
+                //arrowBody.transform.position = arrowBody.transform.position + dirVecNorm * (distance / 2);
+                //Vector3 newScale = new Vector3(distance, distance, 0.02f * 20f * dockWeights[cc]);
+                //arrowBody.transform.localScale = newScale;
+
+                //float angle = Vector3.Angle(visualizationContainer.transform.right, dirVecNorm);
+                //Vector3 cross = Vector3.Cross(visualizationContainer.transform.right, dirVecNorm);
+                //if (cross.y < 0)
+                //    angle = -angle;
+
+                //arrowBody.transform.Rotate(visualizationContainer.transform.up, angle);
+
+                //arrowHead.transform.parent = conArrow.transform;
+                //arrowBody.transform.parent = conArrow.transform;
+                //conArrow.transform.parent = dependencyContainer.transform;
+
                 dirVec.y = 0;
                 float distance = dirVec.magnitude;
                 float sDWidth = gameObject.GetComponent<Collider>().bounds.extents.x;
-                float tDWidth = dock.gameObject.GetComponent<Collider>().bounds.extents.x; ;
-                float aWidth = 0.0005f * 20f * dockWeights[cc]; // Do not hardcode arrow width
+                float tDWidth = dock.gameObject.GetComponent<Collider>().bounds.extents.x;
+                float aWidth = 0.02f * 20f * dockWeights[cc]; // Do not hardcode arrow width
                 float connectionLength = distance - (sDWidth + tDWidth);
-                Vector3 newScale = new Vector3(connectionLength, connectionLength, 0.0005f * 20f * dockWeights[cc]); // Do not hardcode arrow width
+                Vector3 newScale = new Vector3(connectionLength, connectionLength, 0.02f * 20f * dockWeights[cc]); // Do not hardcode arrow width
                 arrowBody.transform.localScale = newScale;
-                #region Arrowhead
 
-                newScale.x = 0.0005f * 20f * dockWeights[cc];
+                #region Arrowhead
+                newScale.x = 0.02f * 20f * dockWeights[cc];
                 newScale.y = 0.01f;
                 arrowHead.transform.localScale = newScale;
                 if (dockType == DockType.Import)
@@ -102,7 +123,6 @@ public class DependencyDock : MonoBehaviour
                 }
 
                 arrowHead.transform.parent = conArrow.transform;
-
                 #endregion
 
                 arrowBody.transform.parent = conArrow.transform;

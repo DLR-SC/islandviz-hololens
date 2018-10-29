@@ -40,6 +40,7 @@ namespace HoloIslandVis
             _isScanning = false;
 
             _filepath = Path.Combine(Application.streamingAssetsPath, "rce_lite.model");
+            //_filepath = Path.Combine(Application.streamingAssetsPath, "rce_23_05_2017.model");
             new Task(() => loadVisualization()).Start();
 
             //inputListenerDebug();
@@ -74,37 +75,17 @@ namespace HoloIslandVis
         {
             foreach (CartographicIsland island in _islandStructures)
             {
-                GameObject islandGameObject =
+                if(island.DependencyVertex != null)
+                {
+                    GameObject islandGameObject =
                     IslandGameObjectBuilder.Instance.BuildFromIslandStructure(island);
-                _islands.Add(islandGameObject.GetComponent<Island>());
+                    _islands.Add(islandGameObject.GetComponent<Island>());
+                }
             }
 
             RuntimeCache.Instance.Islands = _islands;
             UnityMainThreadDispatcher.Instance.Enqueue(() =>
                 UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done building island game objects.");
-
-            foreach(Island island in _islands)
-            {
-                island.gameObject.AddComponent<Interactable>();
-                MeshFilter[] islandMeshFilters = island.gameObject.GetComponentsInChildren<MeshFilter>();
-                CombineInstance[] combineInstance = new CombineInstance[islandMeshFilters.Length];
-
-                for (int i = 0; i < islandMeshFilters.Length; i++)
-                {
-                    combineInstance[i].mesh = islandMeshFilters[i].sharedMesh;
-                    combineInstance[i].transform = islandMeshFilters[i].transform.localToWorldMatrix;
-                }
-
-                GameObject highlight = new GameObject("Highlight");
-                highlight.tag = "Highlight";
-                highlight.transform.parent = island.gameObject.transform;
-                highlight.AddComponent<MeshFilter>().mesh.CombineMeshes(combineInstance);
-                MeshRenderer meshRenderer = highlight.AddComponent<MeshRenderer>();
-                meshRenderer.sharedMaterial = RuntimeCache.Instance.WireFrame;
-                meshRenderer.enabled = false;
-            }
-
-            RuntimeCache.Instance.VisualizationContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
         }
 
         public void buildDocks()
@@ -134,6 +115,30 @@ namespace HoloIslandVis
             }
 
             Debug.Log("Finished with Dock-GameObject construction!");
+
+            foreach (Island island in _islands)
+            {
+                island.gameObject.AddComponent<Interactable>();
+                MeshFilter[] islandMeshFilters = island.gameObject.GetComponentsInChildren<MeshFilter>();
+                CombineInstance[] combineInstance = new CombineInstance[islandMeshFilters.Length];
+
+                for (int i = 0; i < islandMeshFilters.Length; i++)
+                {
+                    combineInstance[i].mesh = islandMeshFilters[i].sharedMesh;
+                    combineInstance[i].transform = islandMeshFilters[i].transform.localToWorldMatrix;
+                }
+
+                GameObject highlight = new GameObject("Highlight");
+                highlight.tag = "Highlight";
+                highlight.transform.parent = island.gameObject.transform;
+                highlight.AddComponent<MeshFilter>().mesh.CombineMeshes(combineInstance);
+                MeshRenderer meshRenderer = highlight.AddComponent<MeshRenderer>();
+                meshRenderer.sharedMaterial = RuntimeCache.Instance.WireFrame;
+                meshRenderer.enabled = false;
+            }
+
+            RuntimeCache.Instance.VisualizationContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+            RuntimeCache.Instance.DependencyContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
         }
 
         public void initScene()

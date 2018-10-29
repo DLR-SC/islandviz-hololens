@@ -205,22 +205,16 @@ namespace HoloIslandVis.Visualization
 
         private GameObject buildDock(CartographicIsland islandStructure, DockType dockType)
         {
-            GraphVertex vertex = islandStructure.DependencyVertex;
-            GameObject dock = null;
+            float[] heightProfile = IslandStructureBuilder.HEIGHT_PROFILE;
+            Vector3 dockDirection = new Vector3(UnityEngine.Random.value, 0, UnityEngine.Random.value);
+            dockDirection.Normalize();
+            dockDirection *= islandStructure.getRadius();
+            Vector3 dockPos = islandStructure.getWeightedCenter() + dockDirection;
+            dockPos.y -= Mathf.Abs(heightProfile[heightProfile.Length - 1]) * ISLAND_ABOVE_OCEAN - 0.2f;
 
-            if (vertex != null)
-            {
-                float[] heightProfile = IslandStructureBuilder.HEIGHT_PROFILE;
-                Vector3 dockDirection = new Vector3(UnityEngine.Random.value, 0, UnityEngine.Random.value);
-                dockDirection.Normalize();
-                dockDirection *= islandStructure.getRadius();
-                Vector3 dockPos = islandStructure.getWeightedCenter() + dockDirection;
-                dockPos.y -= Mathf.Abs(heightProfile[heightProfile.Length - 1]) * ISLAND_ABOVE_OCEAN - 0.2f;
-
-                dock = GameObject.Instantiate(RuntimeCache.Instance.DockPrefabs[dockType], dockPos, Quaternion.identity);
-                dock.name = islandStructure.Name + " " + Enum.GetName(typeof(DockType), dockType);
-                dock.transform.localScale = Vector3.one;
-            }
+            GameObject dock = GameObject.Instantiate(RuntimeCache.Instance.DockPrefabs[dockType], dockPos, Quaternion.identity);
+            dock.name = islandStructure.Name + " " + Enum.GetName(typeof(DockType), dockType);
+            dock.transform.localScale = Vector3.one;
 
             return dock;
         }

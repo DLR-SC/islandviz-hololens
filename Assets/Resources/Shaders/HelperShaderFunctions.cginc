@@ -5,12 +5,16 @@
 }
 
 //discard drawing of a point in the world if it is outside of a defined circle
-void circleClip(float3 posWorld, float3 posCircle, float radiusCircle) {
+void circleClip(float3 inputWorld, float3 referencePosition, float3 referenceNormal, float referenceRadius) 
+{
 
-	posCircle.y = 0;
-	posWorld.y = 0;
 
-	float dist = distanceFromPoint(posWorld, posCircle);
-	clip( (radiusCircle - dist) );
+	float3 vertWorld = inputWorld.xyz;
+	float3 vertRef = vertWorld - referencePosition;
+	float distToPlane = dot(vertRef, referenceNormal);
+	float3 vertProj = vertWorld - distToPlane * referenceNormal;
+	float distProj = distance(referencePosition, vertProj);
+
+	clip(distProj > 1);
 
 }

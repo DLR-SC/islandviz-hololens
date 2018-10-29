@@ -32,14 +32,14 @@ public class IslandDockBuilder
         if (vert != null)
         {
 
-            float importSize = 0.02f * 20f; // Don't hardcode.
-            float exportSize = 0.02f * 20f; // Don't hardcode.
+            float importSize = 0.04f * 20f; // Don't hardcode.
+            float exportSize = 0.04f * 20f; // Don't hardcode.
 
             //Outgoing edges -Bundle depends on...
             IEnumerable<GraphEdge> outEdges;
             depGraph.TryGetOutEdges(vert, out outEdges);
             List<GraphEdge> edgeList = outEdges.ToList();
-            importSize = mapDependencyCountToSize(edgeList.Count);
+            //importSize = mapDependencyCountToSize(edgeList.Count);
 
             //Import Dock
             GameObject importD = island.ImportDock;
@@ -67,7 +67,7 @@ public class IslandDockBuilder
             //Ingoing edges -Other Bundles depends on this one...
             depGraph.TryGetInEdges(vert, out outEdges);
             edgeList = outEdges.ToList();
-            exportSize = mapDependencyCountToSize(edgeList.Count);
+            //exportSize = mapDependencyCountToSize(edgeList.Count);
             //Export Dock
             GameObject exportD = island.ExportDock;
             float eDockWidth = exportD.GetComponent<MeshFilter>().sharedMesh.bounds.size.x * exportSize;
@@ -91,9 +91,8 @@ public class IslandDockBuilder
                 Debug.Log("Could not find suitable location for " + exportD.name);
             #endregion
 
-
             #region extend Island collider based on new Docksizes
-            island.GetComponent<CapsuleCollider>().radius += Mathf.Max(importSize, exportSize) * Mathf.Sqrt(2f);
+            //island.GetComponent<CapsuleCollider>().radius += Mathf.Max(importSize, exportSize) * Mathf.Sqrt(2f);
             #endregion
 
         }
