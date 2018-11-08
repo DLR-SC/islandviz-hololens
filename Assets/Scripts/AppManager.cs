@@ -5,8 +5,10 @@ using HoloIslandVis.Interaction.Input;
 using HoloIslandVis.Interaction.Tasking;
 using HoloIslandVis.Mapping;
 using HoloIslandVis.OSGiParser;
+using HoloIslandVis.Sharing;
 using HoloIslandVis.Utility;
 using HoloIslandVis.Visualization;
+using HoloToolkit.Sharing;
 using HoloToolkit.Unity.InputModule;
 using HoloToolkit.UX.ToolTips;
 using System;
@@ -32,6 +34,10 @@ namespace HoloIslandVis
         // Use this for initialization
         void Start()
         {
+            CustomMessages.Instance.MessageHandlers[CustomMessages.TestMessageID.SurfaceTransform] = UpdateSurfaceTransform;
+            CustomMessages.Instance.MessageHandlers[CustomMessages.TestMessageID.ContainerTransform] = UpdateContainerTransform;
+            CustomMessages.Instance.MessageHandlers[CustomMessages.TestMessageID.IslandTransform] = UpdateIslandTransform;
+
             _islands = new List<Island>();
             ToolTipManager ttm = gameObject.AddComponent<ToolTipManager>();
             RuntimeCache cache = RuntimeCache.Instance;
@@ -44,7 +50,8 @@ namespace HoloIslandVis
             new Task(() => loadVisualization()).Start();
 
             //inputListenerDebug();
-            initScene();
+            //initScene();
+            initSceneNoScan();
         }
 
         public void loadVisualization()
@@ -139,6 +146,7 @@ namespace HoloIslandVis
 
             RuntimeCache.Instance.VisualizationContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
             RuntimeCache.Instance.DependencyContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+            VisualizationSynchronizer.Instance.Sync();
         }
 
         public void initScene()
@@ -171,6 +179,96 @@ namespace HoloIslandVis
             };
         }
 
+        public void initSceneNoScan()
+        {
+            UserInterface.Instance.ContentSurface.SetActive(true);
+
+            GestureInputListener.Instance.OneHandTap += (GestureInputEventArgs eventArgs) =>
+            {
+                if (_isUpdating)
+                {
+                    UserInterface.Instance.ScanInstructionText.SetActive(false);
+
+                    Vector3 panelPos = RuntimeCache.Instance.ContentSurface.transform.position;
+                    Quaternion panelRot = RuntimeCache.Instance.ContentSurface.transform.rotation;
+
+                    CustomMessages.Instance.SendPanelTransform(panelPos, panelRot);
+
+                    _isUpdating = false;
+                }
+            };
+
+            new Task(async () =>
+            {
+                _isUpdating = true;
+                while (_isUpdating)
+                {
+                    await Task.Delay(25);
+                    UnityMainThreadDispatcher.Instance.Enqueue(() => {
+                        if (!UserInterface.Instance.ContentSurface.activeInHierarchy)
+                            UserInterface.Instance.ContentSurface.SetActive(true);
+
+                        UserInterface.Instance.ContentSurface.transform.position =
+                        Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.position, GazeManager.Instance.HitPosition, 0.2f);
+                        UserInterface.Instance.ContentSurface.transform.up =
+                        Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.up, GazeManager.Instance.HitNormal, 0.5f);
+                    });
+                }
+
+                UnityMainThreadDispatcher.Instance.Enqueue(() => {
+                    UserInterface.Instance.ContentSurface.layer = LayerMask.NameToLayer("Default");
+                    GameObject.Find("Water").layer = LayerMask.NameToLayer("Default");
+                    GameObject.Find("Glow").layer = LayerMask.NameToLayer("Default");
+                    GameObject.Find("SpatialUnderstanding").SetActive(false);
+                });
+
+                UnityMainThreadDispatcher.Instance.Enqueue(() => setupStateMachine());
+            }).Start();
+        }
+
+        public void UpdateSurfaceTransform(NetworkInMessage msg)
+        {
+            long userID = msg.ReadInt64();
+            Vector3 panelPos = CustomMessages.Instance.ReadVector3(msg);
+            Quaternion panelRot = CustomMessages.Instance.ReadQuaternion(msg);
+            RuntimeCache.Instance.ContentSurface.transform.position = panelPos;
+            RuntimeCache.Instance.ContentSurface.transform.rotation = panelRot;
+
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Updated panel position!");
+        }
+
+        public void UpdateContainerTransform(NetworkInMessage msg)
+        {
+            long userID = msg.ReadInt64();
+            Vector3 panelPos = CustomMessages.Instance.ReadVector3(msg);
+            Quaternion panelRot = CustomMessages.Instance.ReadQuaternion(msg);
+            RuntimeCache.Instance.VisualizationContainer.transform.position = panelPos;
+            RuntimeCache.Instance.VisualizationContainer.transform.rotation = panelRot;
+
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Updated container position!");
+        }
+
+        public void UpdateIslandTransform(NetworkInMessage msg)
+        {
+            long userID = msg.ReadInt64();
+            Vector3 islandPos = CustomMessages.Instance.ReadVector3(msg);
+            Quaternion islandRot = CustomMessages.Instance.ReadQuaternion(msg);
+            XString name = msg.ReadString();
+
+            Island island = RuntimeCache.Instance.GetIsland(name.GetString());
+
+            if(island != null)
+            {
+                island.transform.position = islandPos;
+                island.transform.rotation = islandRot;
+            }
+
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Updated island " + name.GetString());
+        }
+
         private async void updateSurfacePosition()
         {
             Debug.Log("updateSurfacePosition");
@@ -184,10 +282,10 @@ namespace HoloIslandVis
                         if (!UserInterface.Instance.ContentSurface.activeInHierarchy)
                             UserInterface.Instance.ContentSurface.SetActive(true);
 
-                            UserInterface.Instance.ContentSurface.transform.position =
-                            Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.position, GazeManager.Instance.HitPosition, 0.2f);
-                            UserInterface.Instance.ContentSurface.transform.up =
-                            Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.up, GazeManager.Instance.HitNormal, 0.5f);
+                        UserInterface.Instance.ContentSurface.transform.position =
+                        Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.position, GazeManager.Instance.HitPosition, 0.2f);
+                        UserInterface.Instance.ContentSurface.transform.up =
+                        Vector3.Lerp(UserInterface.Instance.ContentSurface.transform.up, GazeManager.Instance.HitNormal, 0.5f);
                     }
                 });
             }

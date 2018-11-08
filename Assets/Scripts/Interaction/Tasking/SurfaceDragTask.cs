@@ -1,5 +1,6 @@
 ﻿using HoloIslandVis.Interaction;
 using HoloIslandVis.Interaction.Input;
+using HoloIslandVis.Sharing;
 using HoloIslandVis.Utility;
 using System.Collections;
 using System.Collections.Generic;
@@ -39,6 +40,10 @@ namespace HoloIslandVis.Interaction.Tasking
                 Vector3 projVector = projPoint - _surfacePosition;
                 _visualizationContainer.transform.position += projVector;
                 _lastPosition = _currentPosition;
+
+
+                CustomMessages.Instance.SendContainerTransform(_visualizationContainer.transform.position,
+                    _visualizationContainer.transform.rotation);
             }
         }
 

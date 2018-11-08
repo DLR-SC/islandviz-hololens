@@ -623,15 +623,15 @@ PlayerSettings:
       EnterpriseAuthentication: False
       HumanInterfaceDevice: False
       InputInjectionBrokered: False
-      InternetClient: True
-      InternetClientServer: False
+      InternetClient: False
+      InternetClientServer: True
       Location: False
       Microphone: True
       MusicLibrary: False
       Objects3D: False
       PhoneCall: False
       PicturesLibrary: False
-      PrivateNetworkClientServer: False
+      PrivateNetworkClientServer: True
       Proximity: False
       RemovableStorage: False
       SharedUserCertificates: False

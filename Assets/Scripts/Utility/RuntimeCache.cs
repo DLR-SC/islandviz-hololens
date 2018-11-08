@@ -170,6 +170,17 @@ namespace HoloIslandVis.Utility
             _dockPrefabs.Add(DockType.Import, (GameObject) Resources.Load("Prefabs/Docks/iDock_1"));
             _dockPrefabs.Add(DockType.Export, (GameObject) Resources.Load("Prefabs/Docks/eDock_1"));
         }
+
+        public Island GetIsland(string name)
+        {
+            foreach(Island island in Islands)
+            {
+                if(island.name == name)
+                    return island;
+            }
+
+            return null;
+        }
     }
 
 }
