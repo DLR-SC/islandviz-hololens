@@ -8,7 +8,6 @@ using HoloIslandVis.OSGiParser;
 using HoloIslandVis.Sharing;
 using HoloIslandVis.Utility;
 using HoloIslandVis.Visualization;
-using HoloToolkit.Sharing;
 using HoloToolkit.Unity.InputModule;
 using HoloToolkit.UX.ToolTips;
 using System;
@@ -34,10 +33,6 @@ namespace HoloIslandVis
         // Use this for initialization
         void Start()
         {
-            CustomMessages.Instance.MessageHandlers[CustomMessages.TestMessageID.SurfaceTransform] = UpdateSurfaceTransform;
-            CustomMessages.Instance.MessageHandlers[CustomMessages.TestMessageID.ContainerTransform] = UpdateContainerTransform;
-            CustomMessages.Instance.MessageHandlers[CustomMessages.TestMessageID.IslandTransform] = UpdateIslandTransform;
-
             _islands = new List<Island>();
             ToolTipManager ttm = gameObject.AddComponent<ToolTipManager>();
             RuntimeCache cache = RuntimeCache.Instance;
@@ -121,7 +116,7 @@ namespace HoloIslandVis
                 }
             }
 
-            Debug.Log("Finished with Dock-GameObject construction!");
+            Debug.Log("Finished with Dock-GameObject constr.!");
 
             foreach (Island island in _islands)
             {
@@ -146,7 +141,6 @@ namespace HoloIslandVis
 
             RuntimeCache.Instance.VisualizationContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
             RuntimeCache.Instance.DependencyContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-            VisualizationSynchronizer.Instance.Sync();
         }
 
         public void initScene()
@@ -188,12 +182,6 @@ namespace HoloIslandVis
                 if (_isUpdating)
                 {
                     UserInterface.Instance.ScanInstructionText.SetActive(false);
-
-                    Vector3 panelPos = RuntimeCache.Instance.ContentSurface.transform.position;
-                    Quaternion panelRot = RuntimeCache.Instance.ContentSurface.transform.rotation;
-
-                    CustomMessages.Instance.SendPanelTransform(panelPos, panelRot);
-
                     _isUpdating = false;
                 }
             };
@@ -224,49 +212,6 @@ namespace HoloIslandVis
 
                 UnityMainThreadDispatcher.Instance.Enqueue(() => setupStateMachine());
             }).Start();
-        }
-
-        public void UpdateSurfaceTransform(NetworkInMessage msg)
-        {
-            long userID = msg.ReadInt64();
-            Vector3 panelPos = CustomMessages.Instance.ReadVector3(msg);
-            Quaternion panelRot = CustomMessages.Instance.ReadQuaternion(msg);
-            RuntimeCache.Instance.ContentSurface.transform.position = panelPos;
-            RuntimeCache.Instance.ContentSurface.transform.rotation = panelRot;
-
-            UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Updated panel position!");
-        }
-
-        public void UpdateContainerTransform(NetworkInMessage msg)
-        {
-            long userID = msg.ReadInt64();
-            Vector3 panelPos = CustomMessages.Instance.ReadVector3(msg);
-            Quaternion panelRot = CustomMessages.Instance.ReadQuaternion(msg);
-            RuntimeCache.Instance.VisualizationContainer.transform.position = panelPos;
-            RuntimeCache.Instance.VisualizationContainer.transform.rotation = panelRot;
-
-            UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Updated container position!");
-        }
-
-        public void UpdateIslandTransform(NetworkInMessage msg)
-        {
-            long userID = msg.ReadInt64();
-            Vector3 islandPos = CustomMessages.Instance.ReadVector3(msg);
-            Quaternion islandRot = CustomMessages.Instance.ReadQuaternion(msg);
-            XString name = msg.ReadString();
-
-            Island island = RuntimeCache.Instance.GetIsland(name.GetString());
-
-            if(island != null)
-            {
-                island.transform.position = islandPos;
-                island.transform.rotation = islandRot;
-            }
-
-            UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Updated island " + name.GetString());
         }
 
         private async void updateSurfacePosition()
@@ -332,6 +277,8 @@ namespace HoloIslandVis
 
             stateMachine.AddState(testState);
             stateMachine.Init(testState);
+
+            SharingClient.Instance.Init();
         }
 
         public void inputListenerDebug()
