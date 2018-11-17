@@ -49,9 +49,6 @@ public class SharingMessageHandler : MonoBehaviour
 
     private void updateTransform(HoloToolkit.Sharing.NetworkInMessage msg)
     {
-        UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Rcvd message.");
-
         long userID = msg.ReadInt64();
         Vector3 recvPosition = SharingClient.Instance.ReadVector3(msg);
         Vector3 recvScale = SharingClient.Instance.ReadVector3(msg);

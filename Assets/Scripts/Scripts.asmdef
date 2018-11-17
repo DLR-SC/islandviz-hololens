@@ -1,0 +1,10 @@
+{
+    "name": "Scripts",
+    "references": [
+        "External"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

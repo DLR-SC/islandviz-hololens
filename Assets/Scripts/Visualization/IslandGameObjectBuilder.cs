@@ -104,9 +104,9 @@ namespace HoloIslandVis.Visualization
 
                     // TODO: Refactor?
                     // TODO: Switch axis!
-                    float xPos = (float) packageCells[j].generator.X;
-                    float yPos = (float) packageCells[j].generator.Y;
-                    float zPos = (float) packageCells[j].generator.Z;
+                    float xPos = (float) packageCells[j].Generator.X;
+                    float yPos = (float) packageCells[j].Generator.Y;
+                    float zPos = (float) packageCells[j].Generator.Z;
                     building.transform.position = new Vector3(xPos, zPos, yPos);
                     Vector3 randomRotation = new Vector3(0f, UnityEngine.Random.Range(-180, 180), 0f);
                     building.transform.localEulerAngles = randomRotation;
@@ -260,7 +260,7 @@ namespace HoloIslandVis.Visualization
                     bool found = false;
                     for (int k = 0; k < outVertices.Count; k++)
                     {
-                        if ((outVertices[k].x == t.GetVertex(j).x) && (outVertices[k].z == t.GetVertex(j).y) && (outVertices[k].y == t.GetVertex(j).z))
+                        if ((outVertices[k].x == t.GetVertex(j).X) && (outVertices[k].z == t.GetVertex(j).Y) && (outVertices[k].y == t.GetVertex(j).Z))
                         {
                             outIndices.Add(k);
                             found = true;
@@ -270,7 +270,7 @@ namespace HoloIslandVis.Visualization
 
                     if (!found)
                     {
-                        outVertices.Add(new Vector3((float)t.GetVertex(j).x, (float)t.GetVertex(j).z, (float)t.GetVertex(j).y));
+                        outVertices.Add(new Vector3((float)t.GetVertex(j).X, (float)t.GetVertex(j).Y, (float)t.GetVertex(j).Z));
                         outIndices.Add(outVertices.Count - 1);
                     }
                 }

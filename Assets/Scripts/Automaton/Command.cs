@@ -6,29 +6,31 @@ namespace HoloIslandVis.Automaton
 {
     public enum GestureType
     {
-        Invariant = 0,
-        OneHandTap = 1,
-        OneHandDoubleTap = 2,
-        OneHandManipStart = 4,
-        TwoHandManipStart = 8,
-        ManipulationEnd = 16
+        None = 0,
+        Invariant = 1,
+        OneHandTap = 2,
+        OneHandDoubleTap = 4,
+        OneHandManipStart = 8,
+        TwoHandManipStart = 16,
+        ManipulationEnd = 32
     }
 
     public enum KeywordType
     {
-        Invariant = 0,
-        Find = 1,
-        Show = 2,
-        Hide = 4
+        None = 0,
+        Invariant = 1,
+        Find = 2,
+        Show = 4,
+        Hide = 8
     }
 
     public enum InteractableType
     {
         None = 0,
-        Island = 1,
-        ExportDock = 2,
-        ImportDock = 4,
-        Invariant = 8
+        Invariant = 1,
+        Island = 2,
+        ExportDock = 4,
+        ImportDock = 8
     }
 
     public struct Command
@@ -44,30 +46,35 @@ namespace HoloIslandVis.Automaton
             FocusedObject = focusedObject;
         }
 
-        //public override bool Equals(object obj)
-        //{
-        //    if(!GetType().Equals(obj.GetType()))
-        //        return false;
+        public override bool Equals(object obj)
+        {
+            if (!GetType().Equals(obj.GetType()))
+                return false;
 
-        //    Command other = (Command) obj;
+            Command other = (Command)obj;
 
-        //    if (Gesture != other.Gesture && other.Gesture != GestureType.Invariant && Gesture != GestureType.Invariant)
-        //        return false;
+            if (GestureType.Invariant != Gesture &&
+                GestureType.Invariant != other.Gesture)
+            {
+                if (Gesture != other.Gesture)
+                    return false;
+            }
 
-        //    if (Keyword != other.Keyword && other.Keyword != KeywordType.Invariant && Keyword != KeywordType.Invariant)
-        //        return false;
+            if (KeywordType.Invariant != Keyword &&
+                KeywordType.Invariant != other.Keyword)
+            {
+                if (Keyword != other.Keyword)
+                    return false;
+            }
 
-        //    if (FocusedObject != other.FocusedObject && other.FocusedObject != InteractableType.Invariant 
-        //        && FocusedObject != InteractableType.Invariant)
-        //        return false;
+            if (InteractableType.Invariant != FocusedObject &&
+                InteractableType.Invariant != other.FocusedObject)
+            {
+                if (FocusedObject != other.FocusedObject)
+                    return false;
+            }
 
-        //    return true;
-        //}
-
-        //public override int GetHashCode()
-        //{
-        //    // TODO     Implement!
-        //    return 0;
-        //}
+            return true;
+        }
     }
 }

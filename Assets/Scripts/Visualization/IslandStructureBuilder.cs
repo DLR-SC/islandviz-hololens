@@ -120,8 +120,8 @@ namespace HoloIslandVis.Visualization
             foreach (KeyValuePair<int, VFace> kvp in startingCandidates)
             {
                 coastlineList.Add(kvp.Value);
-                float x = (float)kvp.Value.generator.X;
-                float z = (float)kvp.Value.generator.Y;
+                float x = (float)kvp.Value.Generator.X;
+                float z = (float)kvp.Value.Generator.Y;
                 Vector3 tilePos = new Vector3(x, 0, z);
                 weightedCenter += tilePos;
             }
@@ -134,8 +134,8 @@ namespace HoloIslandVis.Visualization
             List<float> radii = new List<float>();
             foreach (KeyValuePair<int, VFace> kvp in startingCandidates)
             {
-                float x = (float)kvp.Value.generator.X - island.getWeightedCenter().x;
-                float z = (float)kvp.Value.generator.Y - island.getWeightedCenter().z;
+                float x = (float)kvp.Value.Generator.X - island.getWeightedCenter().x;
+                float z = (float)kvp.Value.Generator.Y - island.getWeightedCenter().z;
                 float radius = Mathf.Sqrt(x * x + z * z);
                 radii.Add(radius);
             }
@@ -174,7 +174,7 @@ namespace HoloIslandVis.Visualization
             //update dictA
             List<int> keysToRemove = new List<int>();
             foreach (KeyValuePair<int, VFace> kvp in dictA)
-                if (kvp.Value.mark != 0)
+                if (kvp.Value.Mark != 0)
                     keysToRemove.Add(kvp.Key);
             foreach (int key in keysToRemove)
                 dictA.Remove(key);
@@ -232,7 +232,7 @@ namespace HoloIslandVis.Visualization
                 //Select cell from candidates
                 KeyValuePair<int, VFace> selectedCell = selectFromCandidates(candidates, b);
                 //Mark cell in islandVoronoi
-                selectedCell.Value.mark = i;
+                selectedCell.Value.Mark = i;
                 //Add cell to package dictionary
                 cellMap.Add(selectedCell.Value);
                 //Remove cell from future candidates list
@@ -241,10 +241,10 @@ namespace HoloIslandVis.Visualization
 
                 foreach (VHEdge edge in selectedCell.Value.EnumerateEdges())
                 {
-                    VFace nCell = edge.twin.face;
+                    VFace nCell = edge.Twin.Face;
                     //If cell is OK, not occupied and not already in candidateList, add to candidate list
                     if (checkCell(nCell, -CELL_SCALE_FACTOR * 0.4f, CELL_SCALE_FACTOR * 0.4f,
-                        -CELL_SCALE_FACTOR * 0.4f, CELL_SCALE_FACTOR * 0.4f) && nCell.mark == 0 && !candidates.ContainsKey(nCell.ID))
+                        -CELL_SCALE_FACTOR * 0.4f, CELL_SCALE_FACTOR * 0.4f) && nCell.Mark == 0 && !candidates.ContainsKey(nCell.ID))
                         candidates.Add(nCell.ID, nCell);
                 }
 
@@ -295,7 +295,7 @@ namespace HoloIslandVis.Visualization
                 int n = 0;
                 foreach (VHEdge edge in kvp.Value.EnumerateEdges())
                 {
-                    int mark = edge.twin.face.mark;
+                    int mark = edge.Twin.Face.Mark;
                     if (mark != 0)
                         n++;
                 }
@@ -410,9 +410,9 @@ namespace HoloIslandVis.Visualization
                 {
                     foreach (VHEdge edge in kvp.Value.EnumerateEdges())
                     {
-                        VFace nCell = edge.twin.face;
+                        VFace nCell = edge.Twin.Face;
                         if (checkCell(nCell, -CELL_SCALE_FACTOR * 0.4f, CELL_SCALE_FACTOR * 0.4f,
-                            -CELL_SCALE_FACTOR * 0.4f, CELL_SCALE_FACTOR * 0.4f) && nCell.mark == 0 && !coastline.ContainsKey(nCell.ID)
+                            -CELL_SCALE_FACTOR * 0.4f, CELL_SCALE_FACTOR * 0.4f) && nCell.Mark == 0 && !coastline.ContainsKey(nCell.ID)
                             && !newestCoastline.ContainsKey(nCell.ID))
                             newestCoastline.Add(nCell.ID, nCell);
                     }
@@ -463,8 +463,8 @@ namespace HoloIslandVis.Visualization
                 {
 
                     Vertex newVert = new Vertex(x * scaleX - widthScale / 2f, y * scaleY - heightScale / 2f);
-                    newVert.x += (float)RNG.NextDouble() * preturbFactorX;
-                    newVert.y += (float)RNG.NextDouble() * preturbFactorY;
+                    newVert.X += (float)RNG.NextDouble() * preturbFactorX;
+                    newVert.Y += (float)RNG.NextDouble() * preturbFactorY;
                     vertices.Add(newVert);
                 }
             }
@@ -522,8 +522,8 @@ namespace HoloIslandVis.Visualization
         public bool checkCell(VFace cell, float minX, float maxX, float minY, float maxY)
         {
             if (cell.Bounded && cell.ID != -1 &&
-                cell.generator.X > minX && cell.generator.x < maxX &&
-                cell.generator.Y > minY && cell.generator.Y < maxY)
+                cell.Generator.X > minX && cell.Generator.X < maxX &&
+                cell.Generator.Y > minY && cell.Generator.Y < maxY)
                 return true;
             else
                 return false;
@@ -534,7 +534,7 @@ namespace HoloIslandVis.Visualization
         {
             int startingIndex = voronoi.Faces.Count / 2;
             VFace currentCell = voronoi.Faces[startingIndex];
-            float currentDistance = Mathf.Sqrt((float)(currentCell.generator.X - x) * (float)(currentCell.generator.X - x) + (float)(currentCell.generator.Y - y) * (float)(currentCell.generator.Y - y));
+            float currentDistance = Mathf.Sqrt((float)(currentCell.Generator.X - x) * (float)(currentCell.Generator.X - x) + (float)(currentCell.Generator.Y - y) * (float)(currentCell.Generator.Y - y));
 
             while (true)
             {
@@ -542,9 +542,9 @@ namespace HoloIslandVis.Visualization
                 bool foundNeighbour = false;
                 foreach (TriangleNet.Topology.DCEL.HalfEdge edge in currentCell.EnumerateEdges())
                 {
-                    VFace nCell = edge.twin.face;
-                    float neighbourX = (float)nCell.generator.X;
-                    float neighbourY = (float)nCell.generator.Y;
+                    VFace nCell = edge.Twin.Face;
+                    float neighbourX = (float)nCell.Generator.X;
+                    float neighbourY = (float)nCell.Generator.Y;
                     float distanceFromNeighbour = Mathf.Sqrt((neighbourX - x) * (neighbourX - x) + (neighbourY - y) * (neighbourY - y));
                     if (distanceFromNeighbour < currentDistance)
                     {
