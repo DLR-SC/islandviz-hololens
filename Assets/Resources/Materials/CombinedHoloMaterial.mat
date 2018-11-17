@@ -40,7 +40,7 @@ Material:
     - _ClippingPlaneBorder: 0
     - _ClippingPlaneBorderWidth: 0.025
     - _ColorWriteMask: 15
-    - _CullMode: 2
+    - _CullMode: 0
     - _CustomMode: 2
     - _Cutoff: 0.5
     - _DirectionalLight: 1
@@ -88,5 +88,5 @@ Material:
     - _HoverColorOverride: {r: 1, g: 1, b: 1, a: 1}
     - _InnerGlowColor: {r: 1, g: 1, b: 1, a: 0.75}
     - _ReferenceNormal: {r: 0, g: 1, b: 0, a: 0}
-    - _ReferencePosition: {r: 2.5509424, g: -1.0716017, b: 1.0134374, a: 0}
+    - _ReferencePosition: {r: 2.5170653, g: -1.0717303, b: 1.0891489, a: 0}
     - _RimColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

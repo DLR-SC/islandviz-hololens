@@ -98,6 +98,14 @@ public class IslandDockBuilder
         }
     }
 
+    private bool findSuitable2D()
+    {
+        bool result = false;
+
+
+        return false;
+    }
+
     private bool findSuitablePosition2D(GameObject obj, List<GameObject> doNotCollideWith, GameObject placeNearThis, int iterations)
     {
         bool result = false;
@@ -117,21 +125,21 @@ public class IslandDockBuilder
         }
         #endregion
 
-        Vector3 originalPosition = obj.transform.position;
+        Vector3 originalPosition = obj.transform.localPosition;
         Collider objCollider = obj.GetComponent<Collider>();
         Collider nearThisCollider = placeNearThis.GetComponent<Collider>();
-        float placeDistance = objCollider.bounds.extents.magnitude + nearThisCollider.bounds.extents.magnitude;
+        float placeDistance = (objCollider.bounds.extents.magnitude + nearThisCollider.bounds.extents.magnitude)*1.1f;
         for (int i = 0; i < iterations; i++)
         {
-            Vector3 dockDirection = new Vector3(UnityEngine.Random.value, 0, UnityEngine.Random.value);
+            Vector3 dockDirection = new Vector3(Random.value, 0, Random.value);
             dockDirection.Normalize();
             dockDirection *= placeDistance;
-            Vector3 newPossiblePosition = placeNearThis.transform.position + dockDirection;
+            Vector3 newPossiblePosition = placeNearThis.transform.localPosition + dockDirection;
 
             bool intersects = Physics.CheckSphere(newPossiblePosition, placeDistance, calculationLayermask);
             if (!intersects)
             {
-                obj.transform.position = newPossiblePosition;
+                //obj.transform.localPosition = newPossiblePosition;
                 result = true;
                 break;
             }
