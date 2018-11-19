@@ -87,6 +87,6 @@ Material:
     - _HoverColorOpaqueOverride: {r: 1, g: 1, b: 1, a: 1}
     - _HoverColorOverride: {r: 1, g: 1, b: 1, a: 1}
     - _InnerGlowColor: {r: 1, g: 1, b: 1, a: 0.75}
-    - _ReferenceNormal: {r: 0, g: 1, b: 0, a: 0}
-    - _ReferencePosition: {r: 1.9096134, g: -1.069628, b: 1.4360781, a: 0}
+    - _ReferenceNormal: {r: 0.033285186, g: 0.99905413, b: -0.02798066, a: 0}
+    - _ReferencePosition: {r: 2.432171, g: -1.0701056, b: 1.7186328, a: 0}
     - _RimColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
