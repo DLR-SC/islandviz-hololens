@@ -1281,7 +1281,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1136038524}
   - component: {fileID: 1136038525}
-  - component: {fileID: 1136038526}
   m_Layer: 2
   m_Name: ContentSurface
   m_TagString: ContentSurface
@@ -1318,18 +1317,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac663bda89a89454eb3c8ff18eb324d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1136038526
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1136038523}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f47e5ce28bd2452459b029f4a34c1c7d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MessageType: 184
 --- !u!4 &1176067339 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4958700347904618, guid: 3b2729a90daf689408e97dcbcc8e8a4e,
@@ -1343,7 +1330,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1279077019}
-  - component: {fileID: 1279077020}
   m_Layer: 2
   m_Name: VisualizationContainer
   m_TagString: Untagged
@@ -1364,18 +1350,6 @@ Transform:
   m_Father: {fileID: 1136038524}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1279077020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1279077018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f47e5ce28bd2452459b029f4a34c1c7d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MessageType: 185
 --- !u!1 &1336785067
 GameObject:
   m_ObjectHideFlags: 0

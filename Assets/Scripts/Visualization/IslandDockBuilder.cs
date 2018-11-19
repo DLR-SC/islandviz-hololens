@@ -121,14 +121,14 @@ public class IslandDockBuilder
             MeshCollider mc = go.AddComponent<MeshCollider>();
             mc.sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
             mc.convex = true;
-            //go.layer = LayerMask.NameToLayer("CalculationOnly");
+            go.layer = LayerMask.NameToLayer("CalculationOnly");
         }
         #endregion
 
         Vector3 originalPosition = obj.transform.localPosition;
         Collider objCollider = obj.GetComponent<Collider>();
         Collider nearThisCollider = placeNearThis.GetComponent<Collider>();
-        float placeDistance = (objCollider.bounds.extents.magnitude + nearThisCollider.bounds.extents.magnitude)*1.1f;
+        float placeDistance = (objCollider.bounds.extents.magnitude + nearThisCollider.bounds.extents.magnitude);
         for (int i = 0; i < iterations; i++)
         {
             Vector3 dockDirection = new Vector3(Random.value, 0, Random.value);
@@ -139,7 +139,7 @@ public class IslandDockBuilder
             bool intersects = Physics.CheckSphere(newPossiblePosition, placeDistance, calculationLayermask);
             if (!intersects)
             {
-                //obj.transform.localPosition = newPossiblePosition;
+                obj.transform.localPosition = newPossiblePosition;
                 result = true;
                 break;
             }
