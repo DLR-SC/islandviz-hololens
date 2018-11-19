@@ -133,6 +133,13 @@ namespace HoloIslandVis.Input
             ManipulationEnd = delegate { };
         }
 
+        public void InvokeGestureEvent(GestureInputEventArgs eventArgs)
+        {
+            Action<GestureInputEventArgs> action;
+            if (_gestureEventTable.TryGetValue(eventArgs.InputData, out action))
+                UnityMainThreadDispatcher.Instance.Enqueue(action, eventArgs);
+        }
+
         private async void processInput(InputEventData eventData)
         {
             await Task.Delay(_gestureSources[eventData.SourceId].InputTimeout);
@@ -149,8 +156,8 @@ namespace HoloIslandVis.Input
 
             if(_gestureEventTable.TryGetValue(inputData, out action))
             {
-                GestureInputEventArgs eventArgs = new GestureInputEventArgs(gestureSources);
-                UnityMainThreadDispatcher.Instance.Enqueue(action, eventArgs);
+                GestureInputEventArgs eventArgs = new GestureInputEventArgs(inputData, gestureSources);
+                InvokeGestureEvent(eventArgs);
             }
         }
     }

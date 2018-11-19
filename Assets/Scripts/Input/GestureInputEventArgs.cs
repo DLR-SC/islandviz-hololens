@@ -8,12 +8,17 @@ namespace HoloIslandVis.Input
 {
     public class GestureInputEventArgs : InputEventArgs
     {
+        public short InputData;
         public GameObject Target;
         public List<uint> SourceIds;
         public Dictionary<uint, Vector3> SourcePositions;
 
         public GestureInputEventArgs(GestureSource[] gestureSources)
+            : this(0, gestureSources) { }
+
+        public GestureInputEventArgs(short inputData, GestureSource[] gestureSources)
         {
+            InputData = inputData;
             SourceIds = new List<uint>();
             SourcePositions = new Dictionary<uint, Vector3>();
 
@@ -29,9 +34,11 @@ namespace HoloIslandVis.Input
             }
         }
 
-        public GestureInputEventArgs(List<uint> sourceIds, Dictionary<uint, Vector3> sourcePositions)
+        public GestureInputEventArgs(short inputData, List<uint> sourceIds, Dictionary<uint, Vector3> sourcePositions)
         {
-
+            InputData = inputData;
+            SourceIds = new List<uint>();
+            SourcePositions = new Dictionary<uint, Vector3>();
         }
 
         public bool TryGetSingleGripPosition(out Vector3 sourceOnePos)
