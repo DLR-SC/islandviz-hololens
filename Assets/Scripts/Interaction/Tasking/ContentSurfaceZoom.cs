@@ -1,5 +1,5 @@
 ﻿using HoloIslandVis.Component.UI;
-using HoloIslandVis.Interaction.Input;
+using HoloIslandVis.Input;
 using HoloIslandVis.Interaction.Tasking;
 using HoloIslandVis.Utility;
 using HoloToolkit.Unity.InputModule;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace HoloIslandVis.Interaction
+namespace HoloIslandVis.Interaction.Tasking
 {
     public class ContentSurfaceZoom : ContinuousInteractionTask
     {

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using HoloIslandVis.Automaton;
 using UnityEngine.Events;
 
-namespace HoloIslandVis.Interaction.Input
+namespace HoloIslandVis.Input
 {
     public class SpeechInputListener : SingletonComponent<SpeechInputListener>
     {

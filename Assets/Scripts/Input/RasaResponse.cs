@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace HoloIslandVis.Interaction.Input
+namespace HoloIslandVis.Input
 {
     public class RasaResponse
     {

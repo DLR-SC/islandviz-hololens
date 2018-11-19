@@ -1,23 +1,26 @@
 ﻿using HoloIslandVis.Interaction;
-using HoloIslandVis.Interaction.Input;
+using HoloIslandVis.Input;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DebugTaskContinuous : ContinuousInteractionTask
+namespace HoloIslandVis.Input.Tasking
 {
-    public override void StartInteraction(GestureInputEventArgs eventArgs)
+    public class DebugTaskContinuous : ContinuousInteractionTask
     {
-        Debug.Log("InteractionStart");
-    }
+        public override void StartInteraction(GestureInputEventArgs eventArgs)
+        {
+            Debug.Log("InteractionStart");
+        }
 
-    public override void UpdateInteraction(GestureInputEventArgs eventArgs)
-    {
-        Debug.Log("InteractionUpdate");
-    }
+        public override void UpdateInteraction(GestureInputEventArgs eventArgs)
+        {
+            Debug.Log("InteractionUpdate");
+        }
 
-    public override void EndInteraction(GestureInputEventArgs eventArgs)
-    {
-        Debug.Log("InteractionEnd");
+        public override void EndInteraction(GestureInputEventArgs eventArgs)
+        {
+            Debug.Log("InteractionEnd");
+        }
     }
 }

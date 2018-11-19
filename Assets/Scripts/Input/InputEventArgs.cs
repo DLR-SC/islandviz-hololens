@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputEventArgs : EventArgs
+namespace HoloIslandVis.Input
 {
+    public class InputEventArgs : EventArgs
+    {
 
+    }
 }

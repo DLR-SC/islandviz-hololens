@@ -1,6 +1,6 @@
 ﻿using HoloIslandVis.Automaton;
 using HoloIslandVis.Component.UI;
-using HoloIslandVis.Interaction.Input;
+using HoloIslandVis.Input;
 using HoloToolkit.Unity.InputModule;
 using System;
 using System.Collections;

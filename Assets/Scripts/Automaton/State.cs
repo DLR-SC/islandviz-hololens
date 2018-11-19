@@ -1,5 +1,5 @@
 ﻿using HoloIslandVis.Interaction;
-using HoloIslandVis.Interaction.Input;
+using HoloIslandVis.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;

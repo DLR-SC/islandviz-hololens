@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DebugTaskDiscrete : DiscreteInteractionTask
+namespace HoloIslandVis.Interaction.Tasking
 {
+    public class DebugTaskDiscrete : DiscreteInteractionTask
+    {
 
+    }
 }

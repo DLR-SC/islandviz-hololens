@@ -1,21 +1,25 @@
 ﻿using HoloIslandVis.Automaton;
+using HoloIslandVis.Input;
 using HoloIslandVis.Interaction;
 using HoloIslandVis.Utility;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShowArrowTask : DiscreteInteractionTask
+namespace HoloIslandVis.Interaction.Tasking
 {
-    public override void Perform(InputEventArgs eventArgs, Command command)
+    public class ShowArrowTask : DiscreteInteractionTask
     {
-        GameObject currentFocus = RuntimeCache.Instance.CurrentFocus;
-        DependencyDock dependencyDock = currentFocus.GetComponent<DependencyDock>();
-        if (!dependencyDock.expanded)
-            dependencyDock.showAllDependencies();
-        else
-            dependencyDock.hideAllDependencies();
+        public override void Perform(InputEventArgs eventArgs, Command command)
+        {
+            GameObject currentFocus = RuntimeCache.Instance.CurrentFocus;
+            DependencyDock dependencyDock = currentFocus.GetComponent<DependencyDock>();
+            if (!dependencyDock.expanded)
+                dependencyDock.showAllDependencies();
+            else
+                dependencyDock.hideAllDependencies();
 
-        Debug.Log("Showing/Hiding dependencies.");
+            Debug.Log("Showing/Hiding dependencies.");
+        }
     }
 }

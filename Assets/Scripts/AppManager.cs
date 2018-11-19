@@ -1,7 +1,7 @@
 ﻿using HoloIslandVis.Automaton;
 using HoloIslandVis.Component.UI;
 using HoloIslandVis.Interaction;
-using HoloIslandVis.Interaction.Input;
+using HoloIslandVis.Input;
 using HoloIslandVis.Interaction.Tasking;
 using HoloIslandVis.Mapping;
 using HoloIslandVis.OSGiParser;

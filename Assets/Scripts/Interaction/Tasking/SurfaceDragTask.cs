@@ -1,6 +1,5 @@
-﻿using HoloIslandVis.Interaction;
-using HoloIslandVis.Interaction.Input;
-using HoloIslandVis.Sharing;
+﻿using HoloIslandVis.Input;
+using HoloIslandVis.Interaction;
 using HoloIslandVis.Utility;
 using System.Collections;
 using System.Collections.Generic;

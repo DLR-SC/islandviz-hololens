@@ -1,5 +1,6 @@
 ﻿using HoloIslandVis.Automaton;
 using HoloIslandVis.Component.UI;
+using HoloIslandVis.Input;
 using HoloIslandVis.Interaction;
 using HoloIslandVis.Utility;
 using HoloIslandVis.Visualization;
@@ -7,18 +8,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IslandDeselectTask : DiscreteInteractionTask
+namespace HoloIslandVis.Interaction.Tasking
 {
-    public override void Perform(InputEventArgs eventArgs, Command command)
+    public class IslandDeselectTask : DiscreteInteractionTask
     {
-        foreach(Island island in RuntimeCache.Instance.Islands)
+        public override void Perform(InputEventArgs eventArgs, Command command)
         {
-            Transform[] transforms = island.transform.GetComponentsInChildren<Transform>(true);
-            foreach (Transform trans in transforms)
+            foreach (Island island in RuntimeCache.Instance.Islands)
             {
-                if (trans.gameObject.name == "Highlight") { 
-                    trans.gameObject.GetComponent<MeshRenderer>().enabled = false;
-                    UserInterface.Instance.Panel.SetActive(false);
+                Transform[] transforms = island.transform.GetComponentsInChildren<Transform>(true);
+                foreach (Transform trans in transforms)
+                {
+                    if (trans.gameObject.name == "Highlight")
+                    {
+                        trans.gameObject.GetComponent<MeshRenderer>().enabled = false;
+                        UserInterface.Instance.Panel.SetActive(false);
+                    }
                 }
             }
         }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace HoloIslandVis.Interaction.Input
+namespace HoloIslandVis.Input
 {
     enum SourceState
     {
