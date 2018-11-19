@@ -214,7 +214,7 @@ namespace HoloIslandVis.Visualization
             dockDirection.Normalize();
             dockDirection *= islandStructure.getRadius();
             Vector3 dockPos = islandStructure.getWeightedCenter() + dockDirection;
-            dockPos.y -= Mathf.Abs(heightProfile[heightProfile.Length - 1]) * ISLAND_ABOVE_OCEAN - 0.2f;
+            dockPos.y -= 2.0f;
 
             dock.transform.localPosition = dockPos;
             dock.name = islandStructure.Name + " " + Enum.GetName(typeof(DockType), dockType);

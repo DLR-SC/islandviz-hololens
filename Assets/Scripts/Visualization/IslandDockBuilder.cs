@@ -32,8 +32,8 @@ public class IslandDockBuilder
         if (vert != null)
         {
 
-            float importSize = 0.04f * 20f; // Don't hardcode.
-            float exportSize = 0.04f * 20f; // Don't hardcode.
+            float importSize = 0.04f * 25f; // Don't hardcode.
+            float exportSize = 0.04f * 25f; // Don't hardcode.
 
             //Outgoing edges -Bundle depends on...
             IEnumerable<GraphEdge> outEdges;
@@ -86,7 +86,7 @@ public class IslandDockBuilder
             #region determine optimal Position for ExportDock
             doNotCollideList.Clear();
             doNotCollideList.Add(island.Coast);
-            foundLocation = findSuitablePosition2D(exportD, doNotCollideList, importD, 500);
+            foundLocation = findSuitablePosition2D(exportD, doNotCollideList, importD, 2000);
             if (!foundLocation)
                 Debug.Log("Could not find suitable location for " + exportD.name);
             #endregion
@@ -96,14 +96,6 @@ public class IslandDockBuilder
             #endregion
 
         }
-    }
-
-    private bool findSuitable2D()
-    {
-        bool result = false;
-
-
-        return false;
     }
 
     private bool findSuitablePosition2D(GameObject obj, List<GameObject> doNotCollideWith, GameObject placeNearThis, int iterations)
@@ -128,13 +120,15 @@ public class IslandDockBuilder
         Vector3 originalPosition = obj.transform.localPosition;
         Collider objCollider = obj.GetComponent<Collider>();
         Collider nearThisCollider = placeNearThis.GetComponent<Collider>();
+
         float placeDistance = (objCollider.bounds.extents.magnitude + nearThisCollider.bounds.extents.magnitude);
         for (int i = 0; i < iterations; i++)
         {
             Vector3 dockDirection = new Vector3(Random.value, 0, Random.value);
             dockDirection.Normalize();
             dockDirection *= placeDistance;
-            Vector3 newPossiblePosition = placeNearThis.transform.localPosition + dockDirection;
+            Vector3 newPossiblePosition = dockDirection;
+            newPossiblePosition.y = -2.0f;
 
             bool intersects = Physics.CheckSphere(newPossiblePosition, placeDistance, calculationLayermask);
             if (!intersects)

@@ -2,10 +2,12 @@
 using HoloIslandVis.Automaton;
 using HoloIslandVis.Input;
 using HoloIslandVis.Utility;
+using HoloIslandVis.Visualization;
 using HoloToolkit.Sharing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace HoloIslandVis.Sharing
@@ -17,9 +19,9 @@ namespace HoloIslandVis.Sharing
 
         public enum UserMessageID : byte
         {
-            SurfaceTransform = MessageID.UserMessageIDStart,
-            ContainerTransform,
-            GestureInteraction,
+            GestureInteraction = MessageID.UserMessageIDStart,
+            SpeechInteraction,
+            Transform,
             Max
         }
 
@@ -57,10 +59,12 @@ namespace HoloIslandVis.Sharing
             if (IsConnected)
             {
                 initMessageHandlers();
+                _remoteExecutionHelper = new RemoteExecutionHelper(stateMachine);
+                Debug.Log("Connected");
                 return;
             }
 
-            _remoteExecutionHelper = new RemoteExecutionHelper(stateMachine);
+            //_remoteExecutionHelper = new RemoteExecutionHelper(stateMachine);
             SharingStage.Instance.SharingManagerConnected += connected;
         }
 
@@ -72,16 +76,22 @@ namespace HoloIslandVis.Sharing
                 appendGestureInputEventArgs(msg, eventArgs);
 
                 _serverConnection.Broadcast(msg, MessagePriority.Immediate,
-                    MessageReliability.UnreliableSequenced, MessageChannel.Default);
+                    MessageReliability.ReliableOrdered, MessageChannel.Default);
             }
         }
 
-        public void SendTransform(byte messageType, Vector3 position, Vector3 scale, Quaternion rotation)
+        public void SendTransform(byte messageType, GameObject gameObject)
         {
             if (_serverConnection != null && _serverConnection.IsConnected())
             {
                 NetworkOutMessage msg = CreateMessage(messageType);
+
+                Vector3 position = gameObject.transform.localPosition;
+                Vector3 scale = gameObject.transform.localScale;
+                Quaternion rotation = gameObject.transform.localRotation;
+
                 appendTransform(msg, position, scale, rotation);
+                msg.Write(gameObject.name);
 
                 _serverConnection.Broadcast(msg, MessagePriority.Immediate, 
                     MessageReliability.UnreliableSequenced, MessageChannel.Default);
@@ -119,13 +129,19 @@ namespace HoloIslandVis.Sharing
             _connectionAdapter.MessageReceivedCallback += OnMessageReceived;
             LocalUserId = SharingStage.Instance.Manager.GetLocalUser().GetID();
 
-            for (byte index = (byte)UserMessageID.SurfaceTransform; index < (byte)UserMessageID.Max; index++)
+            for (byte index = (byte)UserMessageID.GestureInteraction; index < (byte)UserMessageID.Max; index++)
             {
                 if (_messageHandlers.ContainsKey((UserMessageID)index) == false)
                     _messageHandlers.Add((UserMessageID)index, delegate { });
 
                 _serverConnection.AddListener(index, _connectionAdapter);
             }
+
+            new Task(() =>
+            {
+                while (true)
+                    syncContent();
+            }).Start();
 
             IsInitialized = true;
         }
@@ -182,6 +198,22 @@ namespace HoloIslandVis.Sharing
             msg.Write(rotation.y);
             msg.Write(rotation.z);
             msg.Write(rotation.w);
+        }
+
+        private async void syncContent()
+        {
+            GameObject contentSurface = RuntimeCache.Instance.ContentSurface;
+            GameObject visualizationContainer = RuntimeCache.Instance.VisualizationContainer;
+            GameObject dependencyContainer = RuntimeCache.Instance.DependencyContainer;
+            List<Island> islands = RuntimeCache.Instance.Islands;
+
+            SendTransform((byte)UserMessageID.Transform, contentSurface);
+            SendTransform((byte)UserMessageID.Transform, visualizationContainer);
+            SendTransform((byte)UserMessageID.Transform, dependencyContainer);
+            for (int i = 0; i < islands.Count; i++)
+                SendTransform((byte)UserMessageID.Transform, islands[i].gameObject);
+
+            await Task.Delay(4000);
         }
     }
 }

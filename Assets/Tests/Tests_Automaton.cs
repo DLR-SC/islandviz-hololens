@@ -1,12 +1,12 @@
 ﻿//using HoloIslandVis.Automaton;
 using UnityEngine;
-using UnityEngine.TestTools;
-using NUnit.Framework;
+//using UnityEngine.TestTools;
+//using NUnit.Framework;
 using System.Collections;
 
 public class Tests_Automaton {
 
-    [Test]
+    //[Test]
     public void TestCommandEquality() {
         //Command command1 = new Command(GestureType.Invariant, KeywordType.Hide, InteractableType.Island);
         //Command command2 = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);

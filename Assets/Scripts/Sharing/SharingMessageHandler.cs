@@ -63,10 +63,5 @@ public class SharingMessageHandler : MonoBehaviour
     }
 
     private void sendTransform()
-    {
-        Vector3 localPos = transform.localPosition;
-        Vector3 localScale = transform.localScale;
-        Quaternion localRot = transform.localRotation;
-        SharingClient.Instance.SendTransform((byte)MessageType, localPos, localScale, localRot);
-    }
+        => SharingClient.Instance.SendTransform((byte)MessageType, gameObject);
 }
