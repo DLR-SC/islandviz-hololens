@@ -64,13 +64,12 @@ namespace HoloIslandVis.Sharing
             SharingStage.Instance.SharingManagerConnected += connected;
         }
 
-        public void SendGestureInteraction(byte messageType, GameObject target, GestureInputEventArgs eventArgs)
+        public void SendGestureInputEvent(byte messageType, GestureInputEventArgs eventArgs)
         {
             if (_serverConnection != null && _serverConnection.IsConnected())
             {
                 NetworkOutMessage msg = CreateMessage(messageType);
-                appendGestureEventArgs(msg, eventArgs);
-                msg.Write(target.name);
+                appendGestureInputEventArgs(msg, eventArgs);
 
                 _serverConnection.Broadcast(msg, MessagePriority.Immediate,
                     MessageReliability.UnreliableSequenced, MessageChannel.Default);
@@ -145,8 +144,9 @@ namespace HoloIslandVis.Sharing
             _messageHandlers[(UserMessageID)messageType]?.Invoke(msg);
         }
 
-        private void appendGestureEventArgs(NetworkOutMessage msg, GestureInputEventArgs eventArgs)
+        private void appendGestureInputEventArgs(NetworkOutMessage msg, GestureInputEventArgs eventArgs)
         {
+            msg.Write(eventArgs.InputData);
             msg.Write((byte)eventArgs.SourceIds.Count);
             for (int i = 0; i < eventArgs.SourceIds.Count; i++)
             {
@@ -154,6 +154,12 @@ namespace HoloIslandVis.Sharing
                 appendVector3(msg, eventArgs.SourcePositions[sourceId]);
                 msg.Write(sourceId);
             }
+
+            // Is a target set for these EventArgs?
+            byte targetSet = (byte)(eventArgs.Target != null ? 1 : 0);
+            msg.Write(targetSet);
+            if (targetSet == 1)
+                msg.Write(eventArgs.Target.name);
         }
 
         private void appendTransform(NetworkOutMessage msg, Vector3 position, Vector3 scale, Quaternion rotation)

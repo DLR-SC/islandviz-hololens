@@ -133,7 +133,7 @@ namespace HoloIslandVis.Input
             ManipulationEnd = delegate { };
         }
 
-        public void InvokeGestureEvent(GestureInputEventArgs eventArgs)
+        public void InvokeGestureInputEvent(GestureInputEventArgs eventArgs)
         {
             Action<GestureInputEventArgs> action;
             if (_gestureEventTable.TryGetValue(eventArgs.InputData, out action))
@@ -157,7 +157,7 @@ namespace HoloIslandVis.Input
             if(_gestureEventTable.TryGetValue(inputData, out action))
             {
                 GestureInputEventArgs eventArgs = new GestureInputEventArgs(inputData, gestureSources);
-                InvokeGestureEvent(eventArgs);
+                InvokeGestureInputEvent(eventArgs);
             }
         }
     }
