@@ -278,7 +278,7 @@ namespace HoloIslandVis
             stateMachine.AddState(testState);
             stateMachine.Init(testState);
 
-            SharingClient.Instance.Init();
+            SharingClient.Instance.Init(stateMachine);
         }
 
         public void inputListenerDebug()

@@ -1,4 +1,6 @@
 ﻿using HoloIslandVis;
+using HoloIslandVis.Automaton;
+using HoloIslandVis.Input;
 using HoloIslandVis.Utility;
 using HoloToolkit.Sharing;
 using System;
@@ -17,6 +19,7 @@ namespace HoloIslandVis.Sharing
         {
             SurfaceTransform = MessageID.UserMessageIDStart,
             ContainerTransform,
+            GestureInteraction,
             Max
         }
 
@@ -42,13 +45,14 @@ namespace HoloIslandVis.Sharing
         private bool _isInitialized;
         private NetworkConnection _serverConnection;
         private NetworkConnectionAdapter _connectionAdapter;
+        private RemoteExecutionHelper _remoteExecutionHelper;
 
         private Dictionary<UserMessageID, MessageCallback> _messageHandlers
             = new Dictionary<UserMessageID, MessageCallback>();
 
         private SharingClient() { }
 
-        public void Init()
+        public void Init(StateMachine stateMachine)
         {
             if (IsConnected)
             {
@@ -56,7 +60,21 @@ namespace HoloIslandVis.Sharing
                 return;
             }
 
+            _remoteExecutionHelper = new RemoteExecutionHelper(stateMachine);
             SharingStage.Instance.SharingManagerConnected += connected;
+        }
+
+        public void SendGestureInteraction(byte messageType, GameObject target, GestureInputEventArgs eventArgs)
+        {
+            if (_serverConnection != null && _serverConnection.IsConnected())
+            {
+                NetworkOutMessage msg = CreateMessage(messageType);
+                appendGestureEventArgs(msg, eventArgs);
+                msg.Write(target.name);
+
+                _serverConnection.Broadcast(msg, MessagePriority.Immediate,
+                    MessageReliability.UnreliableSequenced, MessageChannel.Default);
+            }
         }
 
         public void SendTransform(byte messageType, Vector3 position, Vector3 scale, Quaternion rotation)
@@ -65,6 +83,7 @@ namespace HoloIslandVis.Sharing
             {
                 NetworkOutMessage msg = CreateMessage(messageType);
                 appendTransform(msg, position, scale, rotation);
+
                 _serverConnection.Broadcast(msg, MessagePriority.Immediate, 
                     MessageReliability.UnreliableSequenced, MessageChannel.Default);
             }
@@ -122,9 +141,19 @@ namespace HoloIslandVis.Sharing
 
         private void OnMessageReceived(NetworkConnection connection, NetworkInMessage msg)
         {
-            Debug.Log("MSG Received.");
             byte messageType = msg.ReadByte();
             _messageHandlers[(UserMessageID)messageType]?.Invoke(msg);
+        }
+
+        private void appendGestureEventArgs(NetworkOutMessage msg, GestureInputEventArgs eventArgs)
+        {
+            msg.Write((byte)eventArgs.SourceIds.Count);
+            for (int i = 0; i < eventArgs.SourceIds.Count; i++)
+            {
+                uint sourceId = eventArgs.SourceIds[i];
+                appendVector3(msg, eventArgs.SourcePositions[sourceId]);
+                msg.Write(sourceId);
+            }
         }
 
         private void appendTransform(NetworkOutMessage msg, Vector3 position, Vector3 scale, Quaternion rotation)

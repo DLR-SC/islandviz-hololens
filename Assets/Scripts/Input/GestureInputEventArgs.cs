@@ -8,6 +8,7 @@ namespace HoloIslandVis.Input
 {
     public class GestureInputEventArgs : InputEventArgs
     {
+        public GameObject Target;
         public List<uint> SourceIds;
         public Dictionary<uint, Vector3> SourcePositions;
 
@@ -26,6 +27,11 @@ namespace HoloIslandVis.Input
                 if (source.InputSource.TryGetGripPosition(sourceId, out sourcePosition))
                     SourcePositions.Add(source.SourceId, sourcePosition);
             }
+        }
+
+        public GestureInputEventArgs(List<uint> sourceIds, Dictionary<uint, Vector3> sourcePositions)
+        {
+
         }
 
         public bool TryGetSingleGripPosition(out Vector3 sourceOnePos)
