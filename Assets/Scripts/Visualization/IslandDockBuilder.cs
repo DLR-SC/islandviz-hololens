@@ -55,11 +55,11 @@ public class IslandDockBuilder
             }
 
             #region determine optimal Position for ImportDock
-            List<GameObject> doNotCollideList = new List<GameObject>();
-            doNotCollideList.Add(island.Coast);
-            bool foundLocation = findSuitablePosition2D(importD, doNotCollideList, island.gameObject, 500);
-            if (!foundLocation)
-                Debug.Log("Could not find suitable location for " + importD.name);
+            //List<GameObject> doNotCollideList = new List<GameObject>();
+            //doNotCollideList.Add(island.Coast);
+            //bool foundLocation = findSuitablePosition2D(importD, doNotCollideList, island.gameObject, 500);
+            //if (!foundLocation)
+            //    Debug.Log("Could not find suitable location for " + importD.name);
             #endregion
 
 
@@ -84,18 +84,46 @@ public class IslandDockBuilder
             }
 
             #region determine optimal Position for ExportDock
-            doNotCollideList.Clear();
-            doNotCollideList.Add(island.Coast);
-            foundLocation = findSuitablePosition2D(exportD, doNotCollideList, importD, 2000);
-            if (!foundLocation)
-                Debug.Log("Could not find suitable location for " + exportD.name);
+            //doNotCollideList.Clear();
+            //doNotCollideList.Add(island.Coast);
+            //foundLocation = findSuitablePosition2D(exportD, doNotCollideList, importD, 2000);
+            //if (!foundLocation)
+            //    Debug.Log("Could not find suitable location for " + exportD.name);
             #endregion
+
+            findSuitablePosition2D(island, importD, exportD);
 
             #region extend Island collider based on new Docksizes
             //island.GetComponent<CapsuleCollider>().radius += Mathf.Max(importSize, exportSize) * Mathf.Sqrt(2f);
             #endregion
 
         }
+    }
+
+    private void findSuitablePosition2D(Island island, GameObject importDock, GameObject exportDock)
+    {
+        CapsuleCollider islandCollider = island.gameObject.GetComponent<CapsuleCollider>();
+        BoxCollider importDockCollider = importDock.gameObject.GetComponent<BoxCollider>();
+        BoxCollider exportDockCollider = exportDock.gameObject.GetComponent<BoxCollider>();
+
+        float distance = islandCollider.radius + importDockCollider.bounds.extents.magnitude;
+
+        Vector3 importDockDirection = new Vector3(Random.value, 0, Random.value).normalized;
+        Vector3 importDockPosition = importDockDirection * distance * Random.Range(1.0f, 1.2f);
+        importDockPosition.y = -2.0f;
+
+        importDock.transform.localPosition = importDockPosition;
+
+        Vector3 exportDockPosition = importDockPosition * Random.Range(0.95f, 1.25f);
+        exportDockPosition = Quaternion.AngleAxis(Random.Range(25, 35), Vector3.up) * exportDockPosition;
+        exportDockPosition.y = -2.0f;
+        importDock.transform.localPosition = importDockPosition;
+
+        //Vector3 exportDockDirection = new Vector3(Random.value, 0, Random.value).normalized;
+        //Vector3 exportDockPosition = importDockPosition + (exportDockDirection * importDockCollider.bounds.extents.magnitude * Random.Range(1.15f, 1.25f));
+        //exportDockPosition.y = -2.0f;
+
+        exportDock.transform.localPosition = exportDockPosition;
     }
 
     private bool findSuitablePosition2D(GameObject obj, List<GameObject> doNotCollideWith, GameObject placeNearThis, int iterations)
@@ -126,7 +154,12 @@ public class IslandDockBuilder
         {
             Vector3 dockDirection = new Vector3(Random.value, 0, Random.value);
             dockDirection.Normalize();
-            dockDirection *= placeDistance;
+
+            if(obj.GetComponent<DependencyDock>().DockType == DockType.Import)
+                dockDirection = dockDirection * placeDistance;
+            else
+                dockDirection = dockDirection * placeDistance;
+
             Vector3 newPossiblePosition = dockDirection;
             newPossiblePosition.y = -2.0f;
 

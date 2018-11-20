@@ -20,6 +20,8 @@ public class DependencyDock : MonoBehaviour
     private DockType dockType;
     public bool expanded;
 
+    public DockType DockType { get; set; }
+
     void Awake()
     {
         connectionArrows = new List<GameObject>();
