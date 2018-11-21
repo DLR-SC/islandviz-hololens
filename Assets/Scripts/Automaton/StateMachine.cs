@@ -77,46 +77,22 @@ namespace HoloIslandVis.Automaton
         }
 
         public override void OnOneHandTap(GestureInputEventArgs eventArgs)
-        {
-            Command command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
-
-            if (RuntimeCache.Instance.CurrentFocus != null)
-            {
-                if(RuntimeCache.Instance.CurrentFocus.tag == "Untagged")
-                    command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);
-                else if (RuntimeCache.Instance.CurrentFocus.tag == "ExportDock")
-                    command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
-                else if (RuntimeCache.Instance.CurrentFocus.tag == "ImportDock")
-                    command = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ImportDock);
-            }
-
-            if (CurrentState != null)
-                CurrentState.ProcessCommand(eventArgs, command);
-        }
+            => ProcessGestureInputEvent(eventArgs);
 
         public override void OnOneHandDoubleTap(GestureInputEventArgs eventArgs)
-        {
-            Command command = new Command(GestureType.OneHandDoubleTap, KeywordType.Invariant, InteractableType.Invariant);
-
-            if(CurrentState != null)
-                CurrentState.ProcessCommand(eventArgs, command);
-        }
+            => ProcessGestureInputEvent(eventArgs);
 
         public override void OnOneHandManipStart(GestureInputEventArgs eventArgs)
-        {
-            Command command = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
-
-            if(CurrentState != null)
-                CurrentState.ProcessCommand(eventArgs, command);
-        }
+            => ProcessGestureInputEvent(eventArgs);
 
         public override void OnTwoHandManipStart(GestureInputEventArgs eventArgs)
-        {
-            Command command = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
+            => ProcessGestureInputEvent(eventArgs);
 
-            if(CurrentState != null)
-                CurrentState.ProcessCommand(eventArgs, command);
-        }
+        public override void OnManipulationUpdate(GestureInputEventArgs eventArgs)
+            => ProcessGestureInputEvent(eventArgs);
+
+        public override void OnManipulationEnd(GestureInputEventArgs eventArgs)
+            => ProcessGestureInputEvent(eventArgs);
 
         public override void OnSpeechResponse(SpeechInputEventArgs eventArgs)
         {
@@ -139,6 +115,24 @@ namespace HoloIslandVis.Automaton
 
             if (CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, new Command(GestureType.Invariant, kt, InteractableType.Invariant));
+        }
+
+        private void ProcessGestureInputEvent(GestureInputEventArgs eventArgs)
+        {
+            byte gestureType = (byte)eventArgs.GestureType;
+            Command command = new Command((GestureType)gestureType);
+            GameObject focusedObject = RuntimeCache.Instance.CurrentFocus;
+
+            if(focusedObject != null)
+            {
+                eventArgs.Target = focusedObject;
+                Interactable interactable = focusedObject.GetComponent<Interactable>();
+                if (interactable != null)
+                    command.FocusedObject = interactable.InteractableType;
+            }
+
+            if (CurrentState != null)
+                CurrentState.ProcessCommand(eventArgs, command);
         }
     }
 }

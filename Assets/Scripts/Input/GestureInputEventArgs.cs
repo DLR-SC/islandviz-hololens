@@ -8,19 +8,16 @@ namespace HoloIslandVis.Input
 {
     public class GestureInputEventArgs : InputEventArgs
     {
-        public short InputData;
         public bool IsRemoteInput;
+        public GestureType GestureType;
         public GameObject Target;
         public List<uint> SourceIds;
         public Dictionary<uint, Vector3> SourcePositions;
 
-        public GestureInputEventArgs(GestureSource[] gestureSources)
-            : this(0, gestureSources) { }
-
-        public GestureInputEventArgs(short inputData, GestureSource[] gestureSources)
+        public GestureInputEventArgs(GestureType gestureType, GestureSource[] gestureSources)
         {
-            InputData = inputData;
             IsRemoteInput = false;
+            GestureType = gestureType;
             SourceIds = new List<uint>();
             SourcePositions = new Dictionary<uint, Vector3>();
 
@@ -36,12 +33,12 @@ namespace HoloIslandVis.Input
             }
         }
 
-        public GestureInputEventArgs(short inputData, List<uint> sourceIds, Dictionary<uint, Vector3> sourcePositions)
+        public GestureInputEventArgs(GestureType gestureType, List<uint> sourceIds, Dictionary<uint, Vector3> sourcePositions)
         {
-            InputData = inputData;
             IsRemoteInput = false;
-            SourceIds = new List<uint>();
-            SourcePositions = new Dictionary<uint, Vector3>();
+            GestureType = gestureType;
+            SourceIds = sourceIds;
+            SourcePositions = sourcePositions;
         }
 
         public bool TryGetSingleGripPosition(out Vector3 sourceOnePos)

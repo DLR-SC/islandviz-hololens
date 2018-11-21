@@ -14,6 +14,7 @@ namespace HoloIslandVis.Automaton
 
         private Dictionary<Command, State> _stateTransitionTable;
         private Dictionary<Command, InteractionTask> _interactionTaskTable;
+        private InteractionTask _activeInteraction;
 
         public string Name { get; private set; }
 
@@ -30,6 +31,12 @@ namespace HoloIslandVis.Automaton
                 foreach (Delegate del in _openAction.GetInvocationList())
                     _closeAction -= (Action<State>)del;
             });
+
+            // Add entries for Manipulation Update and Manipulation End.
+            // Value "null" is equivalent to there being no currently active
+            // interaction task to update or end.
+            _interactionTaskTable.Add(new Command(GestureType.ManipulationUpdate), null);
+            _interactionTaskTable.Add(new Command(GestureType.ManipulationEnd), null);
         }
 
         public void AddStateTransition(Command command, State state)
@@ -72,8 +79,12 @@ namespace HoloIslandVis.Automaton
 
         private void processInteractionTask(InputEventArgs eventArgs, Command command)
         {
-            InteractionTask interactionTask = _interactionTaskTable[command];
-            interactionTask.Perform(eventArgs, command);
+            _activeInteraction = _interactionTaskTable[command];
+
+            _interactionTaskTable[new Command(GestureType.ManipulationUpdate)] = _activeInteraction;
+            _interactionTaskTable[new Command(GestureType.ManipulationEnd)] = _activeInteraction;
+
+            _activeInteraction.Perform(eventArgs, command);
         }
 
         private void moveNext(State newState)

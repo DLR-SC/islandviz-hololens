@@ -50,6 +50,7 @@ namespace HoloIslandVis.Visualization
             islandGameObject.transform.parent = RuntimeCache.Instance.VisualizationContainer.transform;
             islandComponent.CartographicIsland = islandStructure;
             islandStructure.IslandGameObject = islandGameObject;
+            islandGameObject.tag = "Island";
 
             //islandGameObject.AddComponent<Highlightable>();
 

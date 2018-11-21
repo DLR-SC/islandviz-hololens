@@ -18,6 +18,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
+using GestureType = HoloIslandVis.Automaton.GestureType;
+
 namespace HoloIslandVis
 {
     public class AppManager : SingletonComponent<AppManager>
@@ -289,6 +291,7 @@ namespace HoloIslandVis
             GestureInputListener.Instance.TwoHandDoubleTap += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TwoHandDoubleTap";
             GestureInputListener.Instance.OneHandManipStart += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "OneHandManipulationStart";
             GestureInputListener.Instance.TwoHandManipStart += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "TwoHandManipulationStart";
+            GestureInputListener.Instance.ManipulationUpdate += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ManipulationUpdate";
             GestureInputListener.Instance.ManipulationEnd += (GestureInputEventArgs eventData) => UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "ManipulationEnd";
         }
     }

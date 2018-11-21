@@ -7,35 +7,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using GestureType = HoloIslandVis.Automaton.GestureType;
+
 namespace HoloIslandVis.Interaction
 {
     public abstract class ContinuousInteractionTask : InteractionTask
     {
-        public override void Perform(InputEventArgs eventArgs, Command command)
-        {
-            StartInteraction((GestureInputEventArgs) eventArgs);
+        private Dictionary<GestureType, Action<GestureInputEventArgs>> _interactionTable;
 
-            GestureInputListener.Instance.ManipulationUpdate += OnManipulationUpdate;
-            GestureInputListener.Instance.ManipulationEnd += OnManipulationEnd;
+        protected ContinuousInteractionTask()
+        {
+            _interactionTable = new Dictionary<GestureType, Action<GestureInputEventArgs>>()
+            {
+                { GestureType.OneHandManipStart , eventArgs => StartInteraction(eventArgs) },
+                { GestureType.TwoHandManipStart , eventArgs => StartInteraction(eventArgs) },
+                { GestureType.ManipulationUpdate, eventArgs => UpdateInteraction(eventArgs) },
+                { GestureType.ManipulationEnd   , eventArgs => EndInteraction(eventArgs) },
+            };
         }
 
-        private void OnManipulationUpdate(GestureInputEventArgs eventArgs)
+        public override void Perform(InputEventArgs inputEventArgs, Command command)
         {
-            if(ValidateInput(eventArgs))
-                UpdateInteraction(eventArgs);
-        }
-
-        private void OnManipulationEnd(GestureInputEventArgs eventArgs)
-        {
-            GestureInputListener.Instance.ManipulationUpdate -= OnManipulationUpdate;
-            GestureInputListener.Instance.ManipulationEnd -= OnManipulationEnd;
-            EndInteraction(eventArgs);
-        }
-
-        private bool ValidateInput(GestureInputEventArgs eventArgs)
-        {
-            // TODO: Implement validation!
-            return true;
+            GestureInputEventArgs eventArgs = (GestureInputEventArgs)inputEventArgs;
+            _interactionTable[(GestureType)eventArgs.GestureType].Invoke(eventArgs);
         }
 
         public abstract void StartInteraction(GestureInputEventArgs eventArgs);

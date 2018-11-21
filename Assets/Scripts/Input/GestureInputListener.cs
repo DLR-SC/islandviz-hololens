@@ -11,6 +11,18 @@ using UnityEngine;
 
 namespace HoloIslandVis.Input
 {
+    public enum GestureType : byte
+    {
+        OneHandTap = 1,
+        TwoHandTap = 2,
+        OneHandDoubleTap = 4,
+        TwoHandDoubleTap = 8,
+        OneHandManipStart = 16,
+        TwoHandManipStart = 32,
+        ManipulationUpdate = 64,
+        ManipulationEnd = 128
+    }
+
     public class GestureInputListener : SingletonComponent<GestureInputListener>, 
         IInputHandler, ISourceStateHandler
     {
@@ -27,25 +39,38 @@ namespace HoloIslandVis.Input
         public event GestureInputHandler ManipulationEnd        = delegate { };
 
         private Dictionary<uint, GestureSource> _gestureSources;
-        private Dictionary<short, Action<GestureInputEventArgs>> _gestureEventTable;
+        private Dictionary<short, GestureType> _gestureTypeTable;
+        private Dictionary<GestureType, Action<GestureInputEventArgs>> _gestureEventTable;
         private int _inputTimeout;
         private bool _timerSet;
 
         protected override void Awake()
         {
             base.Awake();
-            _gestureEventTable = new Dictionary<short, Action<GestureInputEventArgs>>()
+            _gestureTypeTable = new Dictionary<short, GestureType>()
             {
-                { Convert.ToInt16("0000000010001001", 2), eventArgs => OneHandTap(eventArgs) },
-                { Convert.ToInt16("1000100110001001", 2), eventArgs => TwoHandTap(eventArgs) },
-                { Convert.ToInt16("0000000010010010", 2), eventArgs => OneHandDoubleTap(eventArgs) },
-                { Convert.ToInt16("1001001010010010", 2), eventArgs => TwoHandDoubleTap(eventArgs) },
-                { Convert.ToInt16("0000000011000001", 2), eventArgs => OneHandManipStart(eventArgs) },
-                { Convert.ToInt16("1100000111000001", 2), eventArgs => TwoHandManipStart(eventArgs) },
-                { Convert.ToInt16("0000000010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
-                { Convert.ToInt16("1000100010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
-                { Convert.ToInt16("1000000010001000", 2), eventArgs => ManipulationEnd(eventArgs) },
-                { Convert.ToInt16("1000100010000000", 2), eventArgs => ManipulationEnd(eventArgs) }
+                { Convert.ToInt16("0000000010001001", 2), GestureType.OneHandTap },
+                { Convert.ToInt16("1000100110001001", 2), GestureType.TwoHandTap },
+                { Convert.ToInt16("0000000010010010", 2), GestureType.OneHandDoubleTap },
+                { Convert.ToInt16("1001001010010010", 2), GestureType.TwoHandDoubleTap },
+                { Convert.ToInt16("0000000011000001", 2), GestureType.OneHandManipStart },
+                { Convert.ToInt16("1100000111000001", 2), GestureType.TwoHandManipStart },
+                { Convert.ToInt16("0000000010001000", 2), GestureType.ManipulationEnd },
+                { Convert.ToInt16("1000100010001000", 2), GestureType.ManipulationEnd },
+                { Convert.ToInt16("1000000010001000", 2), GestureType.ManipulationEnd },
+                { Convert.ToInt16("1000100010000000", 2), GestureType.ManipulationEnd }
+            };
+
+            _gestureEventTable = new Dictionary<GestureType, Action<GestureInputEventArgs>>()
+            {
+                { GestureType.OneHandTap            , eventArgs => OneHandTap(eventArgs) },
+                { GestureType.TwoHandTap            , eventArgs => TwoHandTap(eventArgs) },
+                { GestureType.OneHandDoubleTap      , eventArgs => OneHandDoubleTap(eventArgs) },
+                { GestureType.TwoHandDoubleTap      , eventArgs => TwoHandDoubleTap(eventArgs) },
+                { GestureType.OneHandManipStart     , eventArgs => OneHandManipStart(eventArgs) },
+                { GestureType.TwoHandManipStart     , eventArgs => TwoHandManipStart(eventArgs) },
+                { GestureType.ManipulationUpdate    , eventArgs => ManipulationEnd(eventArgs) },
+                { GestureType.ManipulationEnd       , eventArgs => ManipulationEnd(eventArgs) }
             };
 
             _gestureSources = new Dictionary<uint, GestureSource>(2);
@@ -69,7 +94,7 @@ namespace HoloIslandVis.Input
                 _gestureSources.Values.CopyTo(gestureSources, 0);
 
                 UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                    ManipulationUpdate(new GestureInputEventArgs(gestureSources)));
+                    ManipulationUpdate(new GestureInputEventArgs(GestureType.ManipulationUpdate, gestureSources)));
             }
         }
 
@@ -93,7 +118,7 @@ namespace HoloIslandVis.Input
                 _gestureSources.Values.CopyTo(gestureSources, 0);
 
                 UnityMainThreadDispatcher.Instance.Enqueue(() => 
-                    ManipulationEnd(new GestureInputEventArgs(gestureSources)));
+                    ManipulationEnd(new GestureInputEventArgs(GestureType.ManipulationEnd, gestureSources)));
             }
 
             _gestureSources.Remove(eventData.SourceId);
@@ -135,9 +160,8 @@ namespace HoloIslandVis.Input
 
         public void InvokeGestureInputEvent(GestureInputEventArgs eventArgs)
         {
-            Action<GestureInputEventArgs> action;
-            if (_gestureEventTable.TryGetValue(eventArgs.InputData, out action))
-                UnityMainThreadDispatcher.Instance.Enqueue(action, eventArgs);
+            Action<GestureInputEventArgs> action = _gestureEventTable[eventArgs.GestureType];
+            UnityMainThreadDispatcher.Instance.Enqueue(action, eventArgs);
         }
 
         private async void processInput(InputEventData eventData)
@@ -152,11 +176,11 @@ namespace HoloIslandVis.Input
                 inputData += (short) (gestureSources[i].Evaluate() << i * 8);
 
             _timerSet = false;
-            Action<GestureInputEventArgs> action;
+            GestureType gestureType;
 
-            if(_gestureEventTable.TryGetValue(inputData, out action))
+            if(_gestureTypeTable.TryGetValue(inputData, out gestureType))
             {
-                GestureInputEventArgs eventArgs = new GestureInputEventArgs(inputData, gestureSources);
+                GestureInputEventArgs eventArgs = new GestureInputEventArgs(gestureType, gestureSources);
                 InvokeGestureInputEvent(eventArgs);
             }
         }

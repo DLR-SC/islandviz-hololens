@@ -1,43 +1,53 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace HoloIslandVis.Automaton
 {
-    public enum GestureType
+    public enum GestureType : byte
     {
         None = 0,
-        Invariant = 1,
-        OneHandTap = 2,
+        OneHandTap = 1,
+        TwoHandTap = 2,
         OneHandDoubleTap = 4,
-        OneHandManipStart = 8,
-        TwoHandManipStart = 16,
-        ManipulationEnd = 32
+        TwoHandDoubleTap = 8,
+        OneHandManipStart = 16,
+        TwoHandManipStart = 32,
+        ManipulationUpdate = 64,
+        ManipulationEnd = 128,
+        Invariant = 255
     }
 
-    public enum KeywordType
+    public enum KeywordType : byte
     {
         None = 0,
-        Invariant = 1,
-        Find = 2,
-        Show = 4,
-        Hide = 8
+        Find = 1,
+        Show = 2,
+        Hide = 4,
+        Invariant = 255
     }
 
-    public enum InteractableType
+    public enum InteractableType : byte
     {
         None = 0,
-        Invariant = 1,
-        Island = 2,
-        ExportDock = 4,
-        ImportDock = 8
+        Island = 1,
+        ExportDock = 2,
+        ImportDock = 4,
+        Invariant = 255
     }
 
-    public struct Command
+    public struct Command : IEquatable<Command>
     {
-        public GestureType Gesture { get; private set; }
-        public KeywordType Keyword { get; private set; }
-        public InteractableType FocusedObject { get; private set; }
+        public GestureType Gesture { get; set; }
+        public KeywordType Keyword { get; set; }
+        public InteractableType FocusedObject { get; set; }
+
+        public Command(GestureType gesture)
+            : this(gesture, KeywordType.Invariant) { }
+
+        public Command(GestureType gesture, KeywordType keyword)
+            : this(gesture, keyword, InteractableType.Invariant) { }
 
         public Command(GestureType gesture, KeywordType keyword, InteractableType focusedObject)
         {
@@ -46,13 +56,8 @@ namespace HoloIslandVis.Automaton
             FocusedObject = focusedObject;
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(Command other)
         {
-            if (!GetType().Equals(obj.GetType()))
-                return false;
-
-            Command other = (Command)obj;
-
             if (GestureType.Invariant != Gesture &&
                 GestureType.Invariant != other.Gesture)
             {
@@ -75,6 +80,12 @@ namespace HoloIslandVis.Automaton
             }
 
             return true;
+        }
+
+        public override int GetHashCode()
+        {
+            // TODO     Better solution?
+            return 0;
         }
     }
 }

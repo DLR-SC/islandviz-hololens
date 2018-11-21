@@ -5,6 +5,8 @@ using HoloToolkit.Sharing;
 using System.Collections.Generic;
 using UnityEngine;
 
+using GestureType = HoloIslandVis.Input.GestureType;
+
 namespace HoloIslandVis.Sharing
 {
     public class RemoteExecutionHelper : InputReceiver
@@ -47,7 +49,7 @@ namespace HoloIslandVis.Sharing
             long remoteUserId = msg.ReadInt64();
 
             GestureInputEventArgs eventArgs;
-            short inputData = msg.ReadInt16();
+            GestureType gestureType = (GestureType)msg.ReadByte();
             byte sourceCount = msg.ReadByte();
             List<uint> sourceIds = new List<uint>();
             var sourcePositions = new Dictionary<uint, Vector3>();
@@ -60,7 +62,7 @@ namespace HoloIslandVis.Sharing
                 sourceIds.Add(sourceId);
             }
 
-            eventArgs = new GestureInputEventArgs(inputData, sourceIds, sourcePositions);
+            eventArgs = new GestureInputEventArgs(gestureType, sourceIds, sourcePositions);
             if(msg.ReadByte() == 1)
             {
                 string targetName = msg.ReadString().GetString();
@@ -86,6 +88,12 @@ namespace HoloIslandVis.Sharing
             => SendGestureInputEvent(eventArgs);
 
         public override void OnTwoHandManipStart(GestureInputEventArgs eventArgs)
+            => SendGestureInputEvent(eventArgs);
+
+        public override void OnManipulationUpdate(GestureInputEventArgs eventArgs)
+            => SendGestureInputEvent(eventArgs);
+
+        public override void OnManipulationEnd(GestureInputEventArgs eventArgs)
             => SendGestureInputEvent(eventArgs);
 
         public override void OnSpeechResponse(SpeechInputEventArgs eventArgs)

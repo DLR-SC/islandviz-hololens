@@ -137,12 +137,6 @@ namespace HoloIslandVis.Sharing
                 _serverConnection.AddListener(index, _connectionAdapter);
             }
 
-            new Task(() =>
-            {
-                while (true)
-                    syncContent();
-            }).Start();
-
             IsInitialized = true;
         }
 
@@ -162,7 +156,7 @@ namespace HoloIslandVis.Sharing
 
         private void appendGestureInputEventArgs(NetworkOutMessage msg, GestureInputEventArgs eventArgs)
         {
-            msg.Write(eventArgs.InputData);
+            msg.Write((byte)eventArgs.GestureType);
             msg.Write((byte)eventArgs.SourceIds.Count);
             for (int i = 0; i < eventArgs.SourceIds.Count; i++)
             {
@@ -210,6 +204,7 @@ namespace HoloIslandVis.Sharing
             SendTransform((byte)UserMessageID.Transform, contentSurface);
             SendTransform((byte)UserMessageID.Transform, visualizationContainer);
             SendTransform((byte)UserMessageID.Transform, dependencyContainer);
+
             for (int i = 0; i < islands.Count; i++)
                 SendTransform((byte)UserMessageID.Transform, islands[i].gameObject);
 
