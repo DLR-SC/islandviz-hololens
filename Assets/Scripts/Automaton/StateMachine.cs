@@ -122,14 +122,15 @@ namespace HoloIslandVis.Automaton
             byte gestureType = (byte)eventArgs.GestureType;
             Command command = new Command((GestureType)gestureType);
             GameObject focusedObject = RuntimeCache.Instance.CurrentFocus;
+            Interactable interactable = null;
 
-            if(focusedObject != null)
-            {
-                eventArgs.Target = focusedObject;
-                Interactable interactable = focusedObject.GetComponent<Interactable>();
-                if (interactable != null)
-                    command.FocusedObject = interactable.InteractableType;
-            }
+            if(eventArgs.Target != null)
+                interactable = eventArgs.Target.GetComponent<Interactable>();
+            else if(focusedObject != null)
+                interactable = focusedObject.GetComponent<Interactable>();
+
+            if (interactable != null)
+                command.FocusedObject = interactable.InteractableType;
 
             if (CurrentState != null)
                 CurrentState.ProcessCommand(eventArgs, command);

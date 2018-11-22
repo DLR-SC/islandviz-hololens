@@ -168,6 +168,7 @@ namespace HoloIslandVis.Sharing
         {
             msg.Write((byte)eventArgs.GestureType);
             msg.Write((byte)eventArgs.SourceIds.Count);
+
             for (int i = 0; i < eventArgs.SourceIds.Count; i++)
             {
                 uint sourceId = eventArgs.SourceIds[i];
@@ -176,6 +177,7 @@ namespace HoloIslandVis.Sharing
             }
 
             // Is a target set for these EventArgs?
+            eventArgs.Target = RuntimeCache.Instance.CurrentFocus;
             byte targetSet = (byte)(eventArgs.Target != null ? 1 : 0);
             msg.Write(targetSet);
             if (targetSet == 1)

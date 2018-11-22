@@ -1,4 +1,5 @@
-﻿using HoloIslandVis.Utility;
+﻿using HoloIslandVis.Component.UI;
+using HoloIslandVis.Utility;
 using HoloIslandVis.Automaton;
 using HoloIslandVis.Input;
 using HoloToolkit.Sharing;
@@ -51,10 +52,11 @@ namespace HoloIslandVis.Sharing
             GestureInputEventArgs eventArgs;
             GestureType gestureType = (GestureType)msg.ReadByte();
             byte sourceCount = msg.ReadByte();
+
             List<uint> sourceIds = new List<uint>();
             var sourcePositions = new Dictionary<uint, Vector3>();
 
-            for(int i = 0; i < sourceCount; i++)
+            for (int i = 0; i < sourceCount; i++)
             {
                 Vector3 sourcePosition = SharingClient.Instance.ReadVector3(msg);
                 uint sourceId = (uint)msg.ReadInt32();
@@ -64,7 +66,8 @@ namespace HoloIslandVis.Sharing
 
             eventArgs = new GestureInputEventArgs(gestureType, sourceIds, sourcePositions);
 
-            if(msg.ReadByte() == 1)
+            byte targetSet = msg.ReadByte();
+            if (targetSet == 1)
             {
                 string targetName = msg.ReadString().GetString();
                 eventArgs.Target = GameObject.Find(targetName);
