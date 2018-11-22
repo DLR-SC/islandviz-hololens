@@ -1,4 +1,5 @@
 ﻿using HoloIslandVis.OSGiParser.Graph;
+using HoloIslandVis.Utility;
 using HoloIslandVis.Visualization;
 using QuickGraph;
 using System.Collections;
@@ -8,6 +9,20 @@ using UnityEngine;
 
 public class IslandDockBuilder
 {
+    public delegate void ConstructionCompletedHandler();
+    public event ConstructionCompletedHandler ConstructionCompleted = delegate { };
+
+    private bool _constructionComplete;
+
+    public bool ConstructionComplete {
+        get { return _constructionComplete; }
+        private set {
+            _constructionComplete = value;
+            if (value)
+                ConstructionCompleted();
+        }
+    }
+
     private static IslandDockBuilder _instance;
     public static IslandDockBuilder Instance
     {
@@ -21,7 +36,58 @@ public class IslandDockBuilder
         private set { }
     }
 
-    public void BuildDockForIsland(Island island)
+    public void BuildDocksForIslands(List<Island> islands)
+    {
+        List<GameObject> docks = new List<GameObject>();
+        RuntimeCache.Instance.Docks = docks;
+
+        for (int i = 0; i < islands.Count; i++)
+            buildDockForIsland(islands[i]);
+
+        for (int i = 0; i < islands.Count; i++)
+        {
+            Island island = islands[i].GetComponent<Island>();
+            GameObject eDock = island.ExportDock;
+            GameObject iDock = island.ImportDock;
+            if (eDock != null)
+            {
+                docks.Add(eDock);
+                eDock.GetComponent<DependencyDock>().constructConnectionArrows();
+            }
+            if (iDock != null)
+            {
+                docks.Add(iDock);
+                iDock.GetComponent<DependencyDock>().constructConnectionArrows();
+            }
+        }
+
+        Debug.Log("Finished with Dock-GameObject construction!");
+
+        foreach (Island island in islands)
+        {
+            island.gameObject.AddComponent<Interactable>();
+            MeshFilter[] islandMeshFilters = island.gameObject.GetComponentsInChildren<MeshFilter>();
+            CombineInstance[] combineInstance = new CombineInstance[islandMeshFilters.Length];
+
+            for (int i = 0; i < islandMeshFilters.Length; i++)
+            {
+                combineInstance[i].mesh = islandMeshFilters[i].sharedMesh;
+                combineInstance[i].transform = islandMeshFilters[i].transform.localToWorldMatrix;
+            }
+
+            GameObject highlight = new GameObject("Highlight");
+            highlight.tag = "Highlight";
+            highlight.transform.parent = island.gameObject.transform;
+            highlight.AddComponent<MeshFilter>().mesh.CombineMeshes(combineInstance);
+            MeshRenderer meshRenderer = highlight.AddComponent<MeshRenderer>();
+            meshRenderer.sharedMaterial = RuntimeCache.Instance.WireFrame;
+            meshRenderer.enabled = false;
+        }
+
+        ConstructionComplete = true;
+    }
+
+    private void buildDockForIsland(Island island)
     {
         CartographicIsland islandStructure = island.CartographicIsland;
 

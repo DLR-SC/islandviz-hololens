@@ -61,12 +61,12 @@ namespace HoloIslandVis.Visualization
 
         public void OnFocusEnter()
         {
-            RuntimeCache.Instance.toolTipManager.showToolTip(gameObject);
+            RuntimeCache.Instance.ToolTipManager.showToolTip(gameObject);
         }
 
         public void OnFocusExit()
         {
-            RuntimeCache.Instance.toolTipManager.hideToolTip();
+            RuntimeCache.Instance.ToolTipManager.hideToolTip();
         }
     }
 }

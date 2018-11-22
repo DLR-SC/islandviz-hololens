@@ -60,7 +60,17 @@ namespace HoloIslandVis.Sharing
             {
                 initMessageHandlers();
                 _remoteExecutionHelper = new RemoteExecutionHelper(stateMachine);
-                Debug.Log("Connected");
+
+                new Task(async () =>
+                {
+                    UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                    {
+                        syncContent();
+                    });
+
+                    await Task.Delay(5000);
+                }).Start();
+
                 return;
             }
 
@@ -194,7 +204,7 @@ namespace HoloIslandVis.Sharing
             msg.Write(rotation.w);
         }
 
-        private async void syncContent()
+        private void syncContent()
         {
             GameObject contentSurface = RuntimeCache.Instance.ContentSurface;
             GameObject visualizationContainer = RuntimeCache.Instance.VisualizationContainer;
@@ -207,8 +217,6 @@ namespace HoloIslandVis.Sharing
 
             for (int i = 0; i < islands.Count; i++)
                 SendTransform((byte)UserMessageID.Transform, islands[i].gameObject);
-
-            await Task.Delay(4000);
         }
     }
 }

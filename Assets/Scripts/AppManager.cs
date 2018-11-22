@@ -24,10 +24,6 @@ namespace HoloIslandVis
 {
     public class AppManager : SingletonComponent<AppManager>
     {
-        private OSGiProject _osgiProject;
-        private List<CartographicIsland> _islandStructures;
-        private List<Island> _islands;
-
         private string _filepath;
         private bool _isScanning;
         private bool _isUpdating;
@@ -35,114 +31,16 @@ namespace HoloIslandVis
         // Use this for initialization
         void Start()
         {
-            _islands = new List<Island>();
-            ToolTipManager ttm = gameObject.AddComponent<ToolTipManager>();
             RuntimeCache cache = RuntimeCache.Instance;
-            cache.toolTipManager = ttm;
             _isUpdating = false;
             _isScanning = false;
 
             _filepath = Path.Combine(Application.streamingAssetsPath, "rce_lite.model");
             //_filepath = Path.Combine(Application.streamingAssetsPath, "rce_23_05_2017.model");
-            new Task(() => loadVisualization()).Start();
 
-            //inputListenerDebug();
-            //initScene();
+            new Task(() => cache.BuildSceneFromFile(_filepath)).Start();
+            IslandDockBuilder.Instance.ConstructionCompleted += () => setupStateMachine();
             initSceneNoScan();
-        }
-
-        public void loadVisualization()
-        {
-            JSONObject modelData = ModelDataReader.Instance.Read(new Uri(_filepath).AbsolutePath);
-            UnityMainThreadDispatcher.Instance.Enqueue(() => 
-                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done parsing model data.");
-
-            _osgiProject = OSGiProjectParser.Instance.Parse(modelData);
-            UnityMainThreadDispatcher.Instance.Enqueue(() => 
-                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done parsing OSGiProject data.");
-
-            // TODO: Refactor IslandStructureBuilder.
-            _islandStructures = IslandStructureBuilder.Instance.BuildFromProject(_osgiProject);
-            UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done building island structures.");
-
-            // TODO: Refactor GraphLayoutBuilder.
-            GraphLayoutBuilder.Instance.ConstructFDLayout(_osgiProject, 0.25f, 70000);
-            UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done building dependency graph.");
-
-            UnityMainThreadDispatcher.Instance.Enqueue(() => buildGameObjects());
-            UnityMainThreadDispatcher.Instance.Enqueue(() => buildDocks());
-        }
-
-        public void buildGameObjects()
-        {
-            foreach (CartographicIsland island in _islandStructures)
-            {
-                if(island.DependencyVertex != null)
-                {
-                    GameObject islandGameObject =
-                    IslandGameObjectBuilder.Instance.BuildFromIslandStructure(island);
-                    _islands.Add(islandGameObject.GetComponent<Island>());
-                }
-            }
-
-            RuntimeCache.Instance.Islands = _islands;
-            UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done building island game objects.");
-        }
-
-        public void buildDocks()
-        {
-            List<Island> islands = RuntimeCache.Instance.Islands;
-            List<GameObject> docks = new List<GameObject>();
-            RuntimeCache.Instance.Docks = docks;
-
-            for (int i = 0; i < islands.Count; i++)
-                IslandDockBuilder.Instance.BuildDockForIsland(islands[i]);
-
-            for (int i = 0; i < islands.Count; i++)
-            {
-                Island island = islands[i].GetComponent<Island>();
-                GameObject eDock = island.ExportDock;
-                GameObject iDock = island.ImportDock;
-                if (eDock != null)
-                {
-                    docks.Add(eDock);
-                    eDock.GetComponent<DependencyDock>().constructConnectionArrows();
-                }
-                if (iDock != null)
-                {
-                    docks.Add(iDock);
-                    iDock.GetComponent<DependencyDock>().constructConnectionArrows();
-                }
-            }
-
-            Debug.Log("Finished with Dock-GameObject constr.!");
-
-            foreach (Island island in _islands)
-            {
-                island.gameObject.AddComponent<Interactable>();
-                MeshFilter[] islandMeshFilters = island.gameObject.GetComponentsInChildren<MeshFilter>();
-                CombineInstance[] combineInstance = new CombineInstance[islandMeshFilters.Length];
-
-                for (int i = 0; i < islandMeshFilters.Length; i++)
-                {
-                    combineInstance[i].mesh = islandMeshFilters[i].sharedMesh;
-                    combineInstance[i].transform = islandMeshFilters[i].transform.localToWorldMatrix;
-                }
-
-                GameObject highlight = new GameObject("Highlight");
-                highlight.tag = "Highlight";
-                highlight.transform.parent = island.gameObject.transform;
-                highlight.AddComponent<MeshFilter>().mesh.CombineMeshes(combineInstance);
-                MeshRenderer meshRenderer = highlight.AddComponent<MeshRenderer>();
-                meshRenderer.sharedMaterial = RuntimeCache.Instance.WireFrame;
-                meshRenderer.enabled = false;
-            }
-
-            RuntimeCache.Instance.VisualizationContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
-            RuntimeCache.Instance.DependencyContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
         }
 
         public void initScene()
@@ -211,8 +109,6 @@ namespace HoloIslandVis
                     GameObject.Find("Glow").layer = LayerMask.NameToLayer("Default");
                     GameObject.Find("SpatialUnderstanding").SetActive(false);
                 });
-
-                UnityMainThreadDispatcher.Instance.Enqueue(() => setupStateMachine());
             }).Start();
         }
 

@@ -1,4 +1,5 @@
-﻿using HoloIslandVis.OSGiParser;
+﻿using HoloIslandVis.Component.UI;
+using HoloIslandVis.OSGiParser;
 using HoloIslandVis.OSGiParser.Graph;
 using HoloIslandVis.Utility;
 using System.Collections;
@@ -18,9 +19,23 @@ namespace HoloIslandVis.Visualization
 {
     internal class IslandGameObjectBuilder
     {
+        public delegate void ConstructionCompletedHandler();
+        public event ConstructionCompletedHandler ConstructionCompleted = delegate { };
 
         // TODO: Refactor.
         public const float ISLAND_ABOVE_OCEAN = 3.0f;
+
+        private bool _constructionComplete;
+        private List<Island> _islands;
+
+        public bool ConstructionComplete {
+            get { return _constructionComplete; }
+            private set {
+                _constructionComplete = value;
+                if (value)
+                    ConstructionCompleted();
+            }
+        }
 
         private static IslandGameObjectBuilder _instance;
         public static IslandGameObjectBuilder Instance {
@@ -36,10 +51,27 @@ namespace HoloIslandVis.Visualization
 
         private IslandGameObjectBuilder()
         {
-
+            _islands = new List<Island>();
         }
 
-        public GameObject BuildFromIslandStructure(CartographicIsland islandStructure)
+        public void BuildFromIslandStructures(List<CartographicIsland> _islandStructures)
+        {
+            foreach (CartographicIsland islandStructure in _islandStructures)
+            {
+                if (islandStructure.DependencyVertex != null)
+                {
+                    GameObject islandGameObject =
+                    buildFromIslandStructure(islandStructure);
+                    _islands.Add(islandGameObject.GetComponent<Island>());
+                }
+            }
+
+            RuntimeCache.Instance.Islands = _islands;
+            UserInterface.Instance.ParsingProgressText.GetComponent<TextMesh>().text = "Done building island game objects.";
+            ConstructionComplete = true;
+        }
+
+        private GameObject buildFromIslandStructure(CartographicIsland islandStructure)
         {
             // TODO: Refactor.
             int randomSeed = islandStructure.Name.GetHashCode() + 200;

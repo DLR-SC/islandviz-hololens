@@ -63,6 +63,7 @@ namespace HoloIslandVis.Sharing
             }
 
             eventArgs = new GestureInputEventArgs(gestureType, sourceIds, sourcePositions);
+
             if(msg.ReadByte() == 1)
             {
                 string targetName = msg.ReadString().GetString();
