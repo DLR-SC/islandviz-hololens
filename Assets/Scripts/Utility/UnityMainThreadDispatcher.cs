@@ -32,10 +32,10 @@ namespace HoloIslandVis.Utility
         }
 
         public void Enqueue(Action action)
-            => _executionQueue.Enqueue(actionWrapper(action));
+            => _executionQueue?.Enqueue(actionWrapper(action));
 
         public void Enqueue<T>(Action<T> action, T arg)
-            => _executionQueue.Enqueue(actionWrapper(action, arg));
+            => _executionQueue?.Enqueue(actionWrapper(action, arg));
 
         private IEnumerator actionWrapper(Action action)
         {

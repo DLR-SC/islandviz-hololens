@@ -60,9 +60,11 @@ namespace HoloIslandVis.Visualization
             {
                 if (islandStructure.DependencyVertex != null)
                 {
-                    GameObject islandGameObject =
-                    buildFromIslandStructure(islandStructure);
+                    GameObject islandGameObject = buildFromIslandStructure(islandStructure);
                     _islands.Add(islandGameObject.GetComponent<Island>());
+
+                    //ObjectStateSynchronizer stateSynchronizer = islandGameObject.AddComponent<ObjectStateSynchronizer>();
+                    //stateSynchronizer.SyncTransform = true;
                 }
             }
 

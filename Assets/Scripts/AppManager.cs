@@ -5,9 +5,11 @@ using HoloIslandVis.Input;
 using HoloIslandVis.Interaction.Tasking;
 using HoloIslandVis.Mapping;
 using HoloIslandVis.OSGiParser;
-using HoloIslandVis.Sharing;
+//using HoloIslandVis.Sharing;
 using HoloIslandVis.Utility;
 using HoloIslandVis.Visualization;
+using HoloToolkit.Sharing;
+using HoloToolkit.Sharing.SyncModel;
 using HoloToolkit.Unity.InputModule;
 using HoloToolkit.UX.ToolTips;
 using System;
@@ -41,6 +43,12 @@ namespace HoloIslandVis
             new Task(() => cache.BuildSceneFromFile(_filepath)).Start();
             IslandDockBuilder.Instance.ConstructionCompleted += () => setupStateMachine();
             initSceneNoScan();
+        }
+
+        public void SendChange(SyncTransform transf)
+        {
+            transf.Position.Value = new Vector3(UnityEngine.Random.value,0,0);
+            Debug.Log("Message sent.");
         }
 
         public void initScene()
@@ -176,7 +184,7 @@ namespace HoloIslandVis
             stateMachine.AddState(testState);
             stateMachine.Init(testState);
 
-            SharingClient.Instance.Init(stateMachine);
+            //SharingClient.Instance.Init(stateMachine);
         }
 
         public void inputListenerDebug()
