@@ -5,8 +5,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [SyncDataClass]
-public class SyncObjectModel : SyncObject
+public class SyncModel : SyncObject
 {
+    public delegate void SyncBoolChangedHandler(SyncBool syncBool);
+    public event SyncBoolChangedHandler SyncBoolChanged = delegate { };
+
     private string _name;
     private bool _syncTransform;
 
@@ -15,12 +18,17 @@ public class SyncObjectModel : SyncObject
     [SyncData] public SyncVector3 SyncScale;
     [SyncData] public SyncQuaternion SyncRotation;
 
-    public SyncObjectModel(string name, bool syncTransform)
+    public SyncModel(string name, bool syncTransform)
         : base(name)
     {
-        SyncEnabled = new SyncBool(name + "_syncEnabled");
-        SyncPosition = new SyncVector3(name + "_syncPosition");
-        SyncScale = new SyncVector3(name + "_syncScale");
-        SyncRotation = new SyncQuaternion(name + "_syncRotation");
+
+    }
+
+    protected override void NotifyPrimitiveChanged(SyncPrimitive primitive)
+    {
+        if(primitive is SyncBool)
+        {
+            SyncBoolChanged((SyncBool)primitive);
+        }
     }
 }

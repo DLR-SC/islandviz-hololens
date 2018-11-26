@@ -25,7 +25,7 @@ public class ContentSurfaceTransformTracker : MonoBehaviour
         }
     }
 
-    private void OnTransformChange()
+    public void OnTransformChange()
     {
         if (SharingClient.Instance.IsConnected)
             updateShaderParams();

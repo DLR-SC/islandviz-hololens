@@ -16,6 +16,10 @@ public struct IDPair
 //Bidirectional ConnectionPool for storing all of the Dependency arrows and Service connections
 public class ConnectionPool : MonoBehaviour
 {
+    public Dictionary<IDPair, GameObject> Pool {
+        get { return pool; }
+    }
+
     private Dictionary<IDPair, GameObject> pool;
 
     void Start()

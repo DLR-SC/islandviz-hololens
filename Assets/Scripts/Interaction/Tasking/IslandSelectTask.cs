@@ -15,23 +15,30 @@ namespace HoloIslandVis.Interaction.Tasking
     {
         public override void Perform(InputEventArgs eventArgs, Command command)
         {
-            GameObject[] highlights = GameObject.FindGameObjectsWithTag("Highlight");
-            foreach (GameObject highlight in highlights)
+            foreach (GameObject highlight in RuntimeCache.Instance.Highlights)
             {
-                if (highlight.GetComponent<MeshRenderer>().enabled)
-                    highlight.GetComponent<MeshRenderer>().enabled = false;
+                highlight.GetComponent<MeshRenderer>().enabled = false;
+                highlight.SetActive(false);
             }
 
             GameObject currentFocus = RuntimeCache.Instance.CurrentFocus;
+
+            if (currentFocus == null)
+                return; 
+
             GameObject infoPanel = UserInterface.Instance.Panel;
             RuntimeCache cache = RuntimeCache.Instance;
             //Debug.Log(currentFocus.name + "/Highlight");
             Island island = currentFocus.GetComponent<Island>();
+            if (island == null)
+                return;
+
             Transform[] transforms = currentFocus.transform.GetComponentsInChildren<Transform>(true);
             foreach (Transform trans in transforms)
             {
-                if (trans.gameObject.name == "Highlight")
+                if (trans.gameObject.name.Contains("_Highlight"))
                 {
+                    trans.gameObject.SetActive(true);
                     trans.gameObject.GetComponent<MeshRenderer>().enabled = true;
                     infoPanel.SetActive(true);
                     infoPanel.transform.Find("Canvas").Find("Title").GetComponent<Text>().text = currentFocus.name;

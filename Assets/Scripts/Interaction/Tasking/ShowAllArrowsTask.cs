@@ -8,26 +8,34 @@ using UnityEngine;
 
 namespace HoloIslandVis.Interaction.Tasking
 {
-    public class ShowArrowTask : DiscreteInteractionTask
+    public class ShowAllArrowsTask : DiscreteInteractionTask
     {
+        bool expanded;
+
+        public ShowAllArrowsTask()
+        {
+            expanded = false;
+        }
+
         public override void Perform(InputEventArgs eventArgs, Command command)
         {
-            GameObject currentFocus = RuntimeCache.Instance.CurrentFocus;
+            List<GameObject> docks = RuntimeCache.Instance.Docks;
 
-            if(currentFocus != null)
+            foreach(GameObject dock in docks)
             {
-                DependencyDock dependencyDock = currentFocus.GetComponent<DependencyDock>();
+                DependencyDock dependencyDock = dock.GetComponent<DependencyDock>();
 
-                if(dependencyDock != null)
+                if (dependencyDock != null)
                 {
-                    if (!dependencyDock.expanded)
+                    if (!expanded)
                         dependencyDock.showAllDependencies();
                     else
                         dependencyDock.hideAllDependencies();
                 }
             }
 
-            Debug.Log("Showing/Hiding dependencies.");
+            expanded = !expanded;
+            Debug.Log("Showing/Hiding ALL dependencies.");
         }
     }
 }

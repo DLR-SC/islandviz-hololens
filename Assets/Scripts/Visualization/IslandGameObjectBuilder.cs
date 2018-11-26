@@ -14,6 +14,7 @@ using TNetMesh = TriangleNet.Mesh;
 using TNetHalfEdge = TriangleNet.Topology.DCEL.HalfEdge;
 using System;
 using TriangleNet;
+using System.Linq;
 
 namespace HoloIslandVis.Visualization
 {
@@ -62,9 +63,6 @@ namespace HoloIslandVis.Visualization
                 {
                     GameObject islandGameObject = buildFromIslandStructure(islandStructure);
                     _islands.Add(islandGameObject.GetComponent<Island>());
-
-                    //ObjectStateSynchronizer stateSynchronizer = islandGameObject.AddComponent<ObjectStateSynchronizer>();
-                    //stateSynchronizer.SyncTransform = true;
                 }
             }
 
@@ -187,6 +185,7 @@ namespace HoloIslandVis.Visualization
             addRegionColliders(islandComponent.Regions);
             addIslandCollider(islandComponent);
 
+            islandGameObject.transform.localScale = Vector3.one;
             return islandGameObject;
         }
 
@@ -320,11 +319,11 @@ namespace HoloIslandVis.Visualization
 
             UnityEngine.Mesh resultMesh = new UnityEngine.Mesh();
             resultMesh.SetVertices(outVertices);
+            outIndices.Reverse();
             resultMesh.SetTriangles(outIndices, 0);
             resultMesh.SetUVs(0, uvs);
             resultMesh.RecalculateBounds();
             resultMesh.RecalculateNormals();
-
             return resultMesh;
         }
 

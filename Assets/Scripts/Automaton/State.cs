@@ -84,7 +84,8 @@ namespace HoloIslandVis.Automaton
             _interactionTaskTable[new Command(GestureType.ManipulationUpdate)] = _activeInteraction;
             _interactionTaskTable[new Command(GestureType.ManipulationEnd)] = _activeInteraction;
 
-            _activeInteraction.Perform(eventArgs, command);
+            if(_activeInteraction != null)
+                _activeInteraction.Perform(eventArgs, command);
         }
 
         private void moveNext(State newState)

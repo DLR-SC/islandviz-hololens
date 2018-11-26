@@ -598,7 +598,7 @@ PlayerSettings:
   metroCertificatePassword: 
   metroCertificateSubject: DefaultCompany
   metroCertificateIssuer: DefaultCompany
-  metroCertificateNotAfter: 8046403a01a0d501
+  metroCertificateNotAfter: 80f2e32603a3d501
   metroApplicationDescription: Template_3D
   wsaImages: {}
   metroTileShortName: holo-island-viz

@@ -29,7 +29,7 @@ namespace HoloIslandVis.Component.UI
 
             ScanInstructionText.SetActive(false);
             ScanProgressBar.SetActive(false);
-            Panel.SetActive(false);
+            //Panel.SetActive(false);
 
         }
     }

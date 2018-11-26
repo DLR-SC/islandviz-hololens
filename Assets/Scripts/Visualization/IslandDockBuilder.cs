@@ -71,14 +71,26 @@ public class IslandDockBuilder
 
             for (int i = 0; i < islandMeshFilters.Length; i++)
             {
+                if (islandMeshFilters[i].gameObject.name.Contains("Import"))
+                    continue;
+
+                if (islandMeshFilters[i].gameObject.name.Contains("Export"))
+                    continue;
+
                 combineInstance[i].mesh = islandMeshFilters[i].sharedMesh;
                 combineInstance[i].transform = islandMeshFilters[i].transform.localToWorldMatrix;
+                
+
+                combineInstance[i].transform *= Matrix4x4.Scale(Vector3.one*1.0001f);
             }
 
-            GameObject highlight = new GameObject("Highlight");
+            GameObject highlight = new GameObject(island.name + "_Highlight");
             highlight.tag = "Highlight";
             highlight.transform.parent = island.gameObject.transform;
-            highlight.AddComponent<MeshFilter>().mesh.CombineMeshes(combineInstance);
+            highlight.transform.localPosition += new Vector3(0, 0.001f, 0);
+            MeshFilter meshFilter = highlight.AddComponent<MeshFilter>();
+            meshFilter.mesh.CombineMeshes(combineInstance);
+
             MeshRenderer meshRenderer = highlight.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = RuntimeCache.Instance.WireFrame;
             meshRenderer.enabled = false;

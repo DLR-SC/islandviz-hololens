@@ -59,16 +59,15 @@ public class DependencyDock : MonoBehaviour
 
     public void constructConnectionArrows()
     {
-
         //Construct new Arrows
         int cc = 0;
-        foreach (DependencyDock dock in connectedDocks)
+        foreach (DependencyDock otherDock in connectedDocks)
         {
-
             //Check if Arrow already exists
-            IDPair pair = new IDPair(this.GetInstanceID(), dock.GetInstanceID());
-            GameObject conArrow = connectionPool.getConnection(pair);
-            if (conArrow == null)
+            IDPair pair = new IDPair(this.GetInstanceID(), otherDock.GetInstanceID());
+            GameObject connectionArrow = connectionPool.getConnection(pair);
+
+            if (connectionArrow == null)
             {
                 GameObject arrowBody;
                 if (dockType == DockType.Import)
@@ -77,73 +76,78 @@ public class DependencyDock : MonoBehaviour
                     arrowBody = Instantiate(exportArrowPrefab, transform.position, Quaternion.identity);
 
                 GameObject arrowHead = Instantiate(arrowHeadPrefab, transform.position, Quaternion.identity);
-                conArrow = new GameObject();
-                conArrow.name = "Connection To " + dock.gameObject.name;
+
+                connectionArrow = new GameObject();
+                connectionArrow.name = "Connection from " + gameObject.name + " to " + otherDock.gameObject.name;
+                arrowHead.name = connectionArrow.name + "_ArrowHead";
+                arrowBody.name = connectionArrow.name + "_ArrowBody";
+
+                connectionArrow.transform.parent = visualizationContainer.transform;
+                arrowHead.transform.parent = connectionArrow.transform;
+                arrowHead.transform.localPosition = Vector3.zero;
+
+                arrowBody.transform.parent = connectionArrow.transform;
+                arrowBody.transform.localPosition = Vector3.zero;
+
+                connectionArrow.transform.localScale = Vector3.one;
+                connectionArrow.transform.rotation = Quaternion.identity;
 
                 #region adjust transform
-                Vector3 dirVec = dock.transform.position - transform.position;
-                //Vector3 dirVecNorm = dirVec.normalized;
-                //float distance = dirVec.magnitude;
 
-                //arrowBody.transform.position = arrowBody.transform.position + dirVecNorm * (distance / 2);
-                //Vector3 newScale = new Vector3(distance, distance, 0.02f * 20f * dockWeights[cc]);
-                //arrowBody.transform.localScale = newScale;
+                Vector3d dockLocalPos       = new Vector3d(transform.localPosition);
+                Vector3d otherDockLocalPos  = new Vector3d(otherDock.transform.localPosition);
+                Vector3d islandPos          = new Vector3d(transform.parent.localPosition);
+                Vector3d otherIslandPos     = new Vector3d(otherDock.transform.parent.localPosition);
 
-                //float angle = Vector3.Angle(visualizationContainer.transform.right, dirVecNorm);
-                //Vector3 cross = Vector3.Cross(visualizationContainer.transform.right, dirVecNorm);
-                //if (cross.y < 0)
-                //    angle = -angle;
+                Vector3d dockPos            = islandPos + dockLocalPos;
+                Vector3d otherDockPos       = otherIslandPos + otherDockLocalPos;
+                       
+                Vector3d direction          = otherDockPos - dockPos;
 
-                //arrowBody.transform.Rotate(visualizationContainer.transform.up, angle);
+                direction.y = 0.0f;
+                double distance = direction.magnitude;
 
-                //arrowHead.transform.parent = conArrow.transform;
-                //arrowBody.transform.parent = conArrow.transform;
-                //conArrow.transform.parent = dependencyContainer.transform;
+                Vector3d connectionArrowPos = dockPos + (direction / 2);
+                connectionArrow.transform.localPosition = connectionArrowPos.SinglePrecision;
 
-                dirVec.y = 0;
-                float distance = dirVec.magnitude;
-                float sDWidth = gameObject.GetComponent<Collider>().bounds.extents.x;
-                float tDWidth = dock.gameObject.GetComponent<Collider>().bounds.extents.x;
-                float aWidth = 0.02f * 20f * dockWeights[cc]; // Do not hardcode arrow width
-                float connectionLength = distance - (sDWidth + tDWidth);
-                Vector3 newScale = new Vector3(connectionLength, connectionLength, 0.02f * 20f * dockWeights[cc]); // Do not hardcode arrow width
-                arrowBody.transform.localScale = newScale;
+                double angle = Vector3d.Angle(Vector3d.right, direction.normalized);
+                Vector3d cross = Vector3d.Cross(Vector3d.right, direction.normalized);
+                if (cross.y < 0) angle = -angle;
+
+                connectionArrow.transform.localRotation = Quaternion.Euler(0, (float)angle, 0);
+
+                float sDWidth = gameObject.GetComponent<Collider>().bounds.extents.magnitude;
+                float tDWidth = otherDock.gameObject.GetComponent<Collider>().bounds.extents.magnitude;
+                float cumulativeWidth = (sDWidth + tDWidth) * 30;
+                float conLength = (float)distance - cumulativeWidth;
+
+                Vector3 arrowBodyScale = new Vector3(conLength, conLength, arrowBody.transform.localScale.z);
+                arrowBody.transform.localScale = arrowBodyScale;
+
+                float maxHeight = Mathf.Max(gameObject.GetComponent<Collider>().bounds.extents.y, otherDock.gameObject.GetComponent<Collider>().bounds.extents.y);
+                connectionArrow.transform.localPosition += new Vector3(0, maxHeight+cumulativeWidth, 0);
 
                 #region Arrowhead
-                newScale.x = 0.02f * 20f * dockWeights[cc];
-                newScale.y = 0.01f;
-                arrowHead.transform.localScale = newScale;
+                arrowBodyScale.x = 0.02f * 30f * dockWeights[cc];
+                arrowBodyScale.y = 0.01f;
+                arrowHead.transform.localScale = arrowBodyScale;
                 if (dockType == DockType.Import)
                 {
-                    arrowHead.transform.position += new Vector3(-connectionLength * 0.5f, 0f, 0f);
+                    arrowHead.transform.localPosition += new Vector3(-conLength * 0.5f, 0f, 0f);
                     arrowHead.transform.localEulerAngles = new Vector3(0f, 180f, -39f);
                 }
                 else
                 {
-                    arrowHead.transform.position += new Vector3(connectionLength * 0.5f, 0f, 0f);
+                    arrowHead.transform.localPosition += new Vector3(conLength * 0.5f, 0f, 0f);
                     arrowHead.transform.localEulerAngles = new Vector3(0f, 0f, -39f);
                 }
-
-                arrowHead.transform.parent = conArrow.transform;
+                #endregion
                 #endregion
 
-                arrowBody.transform.parent = conArrow.transform;
-                float maxHeight = Mathf.Max(gameObject.GetComponent<Collider>().bounds.extents.y, dock.gameObject.GetComponent<Collider>().bounds.extents.y);
-                conArrow.transform.position += new Vector3((connectionLength / 2f), maxHeight, 0);
-
-                conArrow.transform.parent = rotPivot.transform;
-                float angle = Vector3.Angle(Vector3.right, dirVec / distance);
-                Vector3 cross = Vector3.Cross(Vector3.right, dirVec / distance);
-                if (cross.y < 0) angle = -angle;
-                rotPivot.transform.Rotate(Vector3.up, angle);
-                conArrow.transform.parent = null;
-                conArrow.transform.parent = dependencyContainer.transform;
-                rotPivot.transform.Rotate(Vector3.up, -angle);
-                #endregion
-                conArrow.SetActive(false);
-                connectionPool.AddConnection(pair, conArrow);
+                connectionPool.AddConnection(pair, connectionArrow);
+                connectionArrow.SetActive(false);
             }
-            connectionArrows.Add(conArrow);
+            connectionArrows.Add(connectionArrow);
             cc++;
         }
 

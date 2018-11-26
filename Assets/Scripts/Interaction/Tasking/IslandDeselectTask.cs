@@ -19,9 +19,10 @@ namespace HoloIslandVis.Interaction.Tasking
                 Transform[] transforms = island.transform.GetComponentsInChildren<Transform>(true);
                 foreach (Transform trans in transforms)
                 {
-                    if (trans.gameObject.name == "Highlight")
+                    if (trans.gameObject.name.Contains("_Highlight"))
                     {
                         trans.gameObject.GetComponent<MeshRenderer>().enabled = false;
+                        trans.gameObject.SetActive(false);
                         UserInterface.Instance.Panel.SetActive(false);
                     }
                 }

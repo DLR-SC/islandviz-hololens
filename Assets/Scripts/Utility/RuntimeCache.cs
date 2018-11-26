@@ -52,6 +52,7 @@ namespace HoloIslandVis.Utility
         public OSGiProject OSGiProject { get; set; }
         public List<CartographicIsland> IslandStructures { get; set; }
         public List<Island> Islands { get; set; }
+        public List<GameObject> Highlights { get; set; }
         public List<GameObject> Docks { get; set; }
 
         public GameObject CurrentFocus { get; set; }
@@ -149,6 +150,7 @@ namespace HoloIslandVis.Utility
         {
             // Init
             _dockPrefabs = new Dictionary<DockType, GameObject>();
+            Highlights = new List<GameObject>();
 
             // Object references
             _visualizationContainer = GameObject.Find("VisualizationContainer");
@@ -202,8 +204,37 @@ namespace HoloIslandVis.Utility
 
             IslandDockBuilder.Instance.ConstructionCompleted += () =>
             {
-                UnityMainThreadDispatcher.Instance.Enqueue(() => _visualizationContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f));
-                UnityMainThreadDispatcher.Instance.Enqueue(() => _dependencyContainer.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f));
+                _contentSurface.AddComponent<ObjectStateSynchronizer>().TransformChange +=
+                    _contentSurface.GetComponent<ContentSurfaceTransformTracker>().OnTransformChange;
+
+                _visualizationContainer.AddComponent<ObjectStateSynchronizer>();
+                _dependencyContainer.AddComponent<ObjectStateSynchronizer>();
+
+                foreach (Island island in Islands)
+                    island.gameObject.AddComponent<ObjectStateSynchronizer>();
+
+                foreach (GameObject connection in _connectionPool.Pool.Values.Distinct())
+                {
+                    connection.AddComponent<ObjectStateSynchronizer>();
+                    Transform[] children = connection.GetComponentsInChildren<Transform>(true);
+                    for (int i = 1; i < children.Length; i++)
+                        children[i].gameObject.AddComponent<ObjectStateSynchronizer>();
+                }
+
+                DependencyDock[] docks = GameObject.FindObjectsOfType<DependencyDock>();
+                foreach (DependencyDock dock in docks)
+                    dock.gameObject.AddComponent<ObjectStateSynchronizer>();
+
+                var highlights = Resources.FindObjectsOfTypeAll<GameObject>().Where(obj => obj.name.Contains("_Highlight"));
+                foreach (GameObject highlight in highlights)
+                {
+                    highlight.AddComponent<ObjectStateSynchronizer>();
+                    highlight.SetActive(false);
+                }
+
+                UserInterface.Instance.Panel.AddComponent<ObjectStateSynchronizer>();
+                UserInterface.Instance.Panel.SetActive(false);
+                UserInterface.Instance.ParsingProgressText.SetActive(false);
             };
 
             UnityMainThreadDispatcher.Instance.Enqueue(IslandGameObjectBuilder.Instance.BuildFromIslandStructures, IslandStructures);

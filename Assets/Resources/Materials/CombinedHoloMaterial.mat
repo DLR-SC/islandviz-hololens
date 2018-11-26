@@ -9,7 +9,7 @@ Material:
   m_Name: CombinedHoloMaterial
   m_Shader: {fileID: 4800000, guid: 0dfd583634d7665438cc76a91d8a3e5b, type: 3}
   m_ShaderKeywords: _ALPHABLEND_ON _BORDER_LIGHT_USES_HOVER_COLOR _DIRECTIONAL_LIGHT
-    _GLOSSYREFLECTIONS_OFF _HOVER_LIGHT _SPECULARHIGHLIGHTS_OFF _SPECULAR_HIGHLIGHTS
+    _GLOSSYREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -40,7 +40,7 @@ Material:
     - _ClippingPlaneBorder: 0
     - _ClippingPlaneBorderWidth: 0.025
     - _ColorWriteMask: 15
-    - _CullMode: 0
+    - _CullMode: 2
     - _CustomMode: 2
     - _Cutoff: 0.5
     - _DirectionalLight: 1
@@ -55,7 +55,7 @@ Material:
     - _EnvironmentColoring: 0
     - _FadeBeginDistance: 0.85
     - _FadeCompleteDistance: 0.5
-    - _HoverLight: 1
+    - _HoverLight: 0
     - _HoverLightOpaque: 0
     - _InnerGlow: 0
     - _Metallic: 0
@@ -69,10 +69,10 @@ Material:
     - _RimLight: 0
     - _RimPower: 0.25
     - _RoundCornerMargin: 0
-    - _RoundCornerRadius: 0.25
+    - _RoundCornerRadius: 0.01
     - _RoundCorners: 0
     - _Smoothness: 0.5
-    - _SpecularHighlights: 1
+    - _SpecularHighlights: 0
     - _SrcBlend: 5
     - _ZTest: 4
     - _ZWrite: 1
@@ -87,6 +87,6 @@ Material:
     - _HoverColorOpaqueOverride: {r: 1, g: 1, b: 1, a: 1}
     - _HoverColorOverride: {r: 1, g: 1, b: 1, a: 1}
     - _InnerGlowColor: {r: 1, g: 1, b: 1, a: 0.75}
-    - _ReferenceNormal: {r: 0.0077407924, g: 0.99911785, b: 0.04127488, a: 0}
-    - _ReferencePosition: {r: 1.5854411, g: -0.6071058, b: 0.3919261, a: 0}
+    - _ReferenceNormal: {r: -0.0048432355, g: 0.999975, b: -0.005142232, a: 0}
+    - _ReferencePosition: {r: 1.0771627, g: -1.0803463, b: 0.8342355, a: 0}
     - _RimColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

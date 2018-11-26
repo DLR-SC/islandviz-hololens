@@ -160,6 +160,7 @@ namespace HoloIslandVis
 
             Command commandImportDockSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ImportDock);
             Command commandExportDockSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
+            Command commandAllDockSelect = new Command(GestureType.OneHandDoubleTap, KeywordType.Invariant, InteractableType.Invariant);
 
             Command commandSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Island);
             Command commandDeselect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None);
@@ -167,6 +168,7 @@ namespace HoloIslandVis
             Command commandSurfaceZoom = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
 
             ShowArrowTask showArrowTask = new ShowArrowTask();
+            ShowAllArrowsTask showAllArrowsTask = new ShowAllArrowsTask();
 
             IslandSelectTask islandSelectTask = new IslandSelectTask();
             IslandDeselectTask islandDeselectTask = new IslandDeselectTask();
@@ -175,6 +177,7 @@ namespace HoloIslandVis
 
             testState.AddInteractionTask(commandImportDockSelect, showArrowTask);
             testState.AddInteractionTask(commandExportDockSelect, showArrowTask);
+            testState.AddInteractionTask(commandAllDockSelect, showAllArrowsTask);
 
             testState.AddInteractionTask(commandSelect, islandSelectTask);
             testState.AddInteractionTask(commandDeselect, islandDeselectTask);
