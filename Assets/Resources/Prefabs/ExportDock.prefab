@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 4176560928635448}
   - component: {fileID: 33938886738797290}
   - component: {fileID: 23743690377738538}
-  - component: {fileID: 114540635330222162}
   - component: {fileID: 65758982728609710}
+  - component: {fileID: 114652184310143890}
   m_Layer: 0
   m_Name: ExportDock
   m_TagString: Untagged
@@ -97,7 +97,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114540635330222162
+--- !u!114 &114652184310143890
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -105,7 +105,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1251808111442520}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11b4ad3852bb09c4289e4363f5b87765, type: 3}
+  m_Script: {fileID: 11500000, guid: 9c4c6ffba6a948a4cb83f98f7745d5bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   expanded: 0

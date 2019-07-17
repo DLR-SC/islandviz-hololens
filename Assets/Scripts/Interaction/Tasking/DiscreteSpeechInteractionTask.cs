@@ -1,0 +1,16 @@
+﻿
+using System.Collections;
+
+namespace HoloIslandVis.Interaction.Tasking
+{
+    public abstract class DiscreteSpeechInteractionTask : DiscreteInteractionTask
+    {
+        public override IEnumerator Perform(InteractionEventArgs eventArgs)
+        {
+            var casted = (SpeechInteractionEventArgs) eventArgs;
+            yield return Perform(casted);
+        }
+
+        public abstract IEnumerator Perform(SpeechInteractionEventArgs eventArgs);
+    }
+}

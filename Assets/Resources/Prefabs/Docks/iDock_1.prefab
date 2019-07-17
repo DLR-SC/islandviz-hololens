@@ -22,8 +22,8 @@ GameObject:
   - component: {fileID: 33296569021148446}
   - component: {fileID: 23645826927223988}
   - component: {fileID: 65260821207475426}
-  - component: {fileID: 114028280439210902}
-  - component: {fileID: 114657403766153684}
+  - component: {fileID: 114204516870362740}
+  - component: {fileID: 114159320241949182}
   m_Layer: 0
   m_Name: iDock_1
   m_TagString: ImportDock
@@ -98,7 +98,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.2645, y: 1.0594, z: 1.3889}
   m_Center: {x: -0.0024499893, y: 0.27850002, z: -0.0021499991}
---- !u!114 &114028280439210902
+--- !u!114 &114159320241949182
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -106,18 +106,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 1974012847536288}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11b4ad3852bb09c4289e4363f5b87765, type: 3}
+  m_Script: {fileID: 11500000, guid: 287794bcba9d7ec4f8a68e7e1f2ba8b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Highlight: {fileID: 0}
+  Type: 5
+  Selectable: 1
+  Focusable: 1
+--- !u!114 &114204516870362740
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1974012847536288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c4c6ffba6a948a4cb83f98f7745d5bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   expanded: 0
---- !u!114 &114657403766153684
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1974012847536288}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c997766ea4474642bf8e3c56d58dad0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

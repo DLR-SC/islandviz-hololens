@@ -1,0 +1,27 @@
+﻿using HoloIslandVis.Input.Speech;
+using System;
+using UnityEngine.Windows.Speech;
+
+namespace HoloIslandVis.Interaction
+{
+    public class SpeechInteractionEventArgs : InteractionEventArgs
+    {
+        public string Data;
+        public string Input;
+        public KeywordType Keyword;
+        public ConfidenceLevel Confidence;
+
+        public Interactable Focused;
+        public Interactable Selected;
+
+        public SpeechInteractionEventArgs(SpeechInputEventArgs eventArgs)
+        {
+            Data = eventArgs.Data;
+            Input = eventArgs.Input;
+            Confidence = eventArgs.Confidence;
+
+            string keywordString = eventArgs.Keyword.ToString();
+            Keyword = (KeywordType)Enum.Parse(typeof(KeywordType), keywordString, true);
+        }
+    }
+}

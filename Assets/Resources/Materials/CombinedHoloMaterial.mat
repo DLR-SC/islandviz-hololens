@@ -7,42 +7,77 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: CombinedHoloMaterial
-  m_Shader: {fileID: 4800000, guid: 0dfd583634d7665438cc76a91d8a3e5b, type: 3}
-  m_ShaderKeywords: _ALPHABLEND_ON _BORDER_LIGHT_USES_HOVER_COLOR _DIRECTIONAL_LIGHT
-    _GLOSSYREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF
+  m_Shader: {fileID: 4800000, guid: 857c246bc1bfe514097dccd67870670d, type: 3}
+  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA _ALPHABLEND_ON _BORDER_LIGHT_USES_HOVER_COLOR
+    _DIRECTIONAL_LIGHT _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3001
+  m_CustomRenderQueue: 3011
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: cdcc847a4b33f1e48be060f03b461c2e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AlbedoAlphaMode: 0
     - _BlendOp: 0
+    - _BlendThreshold: 0.01
     - _BorderLight: 0
     - _BorderLightOpaque: 0
     - _BorderLightUsesHoverColor: 1
     - _BorderMinValue: 0.1
     - _BorderWidth: 0.1
+    - _BumpScale: 1
     - _ClippingPlane: 0
     - _ClippingPlaneBorder: 0
-    - _ClippingPlaneBorderWidth: 0.025
+    - _ClippingPlaneBorderWidth: 1
     - _ColorWriteMask: 15
     - _CullMode: 2
     - _CustomMode: 2
     - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
     - _DirectionalLight: 1
     - _DstBlend: 10
     - _EdgeSmoothingValue: 0.002
@@ -53,40 +88,70 @@ Material:
     - _EnvironmentColorIntensity: 0.5
     - _EnvironmentColorThreshold: 1.5
     - _EnvironmentColoring: 0
-    - _FadeBeginDistance: 0.85
-    - _FadeCompleteDistance: 0.5
+    - _FadeBeginDistance: 1.67
+    - _FadeCompleteDistance: 3.49
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
     - _HoverLight: 0
     - _HoverLightOpaque: 0
     - _InnerGlow: 0
     - _Metallic: 0
     - _Mode: 5
     - _NearPlaneFade: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _ReferenceExtent: 1
     - _ReferenceRadius: 0.25
     - _Reflections: 0
     - _Refraction: 0
     - _RefractiveIndex: 0
-    - _RenderQueueOverride: 3001
+    - _RenderQueueOverride: 3011
     - _RimLight: 0
     - _RimPower: 0.25
     - _RoundCornerMargin: 0
     - _RoundCornerRadius: 0.01
     - _RoundCorners: 0
     - _Smoothness: 0.5
+    - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 0
     - _SrcBlend: 5
+    - _UVSec: 0
     - _ZTest: 4
     - _ZWrite: 1
     m_Colors:
-    - _ClipPlane: {r: 0, g: 1, b: 0, a: 0}
-    - _ClippingPlaneBorderColor: {r: 1, g: 0.2, b: 0, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _BlendColor: {r: 0.949, g: 0.62, b: 1, a: 1}
+    - _ClipPlane: {r: 0, g: 269.34, b: 0, a: 0}
+    - _ClippingPlaneBorderColor: {r: 1, g: 0.20000002, b: 0, a: 1}
+    - _Color: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _EmissiveColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EnvironmentColorX: {r: 1, g: 0, b: 0, a: 1}
+    - _EnvironmentColorX: {r: 0.764151, g: 0.630785, b: 0.630785, a: 1}
     - _EnvironmentColorY: {r: 0, g: 1, b: 0, a: 1}
     - _EnvironmentColorZ: {r: 0, g: 0, b: 1, a: 1}
     - _HoverColorOpaqueOverride: {r: 1, g: 1, b: 1, a: 1}
-    - _HoverColorOverride: {r: 1, g: 1, b: 1, a: 1}
+    - _HoverColorOverride: {r: 0.5849056, g: 0.48282304, b: 0.48282304, a: 1}
     - _InnerGlowColor: {r: 1, g: 1, b: 1, a: 0.75}
-    - _ReferenceNormal: {r: -0.0048432355, g: 0.999975, b: -0.005142232, a: 0}
-    - _ReferencePosition: {r: 1.0771627, g: -1.0803463, b: 0.8342355, a: 0}
+    - _NormalClipBack: {r: 0, g: -0.00000011920929, b: 1.0000001, a: 0}
+    - _NormalClipBottom: {r: 0, g: 1, b: 0, a: 0}
+    - _NormalClipFront: {r: 0, g: -0.00000011920929, b: -1.0000001, a: 0}
+    - _NormalClipLeft: {r: -1.0000001, g: -0.00000011920929, b: 0, a: 0}
+    - _NormalClipPlane1: {r: 0, g: 1, b: 0, a: 1}
+    - _NormalClipPlane2: {r: 0, g: 0, b: 0, a: 1}
+    - _NormalClipPlane3: {r: 0, g: 0, b: 0, a: 1}
+    - _NormalClipPlane4: {r: 0, g: 0, b: 0, a: 1}
+    - _NormalClipPlane5: {r: 0, g: 0, b: 0, a: 1}
+    - _NormalClipRight: {r: 1.0000001, g: -0.00000011920929, b: 0, a: 0}
+    - _PositionClipBack: {r: -2.0924675, g: -0.57227325, b: 1.3680391, a: 0}
+    - _PositionClipBottom: {r: -2.0924675, g: -0.57227325, b: 1.8680391, a: 0}
+    - _PositionClipFront: {r: -2.0924675, g: -0.57227325, b: 2.3680391, a: 0}
+    - _PositionClipLeft: {r: -1.5924675, g: -0.57227325, b: 1.8680391, a: 0}
+    - _PositionClipPlane1: {r: 0, g: 0, b: 0, a: 1}
+    - _PositionClipPlane2: {r: 0, g: 0, b: 0, a: 1}
+    - _PositionClipPlane3: {r: 0, g: 0, b: 0, a: 1}
+    - _PositionClipPlane4: {r: 0, g: 0, b: 0, a: 1}
+    - _PositionClipPlane5: {r: 0, g: 0, b: 0, a: 1}
+    - _PositionClipRight: {r: -2.5924675, g: -0.57227325, b: 1.8680391, a: 0}
+    - _ReferenceNormal: {r: 0.7200348, g: 0.68544304, b: -0.108248755, a: 0}
+    - _ReferencePosition: {r: 0.14390682, g: -0.5106243, b: 1.1131384, a: 0}
     - _RimColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
