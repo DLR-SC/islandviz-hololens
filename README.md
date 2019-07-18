@@ -5,11 +5,8 @@ HoloLens port of [IslandViz](https://github.com/DLR-SC/island-viz), a visualizat
 
 This project is developed and built using <b>Unity 2018.1.6f1</b>. To import the cloned assets into a new Unity project, open the repository's root directory from within the Unity project loader. The application relies on external packages Triangle.NET and JSONObject. They are added as submodules and can be acquired from the repository.
 ```
-
 git submodule init
-
 git submodule update
-
 ```
 Download the [Mixed Reality Toolkit 2017.4.0.0](https://github.com/microsoft/MixedRealityToolkit-Unity/releases/tag/2017.4.0.0) Unity package. Navigate to `Assets -> Import Package -> Custom Package…`  and import the package. Next, navigate to `Edit -> Project Settings -> Player`. Under 'Other Settings', make sure the Scripting Runtime Version is set to '.NET 4.x Equivalent' and under Scripting Backend select '.NET'. Under 'XR Settings' check 'Virtual Reality Supported'. Add the Windows Mixed Reality SDK.
 
