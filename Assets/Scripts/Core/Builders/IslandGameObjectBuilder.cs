@@ -68,9 +68,10 @@ namespace HoloIslandVis.Core.Builders
             yield return BuildDock(islandComponent, DockType.Import);
             yield return BuildDock(islandComponent, DockType.Export);
 
+            SetLayerRecursively(islandGameObject, LayerMask.NameToLayer("Ignore Raycast"));
             AddRegionColliders(islandComponent.Regions);
-            AddIslandCollider(islandComponent);
             SetIslandPosition(islandComponent);
+            AddIslandCollider(islandComponent);
 
             UIManager.Instance.Visualization.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
         }
@@ -406,6 +407,18 @@ namespace HoloIslandVis.Core.Builders
             islandGameObject.transform.localRotation = UIManager.Instance.ContentPane.transform.localRotation;
             islandGameObject.transform.localPosition = position;
             islandGameObject.transform.localScale = Vector3.one;
+        }
+
+        void SetLayerRecursively(GameObject obj, int layer)
+        {
+            if (null == obj) return;
+            obj.layer = layer;
+
+            foreach (Transform childTransform in obj.transform)
+            {
+                if (childTransform == null) return;
+                SetLayerRecursively(childTransform.gameObject, layer);
+            }
         }
     }
 }
