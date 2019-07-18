@@ -16,4 +16,4 @@ Download the [Mixed Reality Toolkit 2017.4.0.0](https://github.com/microsoft/Mix
  
 <h2>Building the application</h2>
 
-Under `File -> Build Settings… `, switch the target Platform to <b>Universal Windows Platform</b> . Click `Mixed Reality Toolkit -> Build Window`, and hit 'Build Unity Project'. This will yield a Visual Studio Solution with the compiled Unity project assemblies, ready for deployment to the HoloLens. For detailed instructions on how to deploy using Visual Studio, [refer to the documentation](https://docs.microsoft.com/en-us/windows/mixed-reality/install-the-tools).
+Under `File -> Build Settings… `, switch the target Platform to <b>Universal Windows Platform</b> . Click `Mixed Reality Toolkit -> Build Window`, and hit 'Build Unity Project'. This will yield a Visual Studio Solution with the compiled Unity project assemblies, ready for deployment to HoloLens. For detailed instructions on how to deploy using Visual Studio, [refer to the documentation](https://docs.microsoft.com/en-us/windows/mixed-reality/install-the-tools).
