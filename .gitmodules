@@ -1,6 +1,12 @@
 [submodule "Assets/External/JSONObject"]
+	
 	path = Assets/External/JSONObject
+	
 	url = https://github.com/mtschoen/JSONObject.git
+
 [submodule "Assets/External/Triangle.NET-for-UWP"]
+	
 	path = Assets/External/Triangle.NET-for-UWP
+	
 	url = https://github.com/arturb90/Triangle.NET-for-UWP.git
+

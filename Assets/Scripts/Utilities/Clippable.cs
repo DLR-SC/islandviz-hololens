@@ -86,7 +86,8 @@ public class Clippable : MonoBehaviour
             WireframeMaterial.SetVector("_NormalClipRight", ClippingPlaneRight.transform.up);
             WireframeMaterial.SetVector("_NormalClipLeft", ClippingPlaneLeft.transform.up);
 
-            ObjectStateSynchronizer.TransformChanged();
+            if(ObjectStateSynchronizer.enabled)    
+                ObjectStateSynchronizer.TransformChanged();
         }
     }
 }

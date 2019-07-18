@@ -27,7 +27,7 @@ namespace HoloIslandVis.Core
             AppConfig.SharingEnabled = false;
             AppConfig.IsServerInstance = false;
 
-            AppConfig.SharingServerAddress = "192.168.0.98";
+            AppConfig.SharingServerAddress = "192.168.0.99";
             AppConfig.SharingServerPort = 20602;
 
             Initializer.AllInitialized += StartApplication;
@@ -47,6 +47,7 @@ namespace HoloIslandVis.Core
 
         public void LoadVisualization()
         {
+
             AppConfig.SharingEnabled = GameObject.Find("SharingEnabledToggle").GetComponent<Toggle>().isOn;
             AppConfig.IsServerInstance = GameObject.Find("ServerInstanceToggle").GetComponent<Toggle>().isOn;
 

@@ -15,6 +15,7 @@ namespace HoloIslandVis.Controller.NLU
 
         private string _serverEndpoint;
         private string _latestResponse;
+        private bool _errorState;
 
         void Start()
         {
@@ -35,14 +36,18 @@ namespace HoloIslandVis.Controller.NLU
                 focusedType, selected, selectedType, gesture);
 
             yield return FetchData(eventArgs.Input, nluContext);
-            string response = _latestResponse;
 
-            JSONObject jsonObject = new JSONObject(response);
-            string intent = jsonObject.GetField("intent_name").ToString();
-            intent = char.ToUpper(intent[1]) + intent.Substring(2, intent.Length - 3);
+            if (!_errorState)
+            {
+                string response = _latestResponse;
 
-            eventArgs.Keyword = (KeywordType)Enum.Parse(typeof(KeywordType), intent);
-            eventArgs.Data = jsonObject.GetField("data").ToString();
+                JSONObject jsonObject = new JSONObject(response);
+                string intent = jsonObject.GetField("intent_name").ToString();
+                intent = char.ToUpper(intent[1]) + intent.Substring(2, intent.Length - 3);
+
+                eventArgs.Keyword = (KeywordType)Enum.Parse(typeof(KeywordType), intent);
+                eventArgs.Data = jsonObject.GetField("data").ToString();
+            }
 
             yield return null;
         }
@@ -52,11 +57,17 @@ namespace HoloIslandVis.Controller.NLU
             string putData = buildPutData(input, context);
             byte[] bytes = Encoding.UTF8.GetBytes(putData);
             yield return null;
-            var webRequest = UnityWebRequest.Put(_serverEndpoint + "api", bytes);
+            var webRequest = UnityWebRequest.Put(_serverEndpoint+"api", bytes);
             yield return webRequest.SendWebRequest();
 
-            if (webRequest.isNetworkError) Debug.Log("Error While Sending: " + webRequest.error);
+            if (webRequest.isNetworkError)
+            {
+                Debug.Log("Error While Sending: " + webRequest.error);
+                _errorState = true;
+            }
             else Debug.Log("Received: " + webRequest.downloadHandler.text);
+
+
 
             _latestResponse = webRequest.downloadHandler.text;
         }

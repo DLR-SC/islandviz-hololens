@@ -26,7 +26,7 @@ namespace HoloIslandVis.Sharing
         private Observable<Vector3> _scale;
         private Observable<Quaternion> _rotation;
 
-        private void Awake()
+        private void Start()
         {
             AppConfig = GameObject.Find("AppConfig").GetComponent<AppConfig>();
 
@@ -169,12 +169,6 @@ namespace HoloIslandVis.Sharing
             }
 
         }
-
-        private void OnEnable()
-            => _enabled.Value = true;
-
-        private void OnDisable()
-            => _enabled.Value = false;
 
         private void OnEnabledChange(bool value)
             => SyncModel.SyncEnabled.Value = value;

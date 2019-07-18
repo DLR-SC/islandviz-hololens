@@ -1,4 +1,5 @@
 ﻿using HoloIslandVis.Core;
+using HoloIslandVis.Sharing;
 using HoloToolkit.Sharing;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ public class SyncManager : SingletonComponent<SyncManager>
     public delegate void SyncManagerStartHandler();
     public event SyncManagerStartHandler SyncManagerStarted = delegate { };
 
+    public ObjectStateSynchronizer ObjectStateSynchronizer;
     public SharingStage SharingStage;
     public AppConfig AppConfig;
 

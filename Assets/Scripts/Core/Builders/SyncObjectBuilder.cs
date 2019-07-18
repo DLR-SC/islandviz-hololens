@@ -11,11 +11,12 @@ namespace HoloIslandVis.Core.Builders
     {
         public delegate void SyncObjectsBuiltHandler();
         public event SyncObjectsBuiltHandler SyncObjectsBuilt = delegate { };
+        public SyncManager syncManager;
 
         public IEnumerator BuildSyncObjects()
         {
-            //Visualization visualization = UIManager.Instance.Visualization;
-            //visualization.gameObject.AddComponent<ObjectStateSynchronizer>();
+            syncManager.gameObject.SetActive(true);
+            Visualization visualization = UIManager.Instance.Visualization;
 
             DependencyContainer dependencyContainer = UIManager.Instance.DependencyContainer;
             var dependencies = dependencyContainer.GetComponentsInChildren<DependencyArrow>();
@@ -26,7 +27,6 @@ namespace HoloIslandVis.Core.Builders
                 //dependencies[i].gameObject.AddComponent<ObjectEnableSynchronizer>();
                 dependencies[i].gameObject.SetActive(false);
             }
-
             SyncObjectsBuilt();
             yield return null;
         }

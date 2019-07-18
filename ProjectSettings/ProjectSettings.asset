@@ -555,9 +555,9 @@ PlayerSettings:
   metroPackageVersion: 1.0.0.0
   metroCertificatePath: Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
-  metroCertificateSubject: DefaultCompany
-  metroCertificateIssuer: DefaultCompany
-  metroCertificateNotAfter: 001b718fe3fbd501
+  metroCertificateSubject: DLR
+  metroCertificateIssuer: DLR
+  metroCertificateNotAfter: 008e1107485cd601
   metroApplicationDescription: IslandViz_For_HoloLens
   wsaImages: {}
   metroTileShortName: IslandViz for HoloLens

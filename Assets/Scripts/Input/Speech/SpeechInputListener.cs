@@ -1,4 +1,5 @@
-﻿using HoloIslandVis.Core;
+﻿using HoloIslandVis.Controller.NLU;
+using HoloIslandVis.Core;
 using HoloToolkit.Unity;
 using HoloToolkit.Unity.InputModule;
 using System;
@@ -12,6 +13,7 @@ namespace HoloIslandVis.Input.Speech
     public enum KeywordType
     {
         None,
+        Show,
         Select,
         Deselect,
         Invariant
@@ -45,6 +47,8 @@ namespace HoloIslandVis.Input.Speech
         void Start()
         {
             InputManager.Instance.AddGlobalListener(gameObject);
+            ExternalResponder = GameObject.Find("NLUService").GetComponent<NLUServiceClient>();
+
 
             _keywordTypeTable = new Dictionary<string, KeywordType>()
             {
@@ -86,6 +90,7 @@ namespace HoloIslandVis.Input.Speech
 
         private IEnumerator ProcessInput(SpeechInputEventArgs eventArgs)
         {
+            Debug.Log("Processing '" + eventArgs.Input + "'");
             _isProcessing = true;
             Action<SpeechInputEventArgs> action;
 
@@ -101,6 +106,7 @@ namespace HoloIslandVis.Input.Speech
             {
                 eventArgs.Keyword = (KeywordType)Enum.Parse(typeof(KeywordType), eventArgs.Input);
             }
+
 
             action = response => SpeechInputEvent(response);
             InputHandler.Instance.InvokeSpeechInputEvent(action, eventArgs);
