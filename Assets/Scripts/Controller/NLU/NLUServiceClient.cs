@@ -2,14 +2,16 @@
 using HoloIslandVis.Input.Speech;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
-
 namespace HoloIslandVis.Controller.NLU
 {
     public class NLUServiceClient : SingletonComponent<NLUServiceClient>, IExternalResponder
     {
+        private Dictionary<string, KeywordType> _intentToKeyword;
+
         public string ServerAddress;
         public int ServerPort;
 
@@ -20,6 +22,17 @@ namespace HoloIslandVis.Controller.NLU
         void Start()
         {
             _serverEndpoint = "http://" + ServerAddress + ":" + ServerPort + "/";
+
+            _intentToKeyword = new Dictionary<string, KeywordType>()
+            {
+                { "zoom_in", KeywordType.ZoomIn},
+                { "zoom_out", KeywordType.ZoomOut},
+                { "move_up", KeywordType.MoveUp},
+                { "move_down", KeywordType.MoveDown},
+                { "move_left", KeywordType.MoveLeft},
+                { "move_right", KeywordType.MoveRight},
+                { "select_component", KeywordType.Select}
+            };
         }
 
         public IEnumerator SendRequest(SpeechInputEventArgs eventArgs)
@@ -42,10 +55,13 @@ namespace HoloIslandVis.Controller.NLU
                 string response = _latestResponse;
 
                 JSONObject jsonObject = new JSONObject(response);
-                string intent = jsonObject.GetField("intent_name").ToString();
-                intent = char.ToUpper(intent[1]) + intent.Substring(2, intent.Length - 3);
+                var intent = jsonObject.GetField("intent_name").GetField("name").ToString();
+                intent = char.ToLower(intent[1]) + intent.Substring(2, intent.Length - 3);
 
-                eventArgs.Keyword = (KeywordType)Enum.Parse(typeof(KeywordType), intent);
+                if (_intentToKeyword.ContainsKey(intent))
+                    eventArgs.Keyword = _intentToKeyword[intent];
+                else eventArgs.Keyword = KeywordType.None;
+
                 eventArgs.Data = jsonObject.GetField("data").ToString();
             }
 
@@ -56,8 +72,9 @@ namespace HoloIslandVis.Controller.NLU
         {
             string putData = buildPutData(input, context);
             byte[] bytes = Encoding.UTF8.GetBytes(putData);
-            yield return null;
+
             var webRequest = UnityWebRequest.Put(_serverEndpoint+"api", bytes);
+            webRequest.SetRequestHeader("Content-Type", "application/json");
             yield return webRequest.SendWebRequest();
 
             if (webRequest.isNetworkError)
@@ -66,9 +83,6 @@ namespace HoloIslandVis.Controller.NLU
                 _errorState = true;
             }
             else Debug.Log("Received: " + webRequest.downloadHandler.text);
-
-
-
             _latestResponse = webRequest.downloadHandler.text;
         }
 

@@ -16,6 +16,12 @@ namespace HoloIslandVis.Input.Speech
         Show,
         Select,
         Deselect,
+        ZoomIn,
+        ZoomOut,
+        MoveUp,
+        MoveDown,
+        MoveLeft,
+        MoveRight,
         Invariant
     }
 
