@@ -92,6 +92,13 @@ namespace HoloIslandVis.UI
             StartCoroutine(component.Deactivate());
         }
 
+        public UIComponent GetUIElement(UIElement element)
+        {
+            if (_uiComponents.ContainsKey(element))
+                return _uiComponents[element];
+            else return null;
+        }
+
         public void SetPanelHeaderTop(string text)
         {
             Panel.SetHeaderTextTop(text);

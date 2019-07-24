@@ -24,13 +24,15 @@ namespace HoloIslandVis.Interaction
     public enum KeywordType
     {
         None,
+        Show,
         Select,
         Deselect,
-        Find,
-        Show,
-        Hide,
-        Utter,
-        ShowAllNodes,
+        ZoomIn,
+        ZoomOut,
+        MoveUp,
+        MoveDown,
+        MoveLeft,
+        MoveRight,
         Invariant
     }
 

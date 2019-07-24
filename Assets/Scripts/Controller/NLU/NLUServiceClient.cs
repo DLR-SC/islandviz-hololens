@@ -60,8 +60,6 @@ namespace HoloIslandVis.Controller.NLU
                 var intent = jsonObject.GetField("intent_name").GetField("name").ToString();
                 intent = char.ToLower(intent[1]) + intent.Substring(2, intent.Length - 3);
 
-                DebugLog.Instance.SetText("Received intent: " + intent);
-
                 if (_intentToKeyword.ContainsKey(intent))
                     eventArgs.Keyword = _intentToKeyword[intent];
                 else eventArgs.Keyword = KeywordType.None;

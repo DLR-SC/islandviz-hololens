@@ -139,7 +139,6 @@ namespace HoloIslandVis.Input.Speech
             {
                 // External responder takes care of evaluating and setting 
                 // the keyword and data values for the input event args.
-                DebugLog.Instance.SetText("Sending Request.");
                 yield return ExternalResponder.SendRequest(eventArgs);
             }
             // If no external responder is available, check if input token
