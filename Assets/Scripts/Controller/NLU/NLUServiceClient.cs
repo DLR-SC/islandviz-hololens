@@ -1,11 +1,13 @@
 ﻿using HoloIslandVis.Core;
 using HoloIslandVis.Input.Speech;
+using HoloIslandVis.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
+
 namespace HoloIslandVis.Controller.NLU
 {
     public class NLUServiceClient : SingletonComponent<NLUServiceClient>, IExternalResponder
@@ -57,6 +59,8 @@ namespace HoloIslandVis.Controller.NLU
                 JSONObject jsonObject = new JSONObject(response);
                 var intent = jsonObject.GetField("intent_name").GetField("name").ToString();
                 intent = char.ToLower(intent[1]) + intent.Substring(2, intent.Length - 3);
+
+                DebugLog.Instance.SetText("Received intent: " + intent);
 
                 if (_intentToKeyword.ContainsKey(intent))
                     eventArgs.Keyword = _intentToKeyword[intent];

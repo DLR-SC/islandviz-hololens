@@ -9,7 +9,6 @@ namespace HoloIslandVis.Interaction
         public string Data;
         public string Input;
         public KeywordType Keyword;
-        public ConfidenceLevel Confidence;
 
         public Interactable Focused;
         public Interactable Selected;
@@ -18,7 +17,6 @@ namespace HoloIslandVis.Interaction
         {
             Data = eventArgs.Data;
             Input = eventArgs.Input;
-            Confidence = eventArgs.Confidence;
 
             string keywordString = eventArgs.Keyword.ToString();
             Keyword = (KeywordType)Enum.Parse(typeof(KeywordType), keywordString, true);

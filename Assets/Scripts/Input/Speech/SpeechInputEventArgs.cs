@@ -7,13 +7,11 @@ namespace HoloIslandVis.Input.Speech
     {
         public string Data;
         public string Input;
-        public ConfidenceLevel Confidence;
         public KeywordType Keyword;
 
-        public SpeechInputEventArgs(string input, ConfidenceLevel confidence)
+        public SpeechInputEventArgs(string input)
         {
             Input = input;
-            Confidence = confidence;
             Keyword = KeywordType.None;
         }
     }

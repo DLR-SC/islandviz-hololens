@@ -1,5 +1,6 @@
 ﻿using HoloIslandVis.Controller.NLU;
 using HoloIslandVis.Core;
+using HoloIslandVis.Utilities;
 using HoloToolkit.Unity;
 using HoloToolkit.Unity.InputModule;
 using System;
@@ -46,15 +47,19 @@ namespace HoloIslandVis.Input.Speech
         // Boolean indicating whether an external responder is interposed.
         public bool RespondExternally;
 
+        private int _minFreq;
+        private int _maxFreq;
         private Dictionary<string, KeywordType> _keywordTypeTable;
         private DictationRecognizer _dictationRecognizer;
+        private bool _dictationStarted;
         private bool _isProcessing;
 
         void Start()
         {
+            _dictationRecognizer = new DictationRecognizer();
             InputManager.Instance.AddGlobalListener(gameObject);
+            Microphone.GetDeviceCaps("", out _minFreq, out _maxFreq);
             ExternalResponder = GameObject.Find("NLUService").GetComponent<NLUServiceClient>();
-
 
             _keywordTypeTable = new Dictionary<string, KeywordType>()
             {
@@ -62,16 +67,31 @@ namespace HoloIslandVis.Input.Speech
                 { "deselect", KeywordType.Deselect },
             };
 
-            // DictationRecognizer takes care of transforming captured speech
-            // audio data into text string.
-            _dictationRecognizer = new DictationRecognizer();
-            _dictationRecognizer.DictationResult += OnDictationResult;
             _dictationRecognizer.DictationComplete += OnDictationComplete;
+            _dictationRecognizer.DictationResult += OnDictationResult;
+            _dictationRecognizer.DictationError += OnDictationError;
             _dictationRecognizer.Start();
+
             _isProcessing = false;
         }
 
-        private void OnDictationResult(string text, ConfidenceLevel confidence)
+        void Update()
+        {
+            if (!(_dictationRecognizer.Status == SpeechSystemStatus.Running)
+                && !_dictationStarted && !_isProcessing)
+            {
+                _dictationStarted = true;
+                StartCoroutine(StartRecording());
+            }
+        }
+
+        public IEnumerator StartRecording()
+        {
+            _dictationRecognizer.Start();
+            yield return null;
+        }
+
+        public void OnDictationResult(string text, ConfidenceLevel confidence)
         {
             // Return if SpeechInputListener is already processing speech
             // input (external responders may take more time).
@@ -80,18 +100,33 @@ namespace HoloIslandVis.Input.Speech
 
             // First token has to be equal to activation keyword, second token
             // is the actual input string for processing.
-            string[] token = text.ToLower().Split(new char [] {' '}, 2);
+            string[] token = text.ToLower().Split(new char[] { ' ' }, 2);
             if (token[0] == ActivationKeyword.ToLower() && token.Length > 1)
             {
-                var eventArgs = new SpeechInputEventArgs(token[1], confidence);
+                var eventArgs = new SpeechInputEventArgs(token[1]);
                 StartCoroutine(ProcessInput(eventArgs));
             }
+
+            if (_dictationRecognizer.Status == SpeechSystemStatus.Running)
+                _dictationRecognizer.Stop();
+
+            _dictationStarted = false;
         }
 
-        private void OnDictationComplete(DictationCompletionCause cause)
+        public void OnDictationComplete(DictationCompletionCause cause)
         {
-            // TODO: Cause specific feedback.
-            _dictationRecognizer.Start();
+            if(_dictationRecognizer.Status == SpeechSystemStatus.Running)
+                _dictationRecognizer.Stop();
+
+            _dictationStarted = false;
+        }
+
+        public void OnDictationError(string error, int hresult)
+        {
+            if (_dictationRecognizer.Status == SpeechSystemStatus.Running)
+                _dictationRecognizer.Stop();
+
+            _dictationStarted = false;
         }
 
         private IEnumerator ProcessInput(SpeechInputEventArgs eventArgs)
@@ -104,6 +139,7 @@ namespace HoloIslandVis.Input.Speech
             {
                 // External responder takes care of evaluating and setting 
                 // the keyword and data values for the input event args.
+                DebugLog.Instance.SetText("Sending Request.");
                 yield return ExternalResponder.SendRequest(eventArgs);
             }
             // If no external responder is available, check if input token
