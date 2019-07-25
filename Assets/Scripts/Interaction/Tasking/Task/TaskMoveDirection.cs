@@ -58,7 +58,7 @@ namespace HoloIslandVis.Interaction.Tasking.Task
                     directionShift = projectedDirection;
                     break;
                 case KeywordType.MoveUp:
-                    directionShift = projectedDirection;
+                    directionShift = -projectedDirection;
                     break;
                 default:
                     directionShift = Vector3.zero;
