@@ -153,6 +153,7 @@ namespace HoloIslandVis.Core
             TaskToggleDependency task_toggleDependency  = new TaskToggleDependency();
             TaskResetPane task_resetPane                = new TaskResetPane();
             TaskMoveDirection task_moveDirection        = new TaskMoveDirection();
+            TaskZoom task_zoom                          = new TaskZoom();
 
             Command command_dragProjected       = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command command_zoomProjected       = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
@@ -161,7 +162,12 @@ namespace HoloIslandVis.Core
             Command command_importSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
             Command command_islandSelectSpeech  = new Command(GestureType.None, KeywordType.Select, InteractableType.Bundle);
             Command command_resetPane           = new Command(GestureType.None, KeywordType.Select, InteractableType.ContentPane);
+            Command command_zoomIn              = new Command(GestureType.None, KeywordType.ZoomIn, InteractableType.Invariant);
+            Command command_zoomOut             = new Command(GestureType.None, KeywordType.ZoomOut, InteractableType.Invariant);
             Command command_moveUp              = new Command(GestureType.None, KeywordType.MoveUp, InteractableType.Invariant);
+            Command command_moveDown            = new Command(GestureType.None, KeywordType.MoveDown, InteractableType.Invariant);
+            Command command_moveLeft            = new Command(GestureType.None, KeywordType.MoveLeft, InteractableType.Invariant);
+            Command command_moveRight           = new Command(GestureType.None, KeywordType.MoveRight, InteractableType.Invariant);
             Command command_adjust              = new Command(StaticItem.Adjust);
             Command command_showDependencies    = new Command(StaticItem.Dependencies);
             Command command_fitContent          = new Command(StaticItem.Fit);
@@ -175,7 +181,12 @@ namespace HoloIslandVis.Core
             state_main.AddInteractionTask(command_importSelectGesture, task_toggleDependency);
             state_main.AddInteractionTask(command_exportSelectGesture, task_toggleDependency);
             state_main.AddInteractionTask(command_resetPane, task_resetPane);
+            state_main.AddInteractionTask(command_zoomIn, task_zoom);
+            state_main.AddInteractionTask(command_zoomOut, task_zoom);
             state_main.AddInteractionTask(command_moveUp, task_moveDirection);
+            state_main.AddInteractionTask(command_moveDown, task_moveDirection);
+            state_main.AddInteractionTask(command_moveLeft, task_moveDirection);
+            state_main.AddInteractionTask(command_moveRight, task_moveDirection);
 
             state_main.AddStateTransition(command_adjust, state_init);
             state_main.AddStateTransition(command_islandSelectGesture, state_inspectIsland);
