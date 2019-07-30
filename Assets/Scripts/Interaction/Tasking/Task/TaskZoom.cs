@@ -10,49 +10,75 @@ namespace HoloIslandVis.Interaction.Tasking.Task
 {
     public class TaskZoom : DiscreteSpeechInteractionTask
     {
-        private UIComponent _contentPane;
+        //private UIComponent _contentPane;
         private UIComponent _visualization;
-        private float _scalingFactor;
+
+        //private Vector3 headPosition;
+        private Vector3 focusPosition;
+        private Vector3 projectedFocus;
+        private Vector3 distanceVector;
+
+        private float _zoomFactor;
         private float _duration;
 
         public override IEnumerator Perform(SpeechInteractionEventArgs eventArgs)
         {
             // Number of seconds to zoom.
             _duration = 4.0f;
-            // Influences the zoom intensity.
-            _scalingFactor = 20.0f;
+            // Zoom intensity.
+            _zoomFactor = 2.0f;
 
             _visualization = UIManager.Instance.GetUIElement(UIElement.Visualization);
-            _contentPane = UIManager.Instance.GetUIElement(UIElement.ContentPane);
 
-            // Get position information
-            Vector3 headPosition = GazeManager.Instance.GazeOrigin;
+            UIComponent _contentPane = UIManager.Instance.GetUIElement(UIElement.ContentPane);
             Vector3 contentPosition = _contentPane.transform.position;
 
-            // Start and target position of the shift.
-            Vector3 startPosition = headPosition;
-            Vector3 targetPosition;
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.transform.localScale = 0.05f * cube.transform.localScale;
 
-            /*switch (eventArgs.Keyword)
+            // Get position information
+            //Vector3 headPosition = GazeManager.Instance.GazeOrigin;
+            Vector3 focusPosition = GazeManager.Instance.HitPosition;
+
+            Vector3 paneToFocus = contentPosition - focusPosition;
+            float heightFactor = Vector3.Dot(_contentPane.transform.up, paneToFocus);
+            Vector3 height = _contentPane.transform.up * heightFactor;
+            Vector3 projectedPaneToFocus = paneToFocus - height;
+            
+            projectedFocus = contentPosition - projectedPaneToFocus;
+            
+            distanceVector = projectedFocus - _visualization.transform.position;
+
+            Vector3 shiftVector;
+            Vector3 scaledVisualizationScale;
+
+            switch (eventArgs.Keyword)
             {
                 case KeywordType.ZoomIn:
-                    targetPosition = headPosition - (headPosition - _visualization.transform.position) / 2;
+                    shiftVector = distanceVector - _zoomFactor * distanceVector;
+                    scaledVisualizationScale = _zoomFactor * _visualization.transform.localScale;
                     break;
                 case KeywordType.ZoomOut:
-                    targetPosition = headPosition + (headPosition - _visualization.transform.position) / 2;
+                    shiftVector = distanceVector - (1 / _zoomFactor) * distanceVector;
+                    scaledVisualizationScale = (1 / _zoomFactor) * _visualization.transform.localScale;
                     break;
                 default:
-                    targetPosition = startPosition;
+                    shiftVector = distanceVector;
+                    scaledVisualizationScale = _visualization.transform.localScale;
                     break;
-            }*/
+            }
 
+            Vector3 startPosition = _visualization.transform.position;
+            Vector3 targetPosition = startPosition + shiftVector;
             Vector3 startScale = _visualization.transform.localScale;
-            Vector3 targetScale = 1.1f * _visualization.transform.localScale;
-            yield return Zoom(startScale, targetScale);
+            Vector3 targetScale = scaledVisualizationScale;
+
+            yield return Zoom(startPosition, targetPosition, startScale, targetScale);
         }
 
-        private IEnumerator Zoom(Vector3 startScale, Vector3 targetScale)
+        private IEnumerator Zoom(Vector3 startPosition, Vector3 targetPosition, Vector3 startScale, Vector3 targetScale)
         {
+            Vector3 currentPosition = startPosition;
             Vector3 currentScale = startScale;
 
             /* 
@@ -69,16 +95,19 @@ namespace HoloIslandVis.Interaction.Tasking.Task
             float durationOffset = _duration / 2.0f;
             float durationFactor = 12.0f / _duration;
 
-            while (Vector3.Distance(targetScale, currentScale) > 0.001f)
+            while (Vector3.Distance(targetPosition, currentPosition) > 0.001f)
             {
                 cumulativeTime += Time.deltaTime;
                 float sigmoidInput = (cumulativeTime - durationOffset) * durationFactor;
                 interpolation = Sigmoid(sigmoidInput);
+                currentPosition = Vector3.Lerp(startPosition, targetPosition, interpolation);
                 currentScale = Vector3.Lerp(startScale, targetScale, interpolation);
+                _visualization.transform.position = currentPosition;
                 _visualization.transform.localScale = currentScale;
                 yield return null;
             }
 
+            _visualization.transform.position = currentPosition;
             _visualization.transform.localScale = targetScale;
         }
 
