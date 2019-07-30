@@ -10,10 +10,9 @@ namespace HoloIslandVis.Interaction.Tasking.Task
 {
     public class TaskZoom : DiscreteSpeechInteractionTask
     {
-        //private UIComponent _contentPane;
         private UIComponent _visualization;
-
-        //private Vector3 headPosition;
+        UIComponent _contentPane;
+        
         private Vector3 focusPosition;
         private Vector3 projectedFocus;
         private Vector3 distanceVector;
@@ -28,30 +27,29 @@ namespace HoloIslandVis.Interaction.Tasking.Task
             // Zoom intensity.
             _zoomFactor = 2.0f;
 
-            _visualization = UIManager.Instance.GetUIElement(UIElement.Visualization);
-
-            UIComponent _contentPane = UIManager.Instance.GetUIElement(UIElement.ContentPane);
-            Vector3 contentPosition = _contentPane.transform.position;
-
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.transform.localScale = 0.05f * cube.transform.localScale;
-
             // Get position information
-            //Vector3 headPosition = GazeManager.Instance.GazeOrigin;
-            Vector3 focusPosition = GazeManager.Instance.HitPosition;
+            _visualization = UIManager.Instance.GetUIElement(UIElement.Visualization);
+            _contentPane = UIManager.Instance.GetUIElement(UIElement.ContentPane);
+            focusPosition = GazeManager.Instance.HitPosition;
 
-            Vector3 paneToFocus = contentPosition - focusPosition;
+            // Relocate the focus vector to a position on the plane which is orthogonal 
+            // below the position of the focus vector.
+            Vector3 paneToFocus = _contentPane.transform.position - focusPosition;
             float heightFactor = Vector3.Dot(_contentPane.transform.up, paneToFocus);
             Vector3 height = _contentPane.transform.up * heightFactor;
             Vector3 projectedPaneToFocus = paneToFocus - height;
-            
-            projectedFocus = contentPosition - projectedPaneToFocus;
-            
+
+            // Calculate the distance between the center of the pane and the position on 
+            // the plane calculated above.            
+            projectedFocus = _contentPane.transform.position - projectedPaneToFocus;
             distanceVector = projectedFocus - _visualization.transform.position;
 
+            // Based on the KeywordType, calculate the new scale of the visualization.
+            // When changing the scale, the visualization must be shifted, so that the
+            // focus position remains the same. The shiftVector contains the positions
+            // with which the visualization must be shifted.
             Vector3 shiftVector;
             Vector3 scaledVisualizationScale;
-
             switch (eventArgs.Keyword)
             {
                 case KeywordType.ZoomIn:
