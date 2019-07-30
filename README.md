@@ -1,4 +1,4 @@
-HoloLens port of [IslandViz](https://github.com/DLR-SC/island-viz), a visualization tool for OSGi-based software projects using an island metaphor. 
+HoloLens port of [IslandViz](https://github.com/DLR-SC/island-viz), a visualization tool for OSGi-based software projects using an island metaphor. The [Wiki](https://github.com/DLR-SC/islandviz-hololens/wiki) includes further information about the project. Instructions on how to synchronize the application across multiple HoloLenses or set it up for remote speech input processing can also be found in the Wiki.
 
 
 <h2>Project Setup</h2>
