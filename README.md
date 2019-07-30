@@ -1,3 +1,7 @@
+**<h1>IslandViz (for HoloLens)</h1>**
+
+ [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/DLR-SC/islandviz-hololens/blob/master/LICENSE)
+
 HoloLens port of [IslandViz](https://github.com/DLR-SC/island-viz), a visualization tool for OSGi-based software projects using an island metaphor. The [Wiki](https://github.com/DLR-SC/islandviz-hololens/wiki) includes further information about the project. Instructions on how to synchronize the application across multiple HoloLenses or set it up for remote speech input processing can also be found in the Wiki.
 
 
