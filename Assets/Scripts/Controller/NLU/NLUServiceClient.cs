@@ -34,6 +34,7 @@ namespace HoloIslandVis.Controller.NLU
                 { "move_left", KeywordType.MoveLeft},
                 { "move_right", KeywordType.MoveRight},
                 { "select_component", KeywordType.Select}
+                //{ "deselect_component", KeywordType.Deselect}
             };
         }
 
