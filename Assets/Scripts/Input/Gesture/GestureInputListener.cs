@@ -1,4 +1,5 @@
 ﻿using HoloIslandVis.Core;
+using HoloIslandVis.Utilities;
 using HoloToolkit.Unity.InputModule;
 using System;
 using System.Collections;
@@ -97,6 +98,8 @@ namespace HoloIslandVis.Input.Gesture
         {
             int sourcesManipulating = 0;
 
+            DebugLog.Instance.SetText("Gesture sources present: " + _gestureSources.Count);
+
             // Check whether any sources are currently in a manipulating state.
             foreach(GestureSource source in _gestureSources.Values)
             {
@@ -148,7 +151,6 @@ namespace HoloIslandVis.Input.Gesture
             }
 
             _gestureSources.Remove(eventData.SourceId);
-            _gestureSources.Clear();
         }
 
         public void OnInputDown(InputEventData eventData)
