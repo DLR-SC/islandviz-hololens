@@ -21,7 +21,7 @@ namespace HoloIslandVis.Interaction.Tasking.Task
             _contentPane = UIManager.Instance.GetUIElement(UIElement.ContentPane);
 
             // Number of seconds to perform a shift.
-            _duration = 4.0f;
+            _duration = 2.0f;
 
             // Set the width of the shift.
             _scalingFactor = 30.0f * 0.01f / _visualization.transform.localScale.x;

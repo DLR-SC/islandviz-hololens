@@ -23,7 +23,7 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         public override IEnumerator Perform(SpeechInteractionEventArgs eventArgs)
         {
             // Number of seconds to zoom.
-            _duration = 4.0f;
+            _duration = 2.0f;
             // Zoom intensity.
             _zoomFactor = 2.0f;
 
