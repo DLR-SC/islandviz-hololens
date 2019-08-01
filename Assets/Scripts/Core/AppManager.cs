@@ -93,6 +93,8 @@ namespace HoloIslandVis.Core
             State state_inspectRegion   = new State("inspect region");
             State state_inspectBuilding = new State("inspect building");
 
+            State state_scenario_manager = new State("scenario manager");
+
             StateManager.Instance.AddState(state_settings);
             StateManager.Instance.AddState(state_loading);
             StateManager.Instance.AddState(state_setup);
@@ -101,15 +103,38 @@ namespace HoloIslandVis.Core
             StateManager.Instance.AddState(state_inspectRegion);
             StateManager.Instance.AddState(state_inspectBuilding);
 
+            StateManager.Instance.AddState(state_scenario_manager);
+
             Init_StateSettings(state_settings, state_setup);
             //Init_StateLoading(state_loading, state_setup);
+
             Init_StateSetup(state_setup, state_main);
             Init_StateMain(state_main, state_setup, state_inspectIsland);
+            /*Init_StateSetup(state_setup, state_scenario_manager);
+            Init_StateScenario(state_scenario_manager, state_setup, state_main);
+            Init_StateMain(state_main, state_scenario_manager, state_inspectIsland);*/
+
             Init_StateInspectIsland(state_inspectIsland, state_main, state_inspectRegion);
             Init_StateInspectRegion(state_inspectRegion, state_inspectIsland, state_inspectBuilding, state_main);
             Init_StateInspectBuilding(state_inspectBuilding, state_inspectRegion, state_inspectIsland, state_main);
 
             StateManager.Instance.Init(state_setup);
+        }
+
+        public void LoadScenario()
+        {
+            Debug.Log("Load Scenario");
+            UIManager.Instance.Deactivate(UIElement.ScenarioPanel);
+            UIManager.Instance.Activate(UIElement.StartScenarioPanel);
+        }
+
+        private void Init_StateScenario(State state_scenario_manager, State state_setup, State state_main)
+        {
+            Command command_startScenario = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.Widget, InteractableType.None, StaticItem.None);
+
+            state_scenario_manager.AddOpenAction((State state) => UIManager.Instance.Activate(UIElement.ScenarioPanel));
+            state_scenario_manager.AddCloseAction((State state) => UIManager.Instance.Deactivate(UIElement.StartScenarioPanel));
+            state_scenario_manager.AddStateTransition(command_startScenario, state_main);
         }
 
         private void Init_StateSettings(State state_settings, State state_setup)
@@ -206,6 +231,7 @@ namespace HoloIslandVis.Core
 
                 UIManager.Instance.EnableToolbar(true);
             });
+            state_main.AddOpenAction((State state) => Debug.Log("Main State"));
 
             state_main.AddCloseAction((State state) => UIManager.Instance.DisableToolbar(true));
         }
@@ -219,24 +245,22 @@ namespace HoloIslandVis.Core
             TaskToggleDependency task_toggleDependency = new TaskToggleDependency();
 
             Command command_regionSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Package, InteractableType.Bundle, StaticItem.None);
+            Command command_regionSelectSpeech = new Command(GestureType.None, KeywordType.Select, InteractableType.Package, InteractableType.Bundle, StaticItem.None);
             Command command_islandDeselectGesture1 = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None, InteractableType.Bundle, StaticItem.None);
             Command command_islandDeselectGesture2 = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ContentPane, InteractableType.Bundle, StaticItem.None);
             Command command_islandDeselectGesture3 = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Bundle, InteractableType.Bundle, StaticItem.None);
-            Command command_islandDeselectSpeech1 = new Command(GestureType.None, KeywordType.Deselect, InteractableType.None, InteractableType.Bundle, StaticItem.None);
-            Command command_islandDeselectSpeech2 = new Command(GestureType.None, KeywordType.Deselect, InteractableType.ContentPane, InteractableType.Bundle, StaticItem.None);
-            Command command_islandDeselectSpeech3 = new Command(GestureType.None, KeywordType.Deselect, InteractableType.Bundle, InteractableType.Bundle, StaticItem.None);
+            Command command_islandDeselectSpeech = new Command(GestureType.None, KeywordType.Deselect, InteractableType.Invariant, InteractableType.Bundle, StaticItem.None);
             Command command_exportSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ImportDock);
             Command command_importSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
             Command command_rotateInspect = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command command_showDependencies = new Command(StaticItem.Dependencies);
 
             state_inspectIsland.AddInteractionTask(command_regionSelect, task_regionSelect);
+            state_inspectIsland.AddInteractionTask(command_regionSelectSpeech, task_regionSelect);
             state_inspectIsland.AddInteractionTask(command_islandDeselectGesture1, task_islandDeselect);
             state_inspectIsland.AddInteractionTask(command_islandDeselectGesture2, task_islandDeselect);
             state_inspectIsland.AddInteractionTask(command_islandDeselectGesture3, task_islandDeselect);
-            state_inspectIsland.AddInteractionTask(command_islandDeselectSpeech1, task_islandDeselect);
-            state_inspectIsland.AddInteractionTask(command_islandDeselectSpeech2, task_islandDeselect);
-            state_inspectIsland.AddInteractionTask(command_islandDeselectSpeech3, task_islandDeselect);
+            state_inspectIsland.AddInteractionTask(command_islandDeselectSpeech, task_islandDeselect);
             state_inspectIsland.AddInteractionTask(command_rotateInspect, task_rotateInspect);
             state_inspectIsland.AddInteractionTask(command_showDependencies, task_showDependencies);
             state_inspectIsland.AddInteractionTask(command_importSelectGesture, task_toggleDependency);
@@ -245,15 +269,15 @@ namespace HoloIslandVis.Core
             state_inspectIsland.AddStateTransition(command_islandDeselectGesture1, state_main);
             state_inspectIsland.AddStateTransition(command_islandDeselectGesture2, state_main);
             state_inspectIsland.AddStateTransition(command_islandDeselectGesture3, state_main);
-            state_inspectIsland.AddStateTransition(command_islandDeselectSpeech1, state_main);
-            state_inspectIsland.AddStateTransition(command_islandDeselectSpeech2, state_main);
-            state_inspectIsland.AddStateTransition(command_islandDeselectSpeech3, state_main);
+            state_inspectIsland.AddStateTransition(command_islandDeselectSpeech, state_main);
             state_inspectIsland.AddStateTransition(command_regionSelect, state_inspectRegion);
+            state_inspectIsland.AddStateTransition(command_regionSelectSpeech, state_inspectRegion);
 
             state_inspectIsland.AddOpenAction((State state) => {
                 UIManager.Instance.SetActiveButtons(StaticItem.Done, StaticItem.Panel, StaticItem.Dependencies);
                 UIManager.Instance.EnableToolbar(true);
             });
+            state_inspectIsland.AddOpenAction((State state) => Debug.Log("Inspect Island State"));
             state_inspectIsland.AddCloseAction((State state) => UIManager.Instance.DisableToolbar(true));
         }
 
@@ -262,35 +286,50 @@ namespace HoloIslandVis.Core
             TaskBuildingSelect task_buildingSelect = new TaskBuildingSelect();
             TaskRegionDeselect task_regionDeselect = new TaskRegionDeselect();
             TaskRegionSelect task_regionSelect = new TaskRegionSelect();
+            TaskRegionSelect task_regionSelectSpeech = new TaskRegionSelect();
             TaskIslandDeselect task_islandDeselect = new TaskIslandDeselect();
             TaskRotateInspect task_rotateInspect = new TaskRotateInspect();
             TaskShowDependencies task_showDependencies = new TaskShowDependencies();
 
             Command command_buildingSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.CompilationUnit, InteractableType.Package, StaticItem.None);
+            Command command_buildingSelectSpeech = new Command(GestureType.None, KeywordType.Select, InteractableType.CompilationUnit, InteractableType.Package, StaticItem.None);
             Command command_regionDeselect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Bundle, InteractableType.Package, StaticItem.None);
+            Command command_regionDeselectSpeech = new Command(GestureType.None, KeywordType.Deselect, InteractableType.Bundle, InteractableType.Package, StaticItem.None);
             Command command_regionSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Package, InteractableType.Package, StaticItem.None);
+            Command command_regionSelectSpeech = new Command(GestureType.None, KeywordType.Select, InteractableType.Package, InteractableType.Package, StaticItem.None);
             Command command_islandDeselect1 = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ContentPane, InteractableType.Package, StaticItem.None);
             Command command_islandDeselect2 = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None, InteractableType.Package, StaticItem.None);
+            Command command_islandDeselectSpeech1 = new Command(GestureType.None, KeywordType.Deselect, InteractableType.ContentPane, InteractableType.Package, StaticItem.None);
+            Command command_islandDeselectSpeech2 = new Command(GestureType.None, KeywordType.Deselect, InteractableType.None, InteractableType.Package, StaticItem.None);
             Command command_rotateInspect = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command command_showDependencies = new Command(StaticItem.Dependencies);
 
             state_inspectRegion.AddInteractionTask(command_buildingSelect, task_buildingSelect);
+            state_inspectRegion.AddInteractionTask(command_buildingSelectSpeech, task_buildingSelect);
             state_inspectRegion.AddInteractionTask(command_regionDeselect, task_regionDeselect);
             state_inspectRegion.AddInteractionTask(command_regionSelect, task_regionSelect);
+            state_inspectRegion.AddInteractionTask(command_regionSelectSpeech, task_regionSelect);
             state_inspectRegion.AddInteractionTask(command_islandDeselect1, task_islandDeselect);
             state_inspectRegion.AddInteractionTask(command_islandDeselect2, task_islandDeselect);
+            state_inspectRegion.AddInteractionTask(command_islandDeselectSpeech1, task_islandDeselect);
+            state_inspectRegion.AddInteractionTask(command_islandDeselectSpeech2, task_islandDeselect);
             state_inspectRegion.AddInteractionTask(command_rotateInspect, task_rotateInspect);
             state_inspectRegion.AddInteractionTask(command_showDependencies, task_showDependencies);
 
             state_inspectRegion.AddStateTransition(command_buildingSelect, state_inspectBuilding);
+            state_inspectRegion.AddStateTransition(command_buildingSelectSpeech, state_inspectBuilding);
             state_inspectRegion.AddStateTransition(command_regionDeselect, state_inspectIsland);
+            state_inspectRegion.AddStateTransition(command_regionDeselectSpeech, state_inspectIsland);
             state_inspectRegion.AddStateTransition(command_islandDeselect1, state_main);
             state_inspectRegion.AddStateTransition(command_islandDeselect2, state_main);
+            state_inspectRegion.AddStateTransition(command_islandDeselectSpeech1, state_main);
+            state_inspectRegion.AddStateTransition(command_islandDeselectSpeech2, state_main);
 
             state_inspectRegion.AddOpenAction((State state) => {
                 UIManager.Instance.SetActiveButtons(StaticItem.Done, StaticItem.Panel, StaticItem.Dependencies);
                 UIManager.Instance.EnableToolbar(true);
             });
+            state_inspectRegion.AddOpenAction((State state) => Debug.Log("Inspect Region State"));
             state_inspectRegion.AddCloseAction((State state) => UIManager.Instance.DisableToolbar(true));
         }
 
@@ -300,6 +339,10 @@ namespace HoloIslandVis.Core
             TaskBuildingDeselect task_buildingDeselect = new TaskBuildingDeselect();
             TaskRegionDeselect task_regionDeselect = new TaskRegionDeselect();
             TaskIslandDeselect task_islandDeselect = new TaskIslandDeselect();
+            TaskBuildingSelect task_buildingSelectSpeech = new TaskBuildingSelect();
+            TaskBuildingDeselect task_buildingDeselectSpeech = new TaskBuildingDeselect();
+            TaskRegionDeselect task_regionDeselectSpeech = new TaskRegionDeselect();
+            TaskIslandDeselect task_islandDeselectSpeech = new TaskIslandDeselect();
             TaskRotateInspect task_rotateInspect = new TaskRotateInspect();
             TaskShowDependencies task_showDependencies = new TaskShowDependencies();
 
@@ -308,6 +351,11 @@ namespace HoloIslandVis.Core
             Command command_regionDeselect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Bundle, InteractableType.CompilationUnit, StaticItem.None);
             Command command_islandDeselect1 = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ContentPane, InteractableType.CompilationUnit, StaticItem.None);
             Command command_islandDeselect2 = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.None, InteractableType.CompilationUnit, StaticItem.None);
+            Command command_buildingSelectSpeech = new Command(GestureType.None, KeywordType.Select, InteractableType.CompilationUnit, InteractableType.CompilationUnit, StaticItem.None);
+            Command command_buildingDeselectSpeech = new Command(GestureType.None, KeywordType.Deselect, InteractableType.Package, InteractableType.CompilationUnit, StaticItem.None);
+            Command command_regionDeselectSpeech = new Command(GestureType.None, KeywordType.Deselect, InteractableType.Bundle, InteractableType.CompilationUnit, StaticItem.None);
+            Command command_islandDeselectSpeech1 = new Command(GestureType.None, KeywordType.Deselect, InteractableType.ContentPane, InteractableType.CompilationUnit, StaticItem.None);
+            Command command_islandDeselectSpeech2 = new Command(GestureType.None, KeywordType.Deselect, InteractableType.None, InteractableType.CompilationUnit, StaticItem.None);
             Command command_rotateInspect = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command command_showDependencies = new Command(StaticItem.Dependencies);
 
@@ -316,6 +364,11 @@ namespace HoloIslandVis.Core
             state_inspectBuilding.AddInteractionTask(command_regionDeselect, task_regionDeselect);
             state_inspectBuilding.AddInteractionTask(command_islandDeselect1, task_islandDeselect);
             state_inspectBuilding.AddInteractionTask(command_islandDeselect2, task_islandDeselect);
+            state_inspectBuilding.AddInteractionTask(command_buildingSelectSpeech, task_buildingSelect);
+            state_inspectBuilding.AddInteractionTask(command_buildingDeselectSpeech, task_buildingDeselect);
+            state_inspectBuilding.AddInteractionTask(command_regionDeselectSpeech, task_regionDeselect);
+            state_inspectBuilding.AddInteractionTask(command_islandDeselectSpeech1, task_islandDeselect);
+            state_inspectBuilding.AddInteractionTask(command_islandDeselectSpeech2, task_islandDeselect);
             state_inspectBuilding.AddInteractionTask(command_rotateInspect, task_rotateInspect);
             state_inspectBuilding.AddInteractionTask(command_showDependencies, task_showDependencies);
 
@@ -323,11 +376,16 @@ namespace HoloIslandVis.Core
             state_inspectBuilding.AddStateTransition(command_regionDeselect, state_inspectIsland);
             state_inspectBuilding.AddStateTransition(command_islandDeselect1, state_main);
             state_inspectBuilding.AddStateTransition(command_islandDeselect2, state_main);
+            state_inspectBuilding.AddStateTransition(command_buildingDeselectSpeech, state_inspectRegion);
+            state_inspectBuilding.AddStateTransition(command_regionDeselectSpeech, state_inspectIsland);
+            state_inspectBuilding.AddStateTransition(command_islandDeselectSpeech1, state_main);
+            state_inspectBuilding.AddStateTransition(command_islandDeselectSpeech2, state_main);
 
             state_inspectBuilding.AddOpenAction((State state) => {
                 UIManager.Instance.SetActiveButtons(StaticItem.Done, StaticItem.Panel, StaticItem.Dependencies);
                 UIManager.Instance.EnableToolbar(true);
             });
+            state_inspectBuilding.AddOpenAction((State state) => Debug.Log("Inspect Building State"));
             state_inspectBuilding.AddCloseAction((State state) => UIManager.Instance.DisableToolbar(true));
         }
     }
