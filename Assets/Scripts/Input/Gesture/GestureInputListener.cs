@@ -98,8 +98,6 @@ namespace HoloIslandVis.Input.Gesture
         {
             int sourcesManipulating = 0;
 
-            DebugLog.Instance.SetText("Gesture sources present: " + _gestureSources.Count);
-
             // Check whether any sources are currently in a manipulating state.
             foreach(GestureSource source in _gestureSources.Values)
             {
