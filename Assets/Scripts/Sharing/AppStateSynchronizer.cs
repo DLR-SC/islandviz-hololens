@@ -37,7 +37,8 @@ namespace HoloIslandVis.Sharing
             Selected = new Observable<string>("");
 
             _remoteChangeEvents = new Dictionary<string, Action<SyncString, string>>();
-            _remoteChangeEvents.Add("COMMAND",    (SyncString syncString, string value) => OnRemoteCommandChange(syncString, value));
+            _remoteChangeEvents.Add("GESTURE_COMMAND",    (SyncString syncString, string value) => OnRemoteGestureCommandChange(syncString, value));
+            _remoteChangeEvents.Add("SPEECH_COMMAND", (SyncString syncString, string value) => OnRemoteVoiceCommandChange(syncString, value));
             _remoteChangeEvents.Add("FOCUSED",    (SyncString syncString, string value) => OnRemoteFocusedChange(syncString, value));
             _remoteChangeEvents.Add("DEFOCUSED",  (SyncString syncString, string value) => OnRemoteDefocusedChange(syncString, value));
 
@@ -130,13 +131,26 @@ namespace HoloIslandVis.Sharing
             _remoteChangeEvents[token[0]].Invoke(syncString, token[1]);
         }
 
-        private void OnRemoteCommandChange(SyncString syncString, string value)
+        private void OnRemoteGestureCommandChange(SyncString syncString, string value)
         {
-            Debug.Log(gameObject.name + ": Remote COMMAND received!");
+            Debug.Log(gameObject.name + ": Remote GESTURE_COMMAND received!");
             string[] token = value.Split(' ');
 
             Command command = GetRemoteCommand(token);
-            GestureInteractionEventArgs eventArgs = GetRemoteEventArgs(token);
+            GestureInteractionEventArgs eventArgs = GetRemoteGestureEventArgs(token);
+            StartCoroutine(StateManager.Instance.IssueCommand(eventArgs, command));
+        }
+
+        private void OnRemoteVoiceCommandChange(SyncString syncString, string value)
+        {
+            Debug.Log(gameObject.name + ": Remote VOICE_COMMAND received!");
+            string[] payloadSplit = value.Split(new string[] { "//DataPayload//" }, StringSplitOptions.None);
+            string[] token = payloadSplit[0].Split(' ');
+
+            Command command = GetRemoteCommand(token);
+            SpeechInteractionEventArgs eventArgs = GetRemoteSpeechEventArgs(token);
+            eventArgs.Data = payloadSplit[1];
+
             StartCoroutine(StateManager.Instance.IssueCommand(eventArgs, command));
         }
 
@@ -188,7 +202,7 @@ namespace HoloIslandVis.Sharing
             return command;
         }
 
-        private GestureInteractionEventArgs GetRemoteEventArgs(string[] token)
+        private GestureInteractionEventArgs GetRemoteGestureEventArgs(string[] token)
         {
             GestureInteractionEventArgs eventArgs = new GestureInteractionEventArgs();
             int tokenCounter = 4;
@@ -209,6 +223,24 @@ namespace HoloIslandVis.Sharing
             }
 
             eventArgs.Gesture = (GestureType)Enum.Parse(typeof(GestureType), token[++tokenCounter]);
+
+            string focusedName = token[++tokenCounter].Replace('_', ' ');
+            string selectedName = token[++tokenCounter].Replace('_', ' ');
+            var focusedInteractable = GameObject.Find(focusedName).GetComponent<Interactable>();
+            var selectedInteractable = GameObject.Find(selectedName).GetComponent<Interactable>();
+            eventArgs.Focused = focusedInteractable;
+            eventArgs.Selected = selectedInteractable;
+
+            return eventArgs;
+        }
+
+        private SpeechInteractionEventArgs GetRemoteSpeechEventArgs(string[] token)
+        {
+            SpeechInteractionEventArgs eventArgs = new SpeechInteractionEventArgs();
+            int tokenCounter = 4;
+
+            eventArgs.Keyword = (KeywordType)Enum.Parse(typeof(KeywordType), token[++tokenCounter]);
+            eventArgs.Input = token[++tokenCounter].Replace('_', ' ');
 
             string focusedName = token[++tokenCounter].Replace('_', ' ');
             string selectedName = token[++tokenCounter].Replace('_', ' ');

@@ -225,7 +225,7 @@ namespace HoloIslandVis.Sharing
 
         private void OnRemoteScaleChange(SyncObject syncObj)
         {
-            //sDebug.Log(gameObject.name + ": Remote scale change received!");
+            //Debug.Log(gameObject.name + ": Remote scale change received!");
 
             if (!SyncActive)
                 return;

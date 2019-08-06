@@ -13,6 +13,11 @@ namespace HoloIslandVis.Interaction
         public Interactable Focused;
         public Interactable Selected;
 
+        public SpeechInteractionEventArgs()
+        {
+
+        }
+
         public SpeechInteractionEventArgs(SpeechInputEventArgs eventArgs)
         {
             Data = eventArgs.Data;

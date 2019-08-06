@@ -171,7 +171,7 @@ namespace HoloIslandVis.Controller
         private string ParseGestureCommand(Command command, GestureInteractionEventArgs eventArgs)
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append("COMMAND ");
+            builder.Append("GESTURE_COMMAND ");
             builder.Append(command.Gesture.ToString() + " ");
             builder.Append(command.Keyword.ToString() + " ");
             builder.Append(command.Focused.ToString() + " ");
@@ -200,12 +200,19 @@ namespace HoloIslandVis.Controller
         private string ParseSpeechCommand(Command command, SpeechInteractionEventArgs eventArgs)
         {
             StringBuilder builder = new StringBuilder();
-            builder.Append("COMMAND ");
+            builder.Append("VOICE_COMMAND ");
             builder.Append(command.Gesture.ToString() + " ");
             builder.Append(command.Keyword.ToString() + " ");
             builder.Append(command.Focused.ToString() + " ");
             builder.Append(command.Selected.ToString() + " ");
             builder.Append(command.Item.ToString() + " ");
+
+            builder.Append(eventArgs.Keyword + " ");
+            builder.Append(eventArgs.Input.Replace(' ', '_') + " ");
+            builder.Append(eventArgs.Focused.name.Replace(' ', '_') + " ");
+            builder.Append(eventArgs.Selected.name.Replace(' ', '_'));
+
+            builder.Append("//DataPayload//" + eventArgs.Data);
 
             return builder.ToString();
         }
