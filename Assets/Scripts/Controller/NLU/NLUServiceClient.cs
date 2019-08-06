@@ -14,6 +14,7 @@ namespace HoloIslandVis.Controller.NLU
     {
         private Dictionary<string, KeywordType> _intentToKeyword;
 
+        public AppConfig AppConfig;
         public string ServiceAddress;
         public int ServicePort;
 
@@ -39,6 +40,9 @@ namespace HoloIslandVis.Controller.NLU
 
         public IEnumerator SendRequest(SpeechInputEventArgs eventArgs)
         {
+            if (!AppConfig.IsServerInstance)
+                yield break;
+
             Context context = ContextManager.Instance.SafeContext;
 
             string focused = context.Focused.name;

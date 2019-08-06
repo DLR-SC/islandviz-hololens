@@ -131,7 +131,6 @@ namespace HoloIslandVis.Input.Speech
 
         private IEnumerator ProcessInput(SpeechInputEventArgs eventArgs)
         {
-            Debug.Log("Processing '" + eventArgs.Input + "'");
             _isProcessing = true;
             Action<SpeechInputEventArgs> action;
 
