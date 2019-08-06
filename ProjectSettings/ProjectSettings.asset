@@ -557,7 +557,7 @@ PlayerSettings:
   metroCertificatePassword: 
   metroCertificateSubject: DLR
   metroCertificateIssuer: DLR
-  metroCertificateNotAfter: 008e1107485cd601
+  metroCertificateNotAfter: 00456272e465d601
   metroApplicationDescription: IslandViz_For_HoloLens
   wsaImages: {}
   metroTileShortName: IslandViz for HoloLens

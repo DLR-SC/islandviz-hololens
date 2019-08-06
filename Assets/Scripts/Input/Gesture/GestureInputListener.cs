@@ -1,4 +1,5 @@
 ﻿using HoloIslandVis.Core;
+using HoloIslandVis.Utilities;
 using HoloToolkit.Unity.InputModule;
 using System;
 using System.Collections;
@@ -148,7 +149,6 @@ namespace HoloIslandVis.Input.Gesture
             }
 
             _gestureSources.Remove(eventData.SourceId);
-            _gestureSources.Clear();
         }
 
         public void OnInputDown(InputEventData eventData)

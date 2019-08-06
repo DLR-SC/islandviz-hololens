@@ -90,4 +90,62 @@ public class Clippable : MonoBehaviour
                 ObjectStateSynchronizer.TransformChanged();
         }
     }
+
+    public void ResetMaterials()
+    {
+        DefaultMaterial.SetVector("_PositionClipBottom", Vector3.zero);
+        DefaultMaterial.SetVector("_PositionClipFront", Vector3.zero);
+        DefaultMaterial.SetVector("_PositionClipBack", Vector3.zero);
+        DefaultMaterial.SetVector("_PositionClipRight", Vector3.zero);
+        DefaultMaterial.SetVector("_PositionClipLeft", Vector3.zero);
+        DefaultMaterial.SetVector("_NormalClipBottom", Vector3.zero);
+        DefaultMaterial.SetVector("_NormalClipFront", Vector3.zero);
+        DefaultMaterial.SetVector("_NormalClipBack", Vector3.zero);
+        DefaultMaterial.SetVector("_NormalClipRight", Vector3.zero);
+        DefaultMaterial.SetVector("_NormalClipLeft", Vector3.zero);
+
+        ArrowHeadMaterial.SetVector("_PositionClipBottom", Vector3.zero);
+        ArrowHeadMaterial.SetVector("_PositionClipFront", Vector3.zero);
+        ArrowHeadMaterial.SetVector("_PositionClipBack", Vector3.zero);
+        ArrowHeadMaterial.SetVector("_PositionClipRight", Vector3.zero);
+        ArrowHeadMaterial.SetVector("_PositionClipLeft", Vector3.zero);
+        ArrowHeadMaterial.SetVector("_NormalClipBottom", Vector3.zero);
+        ArrowHeadMaterial.SetVector("_NormalClipFront", Vector3.zero);
+        ArrowHeadMaterial.SetVector("_NormalClipBack", Vector3.zero);
+        ArrowHeadMaterial.SetVector("_NormalClipRight", Vector3.zero);
+        ArrowHeadMaterial.SetVector("_NormalClipLeft", Vector3.zero);
+
+        ImportArrowMaterial.SetVector("_PositionClipBottom", Vector3.zero);
+        ImportArrowMaterial.SetVector("_PositionClipFront", Vector3.zero);
+        ImportArrowMaterial.SetVector("_PositionClipBack", Vector3.zero);
+        ImportArrowMaterial.SetVector("_PositionClipRight", Vector3.zero);
+        ImportArrowMaterial.SetVector("_PositionClipLeft", Vector3.zero);
+        ImportArrowMaterial.SetVector("_NormalClipBottom", Vector3.zero);
+        ImportArrowMaterial.SetVector("_NormalClipFront", Vector3.zero);
+        ImportArrowMaterial.SetVector("_NormalClipBack", Vector3.zero);
+        ImportArrowMaterial.SetVector("_NormalClipRight", Vector3.zero);
+        ImportArrowMaterial.SetVector("_NormalClipLeft", Vector3.zero);
+
+        ExportArrowMaterial.SetVector("_PositionClipBottom", Vector3.zero);
+        ExportArrowMaterial.SetVector("_PositionClipFront", Vector3.zero);
+        ExportArrowMaterial.SetVector("_PositionClipBack", Vector3.zero);
+        ExportArrowMaterial.SetVector("_PositionClipRight", Vector3.zero);
+        ExportArrowMaterial.SetVector("_PositionClipLeft", Vector3.zero);
+        ExportArrowMaterial.SetVector("_NormalClipBottom", Vector3.zero);
+        ExportArrowMaterial.SetVector("_NormalClipFront", Vector3.zero);
+        ExportArrowMaterial.SetVector("_NormalClipBack", Vector3.zero);
+        ExportArrowMaterial.SetVector("_NormalClipRight", Vector3.zero);
+        ExportArrowMaterial.SetVector("_NormalClipLeft", Vector3.zero);
+
+        WireframeMaterial.SetVector("_PositionClipBottom", Vector3.zero);
+        WireframeMaterial.SetVector("_PositionClipFront", Vector3.zero);
+        WireframeMaterial.SetVector("_PositionClipBack", Vector3.zero);
+        WireframeMaterial.SetVector("_PositionClipRight", Vector3.zero);
+        WireframeMaterial.SetVector("_PositionClipLeft", Vector3.zero);
+        WireframeMaterial.SetVector("_NormalClipBottom", Vector3.zero);
+        WireframeMaterial.SetVector("_NormalClipFront", Vector3.zero);
+        WireframeMaterial.SetVector("_NormalClipBack", Vector3.zero);
+        WireframeMaterial.SetVector("_NormalClipRight", Vector3.zero);
+        WireframeMaterial.SetVector("_NormalClipLeft", Vector3.zero);
+    }
 }

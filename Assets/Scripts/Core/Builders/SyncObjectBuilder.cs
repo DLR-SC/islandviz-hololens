@@ -15,6 +15,8 @@ namespace HoloIslandVis.Core.Builders
 
         public IEnumerator BuildSyncObjects()
         {
+            var config = GameObject.Find("AppConfig").GetComponent<AppConfig>();
+            syncManager.SetServerEndpoint(config.SharingServiceAddress, config.SharingServicePort);
             syncManager.gameObject.SetActive(true);
             Visualization visualization = UIManager.Instance.Visualization;
 
@@ -27,6 +29,8 @@ namespace HoloIslandVis.Core.Builders
                 //dependencies[i].gameObject.AddComponent<ObjectEnableSynchronizer>();
                 dependencies[i].gameObject.SetActive(false);
             }
+
+
             SyncObjectsBuilt();
             yield return null;
         }

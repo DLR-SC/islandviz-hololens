@@ -1,0 +1,6 @@
+{
+  "sharing_service_addr" : "192.168.1.99",
+  "sharing_service_port" : 20602,
+  "nlu_service_addr" : "127.0.0.1",
+  "nlu_service_port" : 5000
+}

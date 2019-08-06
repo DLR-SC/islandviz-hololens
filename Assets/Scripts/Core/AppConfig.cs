@@ -7,9 +7,12 @@ namespace HoloIslandVis.Core
     public class AppConfig : MonoBehaviour
     {
         public bool SharingEnabled;
-        public int SharingServerPort;
-        public string SharingServerAddress;
-
         public bool IsServerInstance;
+
+        public string SharingServiceAddress;
+        public int SharingServicePort;
+
+        public string NLUServiceAddress;
+        public int NLUServicePort;
     }
 }

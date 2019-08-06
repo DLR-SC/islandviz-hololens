@@ -14,8 +14,8 @@ namespace HoloIslandVis.Controller.NLU
     {
         private Dictionary<string, KeywordType> _intentToKeyword;
 
-        public string ServerAddress;
-        public int ServerPort;
+        public string ServiceAddress;
+        public int ServicePort;
 
         private string _serverEndpoint;
         private string _latestResponse;
@@ -23,7 +23,7 @@ namespace HoloIslandVis.Controller.NLU
 
         void Start()
         {
-            _serverEndpoint = "http://" + ServerAddress + ":" + ServerPort + "/";
+            _serverEndpoint = "http://" + ServiceAddress + ":" + ServicePort + "/";
 
             _intentToKeyword = new Dictionary<string, KeywordType>()
             {

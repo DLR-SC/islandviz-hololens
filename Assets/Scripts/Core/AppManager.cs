@@ -1,4 +1,5 @@
 ﻿using HoloIslandVis.Controller;
+using HoloIslandVis.Controller.NLU;
 using HoloIslandVis.Core.Builders;
 using HoloIslandVis.Interaction;
 using HoloIslandVis.Interaction.Tasking.Task;
@@ -24,20 +25,44 @@ namespace HoloIslandVis.Core
 
         protected override void Awake()
         {
-            AppConfig.SharingEnabled = false;
-            AppConfig.IsServerInstance = false;
-
-            AppConfig.SharingServerAddress = "192.168.0.99";
-            AppConfig.SharingServerPort = 20602;
-
+            SetDefaultConfig();
             Initializer.AllInitialized += StartApplication;
-
             Initializer.AddComponent(UIManager.Instance);
             Initializer.AddComponent(StateManager.Instance);
             Initializer.AddComponent(VisualizationLoader.Instance);
             Initializer.AddComponent(IslandStructureBuilder.Instance);
             Initializer.AddComponent(UnityMainThreadDispatcher.Instance);
             Initializer.Initialize();
+        }
+
+        private void OnApplicationQuit()
+        {
+            
+        }
+
+        public void SetDefaultConfig()
+        {
+            string assetpath = Application.streamingAssetsPath;
+            string filepath = Path.Combine(assetpath, "default_config.json");
+            string filecontent = FileReader.Read(new Uri(filepath).AbsolutePath);
+            JSONObject config = JSONObject.Create(filecontent);
+
+            var sharingServiceAddr = config.GetField("sharing_service_addr");
+            var sharingServicePort = config.GetField("sharing_service_port");
+            var nluServiceAddr = config.GetField("nlu_service_addr");
+            var nluServicePort = config.GetField("nlu_service_port");
+
+            AppConfig.SharingServiceAddress = sharingServiceAddr.str;
+            AppConfig.SharingServicePort = (int)sharingServicePort.i;
+            AppConfig.NLUServiceAddress = nluServiceAddr.str;
+            AppConfig.NLUServicePort = (int)nluServicePort.i;
+
+            var nluServiceClient = GameObject.Find("NLUService").GetComponent<NLUServiceClient>();
+            nluServiceClient.ServiceAddress = AppConfig.NLUServiceAddress;
+            nluServiceClient.ServicePort = AppConfig.NLUServicePort;
+
+            GameObject.Find("ServiceAddressInput").GetComponent<InputField>().text = AppConfig.SharingServiceAddress;
+            GameObject.Find("ServicePortInput").GetComponent<InputField>().text = AppConfig.SharingServicePort.ToString();
         }
 
         public void StartApplication()
@@ -224,8 +249,8 @@ namespace HoloIslandVis.Core
 
                 if (AppConfig.SharingEnabled && !SyncManager.SharingStarted)
                 {
-                    string address = AppConfig.SharingServerAddress;
-                    int port = AppConfig.SharingServerPort;
+                    string address = AppConfig.SharingServiceAddress;
+                    int port = AppConfig.SharingServicePort;
 
                     SyncManager.SetServerEndpoint(address, port);
                     SyncManager.StartSharing();
@@ -287,7 +312,6 @@ namespace HoloIslandVis.Core
                 UIManager.Instance.SetActiveButtons(StaticItem.Done, StaticItem.Panel, StaticItem.Dependencies);
                 UIManager.Instance.EnableToolbar(true);
             });
-            state_inspectIsland.AddOpenAction((State state) => Debug.Log("Inspect Island State"));
             state_inspectIsland.AddCloseAction((State state) => UIManager.Instance.DisableToolbar(true));
         }
 
@@ -339,7 +363,6 @@ namespace HoloIslandVis.Core
                 UIManager.Instance.SetActiveButtons(StaticItem.Done, StaticItem.Panel, StaticItem.Dependencies);
                 UIManager.Instance.EnableToolbar(true);
             });
-            state_inspectRegion.AddOpenAction((State state) => Debug.Log("Inspect Region State"));
             state_inspectRegion.AddCloseAction((State state) => UIManager.Instance.DisableToolbar(true));
         }
 
@@ -395,7 +418,6 @@ namespace HoloIslandVis.Core
                 UIManager.Instance.SetActiveButtons(StaticItem.Done, StaticItem.Panel, StaticItem.Dependencies);
                 UIManager.Instance.EnableToolbar(true);
             });
-            state_inspectBuilding.AddOpenAction((State state) => Debug.Log("Inspect Building State"));
             state_inspectBuilding.AddCloseAction((State state) => UIManager.Instance.DisableToolbar(true));
         }
     }
