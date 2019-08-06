@@ -108,11 +108,11 @@ namespace HoloIslandVis.Core
             Init_StateSettings(state_settings, state_setup);
             //Init_StateLoading(state_loading, state_setup);
 
-            Init_StateSetup(state_setup, state_main);
-            Init_StateMain(state_main, state_setup, state_inspectIsland);
-            /*Init_StateSetup(state_setup, state_scenario_manager);
+            /*Init_StateSetup(state_setup, state_main);
+            Init_StateMain(state_main, state_setup, state_inspectIsland);*/
+            Init_StateSetup(state_setup, state_scenario_manager);
             Init_StateScenario(state_scenario_manager, state_setup, state_main);
-            Init_StateMain(state_main, state_scenario_manager, state_inspectIsland);*/
+            Init_StateMain(state_main, state_scenario_manager, state_inspectIsland);
 
             Init_StateInspectIsland(state_inspectIsland, state_main, state_inspectRegion);
             Init_StateInspectRegion(state_inspectRegion, state_inspectIsland, state_inspectBuilding, state_main);
@@ -124,8 +124,6 @@ namespace HoloIslandVis.Core
         public void LoadScenario()
         {
             Debug.Log("Load Scenario");
-            UIManager.Instance.Deactivate(UIElement.ScenarioPanel);
-            UIManager.Instance.Activate(UIElement.StartScenarioPanel);
         }
 
         private void Init_StateScenario(State state_scenario_manager, State state_setup, State state_main)
@@ -133,9 +131,11 @@ namespace HoloIslandVis.Core
             Command command_startScenario = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.Widget, InteractableType.None, StaticItem.None);
 
             state_scenario_manager.AddOpenAction((State state) => UIManager.Instance.Activate(UIElement.ScenarioPanel));
-            state_scenario_manager.AddCloseAction((State state) => UIManager.Instance.Deactivate(UIElement.StartScenarioPanel));
+            state_scenario_manager.AddCloseAction((State state) => UIManager.Instance.Deactivate(UIElement.ScenarioPanel));
             state_scenario_manager.AddStateTransition(command_startScenario, state_main);
         }
+
+
 
         private void Init_StateSettings(State state_settings, State state_setup)
         {
@@ -149,7 +149,7 @@ namespace HoloIslandVis.Core
 
         }
 
-        private void Init_StateSetup(State state_setup, State state_main)
+        private void Init_StateSetup(State state_setup, State state_scenario)
         {
             TaskDragPhysics task_dragPhysics    = new TaskDragPhysics();
 
@@ -157,7 +157,7 @@ namespace HoloIslandVis.Core
             Command command_setPane     = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.ContentPane, InteractableType.None, StaticItem.None);
 
             state_setup.AddInteractionTask(command_dragPhysics, task_dragPhysics);
-            state_setup.AddStateTransition(command_setPane, state_main);
+            state_setup.AddStateTransition(command_setPane, state_scenario);
 
             state_setup.AddOpenAction((State state) => {
                 UIManager.Instance.Activate(UIElement.BoundingBoxRig);
@@ -169,6 +169,8 @@ namespace HoloIslandVis.Core
 
         private void Init_StateMain(State state_main, State state_init, State state_inspectIsland)
         {
+            bool first_time_opened = true;
+
             TaskDragProjected task_dragProjected        = new TaskDragProjected();
             TaskZoomProjected task_zoomProjected        = new TaskZoomProjected();
             TaskIslandSelect task_islandSelect          = new TaskIslandSelect();
@@ -232,6 +234,14 @@ namespace HoloIslandVis.Core
                 UIManager.Instance.EnableToolbar(true);
             });
             state_main.AddOpenAction((State state) => Debug.Log("Main State"));
+            state_main.AddOpenAction((State state) => {
+                var uiElement = (ScenarioPanel)UIManager.Instance.GetUIElement(UIElement.ScenarioPanel);
+                var dropdown = uiElement.GetComponentsInChildren<Dropdown>(true);
+                Debug.Log(dropdown[0].options[dropdown[0].value].text);
+                GameObject.Find("ScenarioHandler").GetComponent<ScenarioHandler>().SetupScenario(dropdown[0].options[dropdown[0].value].text, first_time_opened);
+                // Adjusting the view must only be performed, when the main is opened for the first time.
+                first_time_opened = false;
+            });
 
             state_main.AddCloseAction((State state) => UIManager.Instance.DisableToolbar(true));
         }
