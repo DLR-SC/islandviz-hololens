@@ -124,26 +124,38 @@ namespace HoloIslandVis.Sharing
                 modelPrimitives[2].AddFromRemote(remoteSyncScaleElement);
                 modelPrimitives[3].AddFromRemote(remoteSyncRotationElement);
 
+                SyncModel.AddRemotePrimitive(remoteSyncEnabledElement.GetGUID(), modelPrimitives[0]);
+                SyncModel.AddRemotePrimitive(remoteSyncPositionElement.GetGUID(), modelPrimitives[1]);
+                SyncModel.AddRemotePrimitive(remoteSyncScaleElement.GetGUID(), modelPrimitives[2]);
+                SyncModel.AddRemotePrimitive(remoteSyncRotationElement.GetGUID(), modelPrimitives[3]);
+
                 ObjectElement remotePositionElement = ObjectElement.Cast(modelPrimitives[1].NetworkElement);
                 Element remotePositionX = remotePositionElement.GetElement("x");
                 Element remotePositionY = remotePositionElement.GetElement("y");
                 Element remotePositionZ = remotePositionElement.GetElement("z");
 
-                SyncVector3 syncPosition = (SyncVector3)modelPrimitives[1];
-                SyncPrimitive[] positionPrimitves = syncPosition.GetChildren();
-                positionPrimitves[0].AddFromRemote(remotePositionX);
-                positionPrimitves[1].AddFromRemote(remotePositionY);
-                positionPrimitves[2].AddFromRemote(remotePositionZ);
+                SyncPrimitive[] positionPrimitives = ((SyncObject)modelPrimitives[1]).GetChildren();
+                positionPrimitives[0].AddFromRemote(remotePositionX);
+                positionPrimitives[1].AddFromRemote(remotePositionY);
+                positionPrimitives[2].AddFromRemote(remotePositionZ);
+
+                SyncModel.SyncPosition.AddRemotePrimitive(remotePositionX.GetGUID(), positionPrimitives[0]);
+                SyncModel.SyncPosition.AddRemotePrimitive(remotePositionY.GetGUID(), positionPrimitives[1]);
+                SyncModel.SyncPosition.AddRemotePrimitive(remotePositionZ.GetGUID(), positionPrimitives[2]);
 
                 ObjectElement remoteScaleElement = ObjectElement.Cast(modelPrimitives[2].NetworkElement);
                 Element remoteScaleX = remoteScaleElement.GetElement("x");
                 Element remoteScaleY = remoteScaleElement.GetElement("y");
                 Element remoteScaleZ = remoteScaleElement.GetElement("z");
 
-                SyncPrimitive[] scalePrimitves = ((SyncObject)modelPrimitives[2]).GetChildren();
-                scalePrimitves[0].AddFromRemote(remoteScaleX);
-                scalePrimitves[1].AddFromRemote(remoteScaleY);
-                scalePrimitves[2].AddFromRemote(remoteScaleZ);
+                SyncPrimitive[] scalePrimitives = ((SyncObject)modelPrimitives[2]).GetChildren();
+                scalePrimitives[0].AddFromRemote(remoteScaleX);
+                scalePrimitives[1].AddFromRemote(remoteScaleY);
+                scalePrimitives[2].AddFromRemote(remoteScaleZ);
+
+                SyncModel.SyncScale.AddRemotePrimitive(remoteScaleX.GetGUID(), scalePrimitives[0]);
+                SyncModel.SyncScale.AddRemotePrimitive(remoteScaleY.GetGUID(), scalePrimitives[1]);
+                SyncModel.SyncScale.AddRemotePrimitive(remoteScaleZ.GetGUID(), scalePrimitives[2]);
 
                 ObjectElement remoteRotationElement = ObjectElement.Cast(modelPrimitives[3].NetworkElement);
                 Element remoteRotationX = remoteRotationElement.GetElement("x");
@@ -151,14 +163,18 @@ namespace HoloIslandVis.Sharing
                 Element remoteRotationZ = remoteRotationElement.GetElement("z");
                 Element remoteRotationW = remoteRotationElement.GetElement("w");
 
-                SyncPrimitive[] rotationPrimitves = ((SyncObject)modelPrimitives[3]).GetChildren();
-                rotationPrimitves[0].AddFromRemote(remoteRotationX);
-                rotationPrimitves[1].AddFromRemote(remoteRotationY);
-                rotationPrimitves[2].AddFromRemote(remoteRotationZ);
-                rotationPrimitves[3].AddFromRemote(remoteRotationW);
-            }
+                SyncPrimitive[] rotationPrimitives = ((SyncObject)modelPrimitives[3]).GetChildren();
+                rotationPrimitives[0].AddFromRemote(remoteRotationX);
+                rotationPrimitives[1].AddFromRemote(remoteRotationY);
+                rotationPrimitives[2].AddFromRemote(remoteRotationZ);
+                rotationPrimitives[3].AddFromRemote(remoteRotationW);
 
-            SyncModel.InitializeLocal(syncObj.Element);
+                SyncModel.SyncRotation.AddRemotePrimitive(remoteRotationX.GetGUID(), rotationPrimitives[0]);
+                SyncModel.SyncRotation.AddRemotePrimitive(remoteRotationY.GetGUID(), rotationPrimitives[1]);
+                SyncModel.SyncRotation.AddRemotePrimitive(remoteRotationZ.GetGUID(), rotationPrimitives[2]);
+                SyncModel.SyncRotation.AddRemotePrimitive(remoteRotationW.GetGUID(), rotationPrimitives[3]);
+
+            } else SyncModel.InitializeLocal(syncObj.Element);
 
             if (AppConfig.IsServerInstance)
             {
@@ -201,7 +217,7 @@ namespace HoloIslandVis.Sharing
             if (!SyncActive)
                 return;
 
-            SyncVector3 syncPosition = (SyncVector3)syncObj;
+            SyncVec3 syncPosition = (SyncVec3)syncObj;
             transform.localPosition = syncPosition.Value;
             transform.hasChanged = false;
             //TransformChange();
@@ -209,12 +225,12 @@ namespace HoloIslandVis.Sharing
 
         private void OnRemoteScaleChange(SyncObject syncObj)
         {
-            //Debug.Log(gameObject.name + ": Remote scale change received!");
+            //sDebug.Log(gameObject.name + ": Remote scale change received!");
 
             if (!SyncActive)
                 return;
 
-            SyncVector3 syncScale = (SyncVector3)syncObj;
+            SyncVec3 syncScale = (SyncVec3)syncObj;
             transform.localScale = syncScale.Value;
             transform.hasChanged = false;
             //TransformChange();
@@ -227,7 +243,7 @@ namespace HoloIslandVis.Sharing
             if (!SyncActive)
                 return;
 
-            SyncQuaternion syncRotation = (SyncQuaternion)syncObj;
+            SyncQuat syncRotation = (SyncQuat)syncObj;
             transform.localRotation = syncRotation.Value;
             transform.hasChanged = false;
             //TransformChange();

@@ -82,9 +82,9 @@ Material:
     - _NormalClipFront: {r: 0, g: -0.00000011920929, b: -1.0000001, a: 0}
     - _NormalClipLeft: {r: -1.0000001, g: -0.00000011920929, b: 0, a: 0}
     - _NormalClipRight: {r: 1.0000001, g: -0.00000011920929, b: 0, a: 0}
-    - _PositionClipBack: {r: -9.707022, g: -0.40173006, b: 2.1429157, a: 0}
-    - _PositionClipBottom: {r: -9.707022, g: -0.40173006, b: 2.6429157, a: 0}
-    - _PositionClipFront: {r: -9.707022, g: -0.40173006, b: 3.1429157, a: 0}
-    - _PositionClipLeft: {r: -9.207022, g: -0.40173006, b: 2.6429157, a: 0}
-    - _PositionClipRight: {r: -10.207022, g: -0.40173006, b: 2.6429157, a: 0}
+    - _PositionClipBack: {r: -6.4713426, g: -0.8043673, b: -1.2945461, a: 0}
+    - _PositionClipBottom: {r: -6.4713426, g: -0.8043673, b: -0.79454607, a: 0}
+    - _PositionClipFront: {r: -6.4713426, g: -0.8043673, b: -0.29454607, a: 0}
+    - _PositionClipLeft: {r: -5.9713426, g: -0.8043673, b: -0.79454607, a: 0}
+    - _PositionClipRight: {r: -6.9713426, g: -0.8043673, b: -0.79454607, a: 0}
     - _WireColor: {r: 1, g: 1, b: 1, a: 1}

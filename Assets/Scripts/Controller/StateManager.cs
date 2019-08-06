@@ -132,7 +132,7 @@ namespace HoloIslandVis.Controller
                 }
                 else
                 {
-                    string sendCommand = ParseCommand(command, eventArgs);
+                    string sendCommand = ParseGestureCommand(command, eventArgs);
                     SendCommandToRemote(sendCommand);
                 }
             }
@@ -156,13 +156,19 @@ namespace HoloIslandVis.Controller
 
             Command command = new Command(eventArgs);
 
+            if (AppConfig.SharingEnabled && AppConfig.IsServerInstance)
+            {
+                string sendCommand = ParseSpeechCommand(command, eventArgs);
+                SendCommandToRemote(sendCommand);
+            }
+
             if (CurrentState != null)
                 yield return CurrentState.ProcessCommand(eventArgs, command);
 
             yield break;
         }
 
-        private string ParseCommand(Command command, GestureInteractionEventArgs eventArgs)
+        private string ParseGestureCommand(Command command, GestureInteractionEventArgs eventArgs)
         {
             StringBuilder builder = new StringBuilder();
             builder.Append("COMMAND ");
@@ -187,6 +193,19 @@ namespace HoloIslandVis.Controller
             builder.Append(eventArgs.Gesture + " ");
             builder.Append(eventArgs.Focused.name.Replace(' ', '_') + " ");
             builder.Append(eventArgs.Selected.name.Replace(' ', '_'));
+
+            return builder.ToString();
+        }
+
+        private string ParseSpeechCommand(Command command, SpeechInteractionEventArgs eventArgs)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append("COMMAND ");
+            builder.Append(command.Gesture.ToString() + " ");
+            builder.Append(command.Keyword.ToString() + " ");
+            builder.Append(command.Focused.ToString() + " ");
+            builder.Append(command.Selected.ToString() + " ");
+            builder.Append(command.Item.ToString() + " ");
 
             return builder.ToString();
         }
