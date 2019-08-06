@@ -142,16 +142,16 @@ Material:
     - _NormalClipPlane4: {r: 0, g: 0, b: 0, a: 1}
     - _NormalClipPlane5: {r: 0, g: 0, b: 0, a: 1}
     - _NormalClipRight: {r: 1.0000001, g: -0.00000011920929, b: 0, a: 0}
-    - _PositionClipBack: {r: -4.1912274, g: -0.5180404, b: -6.6514306, a: 0}
-    - _PositionClipBottom: {r: -4.1912274, g: -0.5180404, b: -6.1514306, a: 0}
-    - _PositionClipFront: {r: -4.1912274, g: -0.5180404, b: -5.6514306, a: 0}
-    - _PositionClipLeft: {r: -3.6912274, g: -0.5180404, b: -6.1514306, a: 0}
+    - _PositionClipBack: {r: -7.062265, g: -0.4657566, b: -7.1776032, a: 0}
+    - _PositionClipBottom: {r: -7.062265, g: -0.4657566, b: -6.6776032, a: 0}
+    - _PositionClipFront: {r: -7.062265, g: -0.4657566, b: -6.1776032, a: 0}
+    - _PositionClipLeft: {r: -6.562265, g: -0.4657566, b: -6.6776032, a: 0}
     - _PositionClipPlane1: {r: 0, g: 0, b: 0, a: 1}
     - _PositionClipPlane2: {r: 0, g: 0, b: 0, a: 1}
     - _PositionClipPlane3: {r: 0, g: 0, b: 0, a: 1}
     - _PositionClipPlane4: {r: 0, g: 0, b: 0, a: 1}
     - _PositionClipPlane5: {r: 0, g: 0, b: 0, a: 1}
-    - _PositionClipRight: {r: -4.6912274, g: -0.5180404, b: -6.1514306, a: 0}
+    - _PositionClipRight: {r: -7.562265, g: -0.4657566, b: -6.6776032, a: 0}
     - _ReferenceNormal: {r: 0.7200348, g: 0.68544304, b: -0.108248755, a: 0}
     - _ReferencePosition: {r: 0.14390682, g: -0.5106243, b: 1.1131384, a: 0}
     - _RimColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}

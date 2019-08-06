@@ -38,7 +38,7 @@ namespace HoloIslandVis.Sharing
 
             _remoteChangeEvents = new Dictionary<string, Action<SyncString, string>>();
             _remoteChangeEvents.Add("GESTURE_COMMAND",    (SyncString syncString, string value) => OnRemoteGestureCommandChange(syncString, value));
-            _remoteChangeEvents.Add("SPEECH_COMMAND", (SyncString syncString, string value) => OnRemoteVoiceCommandChange(syncString, value));
+            _remoteChangeEvents.Add("VOICE_COMMAND", (SyncString syncString, string value) => OnRemoteVoiceCommandChange(syncString, value));
             _remoteChangeEvents.Add("FOCUSED",    (SyncString syncString, string value) => OnRemoteFocusedChange(syncString, value));
             _remoteChangeEvents.Add("DEFOCUSED",  (SyncString syncString, string value) => OnRemoteDefocusedChange(syncString, value));
 
