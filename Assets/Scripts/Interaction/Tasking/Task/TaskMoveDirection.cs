@@ -26,7 +26,6 @@ namespace HoloIslandVis.Interaction.Tasking.Task
             // Set the width of the shift.
             _scalingFactor = 30.0f * 0.01f / _visualization.transform.localScale.x;
 
-
             // Get position information
             Vector3 headPosition = GazeManager.Instance.GazeOrigin;
             Vector3 contentPosition = _contentPane.transform.position;
