@@ -100,6 +100,9 @@ namespace HoloIslandVis.Input.Speech
 
             // First token has to be equal to activation keyword, second token
             // is the actual input string for processing.
+
+            Debug.Log("Processing: " + text);
+
             string[] token = text.ToLower().Split(new char[] { ' ' }, 2);
             if (token[0] == ActivationKeyword.ToLower() && token.Length > 1)
             {
@@ -131,10 +134,13 @@ namespace HoloIslandVis.Input.Speech
 
         private IEnumerator ProcessInput(SpeechInputEventArgs eventArgs)
         {
+<<<<<<< HEAD
             if (!GameObject.Find("AppConfig").GetComponent<AppConfig>().IsServerInstance)
                 yield break;
 
             Debug.Log("Processing '" + eventArgs.Input + "'");
+=======
+>>>>>>> fdd24e2bbbab8979434d4aed2691bd04d24dd502
             _isProcessing = true;
             Action<SpeechInputEventArgs> action;
 

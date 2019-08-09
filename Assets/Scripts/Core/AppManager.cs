@@ -213,7 +213,6 @@ namespace HoloIslandVis.Core
             Command command_exportSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ImportDock);
             Command command_importSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
             Command command_islandSelectSpeech  = new Command(GestureType.None, KeywordType.Select, InteractableType.Bundle);
-            Command command_resetPane           = new Command(GestureType.None, KeywordType.Select, InteractableType.ContentPane);
             Command command_zoomIn              = new Command(GestureType.None, KeywordType.ZoomIn, InteractableType.Invariant);
             Command command_zoomOut             = new Command(GestureType.None, KeywordType.ZoomOut, InteractableType.Invariant);
             Command command_moveUp              = new Command(GestureType.None, KeywordType.MoveUp, InteractableType.Invariant);
@@ -232,7 +231,6 @@ namespace HoloIslandVis.Core
             state_main.AddInteractionTask(command_islandSelectSpeech, task_islandSelect);
             state_main.AddInteractionTask(command_importSelectGesture, task_toggleDependency);
             state_main.AddInteractionTask(command_exportSelectGesture, task_toggleDependency);
-            state_main.AddInteractionTask(command_resetPane, task_resetPane);
             state_main.AddInteractionTask(command_zoomIn, task_zoom);
             state_main.AddInteractionTask(command_zoomOut, task_zoom);
             state_main.AddInteractionTask(command_moveUp, task_moveDirection);
@@ -324,6 +322,7 @@ namespace HoloIslandVis.Core
             TaskIslandDeselect task_islandDeselect = new TaskIslandDeselect();
             TaskRotateInspect task_rotateInspect = new TaskRotateInspect();
             TaskShowDependencies task_showDependencies = new TaskShowDependencies();
+            TaskToggleDependency task_toggleDependency = new TaskToggleDependency();
 
             Command command_buildingSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.CompilationUnit, InteractableType.Package, StaticItem.None);
             Command command_buildingSelectSpeech = new Command(GestureType.None, KeywordType.Select, InteractableType.CompilationUnit, InteractableType.Package, StaticItem.None);
@@ -337,6 +336,8 @@ namespace HoloIslandVis.Core
             Command command_islandDeselectSpeech2 = new Command(GestureType.None, KeywordType.Deselect, InteractableType.None, InteractableType.Package, StaticItem.None);
             Command command_rotateInspect = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command command_showDependencies = new Command(StaticItem.Dependencies);
+            Command command_exportSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ImportDock);
+            Command command_importSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
 
             state_inspectRegion.AddInteractionTask(command_buildingSelect, task_buildingSelect);
             state_inspectRegion.AddInteractionTask(command_buildingSelectSpeech, task_buildingSelect);
@@ -349,6 +350,8 @@ namespace HoloIslandVis.Core
             state_inspectRegion.AddInteractionTask(command_islandDeselectSpeech2, task_islandDeselect);
             state_inspectRegion.AddInteractionTask(command_rotateInspect, task_rotateInspect);
             state_inspectRegion.AddInteractionTask(command_showDependencies, task_showDependencies);
+            state_inspectRegion.AddInteractionTask(command_importSelectGesture, task_toggleDependency);
+            state_inspectRegion.AddInteractionTask(command_exportSelectGesture, task_toggleDependency);
 
             state_inspectRegion.AddStateTransition(command_buildingSelect, state_inspectBuilding);
             state_inspectRegion.AddStateTransition(command_buildingSelectSpeech, state_inspectBuilding);
@@ -378,6 +381,7 @@ namespace HoloIslandVis.Core
             TaskIslandDeselect task_islandDeselectSpeech = new TaskIslandDeselect();
             TaskRotateInspect task_rotateInspect = new TaskRotateInspect();
             TaskShowDependencies task_showDependencies = new TaskShowDependencies();
+            TaskToggleDependency task_toggleDependency = new TaskToggleDependency();
 
             Command command_buildingSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.CompilationUnit, InteractableType.CompilationUnit, StaticItem.None);
             Command command_buildingDeselect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Package, InteractableType.CompilationUnit, StaticItem.None);
@@ -391,6 +395,8 @@ namespace HoloIslandVis.Core
             Command command_islandDeselectSpeech2 = new Command(GestureType.None, KeywordType.Deselect, InteractableType.None, InteractableType.CompilationUnit, StaticItem.None);
             Command command_rotateInspect = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command command_showDependencies = new Command(StaticItem.Dependencies);
+            Command command_exportSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ImportDock);
+            Command command_importSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
 
             state_inspectBuilding.AddInteractionTask(command_buildingSelect, task_buildingSelect);
             state_inspectBuilding.AddInteractionTask(command_buildingDeselect, task_buildingDeselect);
@@ -404,6 +410,8 @@ namespace HoloIslandVis.Core
             state_inspectBuilding.AddInteractionTask(command_islandDeselectSpeech2, task_islandDeselect);
             state_inspectBuilding.AddInteractionTask(command_rotateInspect, task_rotateInspect);
             state_inspectBuilding.AddInteractionTask(command_showDependencies, task_showDependencies);
+            state_inspectBuilding.AddInteractionTask(command_importSelectGesture, task_toggleDependency);
+            state_inspectBuilding.AddInteractionTask(command_exportSelectGesture, task_toggleDependency);
 
             state_inspectBuilding.AddStateTransition(command_buildingDeselect, state_inspectRegion);
             state_inspectBuilding.AddStateTransition(command_regionDeselect, state_inspectIsland);
