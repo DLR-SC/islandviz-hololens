@@ -100,6 +100,9 @@ namespace HoloIslandVis.Input.Speech
 
             // First token has to be equal to activation keyword, second token
             // is the actual input string for processing.
+
+            Debug.Log("Processing: " + text);
+
             string[] token = text.ToLower().Split(new char[] { ' ' }, 2);
             if (token[0] == ActivationKeyword.ToLower() && token.Length > 1)
             {

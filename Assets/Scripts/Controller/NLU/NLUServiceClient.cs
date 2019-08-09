@@ -40,7 +40,7 @@ namespace HoloIslandVis.Controller.NLU
 
         public IEnumerator SendRequest(SpeechInputEventArgs eventArgs)
         {
-            if (!AppConfig.IsServerInstance)
+            if (AppConfig.SharingEnabled && !AppConfig.IsServerInstance)
                 yield break;
 
             Context context = ContextManager.Instance.SafeContext;
