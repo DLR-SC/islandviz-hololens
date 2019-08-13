@@ -12,7 +12,8 @@ public class ScenarioHandler : MonoBehaviour
 
     public static float scenarioStartTime;
     public static float scenarioEndTime;
-    public static int counterActions;
+    public static int counterActionsGestureControl = 0;
+    public static int counterActionsSpeechControl = 0;
 
     public static Scenario_type scenario;
     public static Control_type control;
@@ -38,7 +39,6 @@ public class ScenarioHandler : MonoBehaviour
         bool useGestureControl
         )
     {
-        Debug.Log(scenarioName);
         _visualization = UIManager.Instance.GetUIElement(UIElement.Visualization);
 
         if (useGestureControl)
@@ -77,7 +77,7 @@ public class ScenarioHandler : MonoBehaviour
         switch (control)
         {
             case Control_type.GESTURE:
-                GameObject.Find("RCE Component Switch GUI ").GetComponent<Interactable>().Highlight.gameObject.SetActive(true);
+                GameObject.Find("RCE Components Switch GUI").GetComponent<Interactable>().Highlight.gameObject.SetActive(true);
                 break;
             case Control_type.VOICE:
                 GameObject.Find("RCE Cluster Component Execution").GetComponent<Interactable>().Highlight.gameObject.SetActive(true);
@@ -154,9 +154,18 @@ public class ScenarioHandler : MonoBehaviour
 
     public void AdjustVisalization()
     {
-        Debug.Log("Adjsut");
         float newScale = 0.00225f;
         _visualization.transform.localScale = new Vector3(newScale, newScale, newScale);
         _visualization.transform.position = _visualization.transform.position + new Vector3(0.06f, 0f, 0.06f);
+    }
+
+    public static void IncrementCounterGestureControl()
+    {
+        counterActionsGestureControl++;
+    }
+
+    public static void IncrementCounterVoiceControl()
+    {
+        counterActionsSpeechControl++;
     }
 }

@@ -262,8 +262,6 @@ namespace HoloIslandVis.Core
             state_main.AddOpenAction((State state) => {
                 var uiElement = (ScenarioPanel)UIManager.Instance.GetUIElement(UIElement.ScenarioPanel);
                 var dropdown = uiElement.GetComponentsInChildren<Dropdown>(true);
-                Debug.Log(dropdown[0].options[dropdown[0].value].text);
-
                 var controlOptions = uiElement.GetComponentsInChildren<Toggle>(true);
 
                 GameObject.Find("ScenarioHandler").GetComponent<ScenarioHandler>().SetupScenario(

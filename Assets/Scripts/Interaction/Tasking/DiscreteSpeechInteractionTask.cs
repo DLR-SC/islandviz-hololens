@@ -1,5 +1,6 @@
 ﻿
 using System.Collections;
+using UnityEngine;
 
 namespace HoloIslandVis.Interaction.Tasking
 {
@@ -8,6 +9,7 @@ namespace HoloIslandVis.Interaction.Tasking
         public override IEnumerator Perform(InteractionEventArgs eventArgs)
         {
             var casted = (SpeechInteractionEventArgs) eventArgs;
+            ScenarioHandler.IncrementCounterVoiceControl();
             yield return Perform(casted);
         }
 

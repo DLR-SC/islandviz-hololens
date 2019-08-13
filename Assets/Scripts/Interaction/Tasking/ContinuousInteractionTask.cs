@@ -7,6 +7,8 @@ namespace HoloIslandVis.Interaction
 {
     public abstract class ContinuousInteractionTask : InteractionTask
     {
+        private float time_last_time_triggered = 0;
+
         private Dictionary<GestureType, Func<GestureInteractionEventArgs, IEnumerator>> _interactionTable;
 
         protected ContinuousInteractionTask()
@@ -22,6 +24,13 @@ namespace HoloIslandVis.Interaction
 
         public override IEnumerator Perform(InteractionEventArgs eventArgs)
         {
+            float current_time = Time.time;
+            if (current_time - time_last_time_triggered > 0.05f)
+            {
+                ScenarioHandler.IncrementCounterGestureControl();
+            }
+            time_last_time_triggered = Time.time;
+
             var casted = (GestureInteractionEventArgs) eventArgs;
             var action = _interactionTable[casted.Gesture];
             yield return action.Invoke(casted);
