@@ -118,6 +118,16 @@ public class ScenarioHandler : MonoBehaviour
 
             Command command = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.Bundle);
             StartCoroutine(StateManager.Instance.IssueCommand(eventArgs, command));
+
+            UIManager.Instance.Activate(UIElement.StopScenarioPanel);
+            GameObject stopScenarioPanel = GameObject.Find("StopScenarioPanel");
+            GameObject contentPane = GameObject.Find("ContentPane");
+            stopScenarioPanel.GetComponent<HoloToolkit.Unity.Tagalong>().enabled = false;
+            stopScenarioPanel.transform.position = new Vector3(
+                contentPane.transform.position.x - 0.4f,
+                contentPane.transform.position.y + 1.05f,
+                contentPane.transform.position.z - 0.94f
+            );
         }
     }
 
@@ -167,5 +177,10 @@ public class ScenarioHandler : MonoBehaviour
     public static void IncrementCounterVoiceControl()
     {
         counterActionsSpeechControl++;
+    }
+
+    public static void FinishScenario()
+    {
+        Debug.Log(":^)");
     }
 }

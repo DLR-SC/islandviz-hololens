@@ -24,7 +24,7 @@ namespace HoloIslandVis.UI
         InfoPanel,
         Toolbar,
         ScenarioPanel,
-        StartScenarioPanel
+        StopScenarioPanel
     }
 
     public enum UIWidget
@@ -70,6 +70,7 @@ namespace HoloIslandVis.UI
             _uiComponents.Add(UIElement.Toolbar, GameObject.Find("Toolbar").GetComponent<UIComponent>());
             _uiComponents.Add(UIElement.InfoPanel, GameObject.Find("InfoPanel").GetComponent<UIComponent>());
             _uiComponents.Add(UIElement.ScenarioPanel, GameObject.Find("ScenarioPanel").GetComponent<UIComponent>());
+            _uiComponents.Add(UIElement.StopScenarioPanel, GameObject.Find("StopScenarioPanel").GetComponent<UIComponent>());
 
             foreach (UIElement element in _uiComponents.Keys)
                 Deactivate(element);

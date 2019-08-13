@@ -148,25 +148,25 @@ namespace HoloIslandVis.Interaction.Tasking.Task
                         case ScenarioHandler.Control_type.GESTURE:
                             if (focused.name == "RCE Components Switch GUI")
                             {
-                                Debug.Log("Doing It for the Money");
+                                ScenarioHandler.FinishScenario();
                             }
                             break;
                         case ScenarioHandler.Control_type.VOICE:
                             if (focused.name == "RCE Database Component Execution")
                             {
-                                Debug.Log("Pay the Man");
+                                ScenarioHandler.FinishScenario();
                             }
                             break;
                     }
                     break;
                 case ScenarioHandler.Scenario_type.SECOND:
-                    switch (ScenarioHandler.control)
+                    /*switch (ScenarioHandler.control)
                     {
                         case ScenarioHandler.Control_type.GESTURE:
                             break;
                         case ScenarioHandler.Control_type.VOICE:
                             break;
-                    }
+                    }*/
                     break;
                 case ScenarioHandler.Scenario_type.THIRD:
                     switch (ScenarioHandler.control)
@@ -174,13 +174,13 @@ namespace HoloIslandVis.Interaction.Tasking.Task
                         case ScenarioHandler.Control_type.GESTURE:
                             if (focused.name == "RCE Toolkit - Common Modules")
                             {
-                                Debug.Log("Doing It for the Money");
+                                ScenarioHandler.FinishScenario();
                             }
                             break;
                         case ScenarioHandler.Control_type.VOICE:
                             if (focused.name == "RCE Input Provider Component Common")
                             {
-                                Debug.Log("Pay the Man");
+                                ScenarioHandler.FinishScenario();
                             }
                             break;
                     }

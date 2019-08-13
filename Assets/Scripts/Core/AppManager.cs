@@ -151,6 +151,11 @@ namespace HoloIslandVis.Core
             Debug.Log("Load Scenario");
         }
 
+        public void StopScenario()
+        {
+            ScenarioHandler.FinishScenario();
+        }
+
         private void Init_StateScenario(State state_scenario_manager, State state_setup, State state_main)
         {
             Command command_startScenario = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.Widget, InteractableType.None, StaticItem.None);
@@ -159,9 +164,7 @@ namespace HoloIslandVis.Core
             state_scenario_manager.AddCloseAction((State state) => UIManager.Instance.Deactivate(UIElement.ScenarioPanel));
             state_scenario_manager.AddStateTransition(command_startScenario, state_main);
         }
-
-
-
+        
         private void Init_StateSettings(State state_settings, State state_setup)
         {
             state_settings.AddOpenAction((State state) => UIManager.Instance.Activate(UIElement.SettingsPanel));
