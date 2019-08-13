@@ -263,7 +263,13 @@ namespace HoloIslandVis.Core
                 var uiElement = (ScenarioPanel)UIManager.Instance.GetUIElement(UIElement.ScenarioPanel);
                 var dropdown = uiElement.GetComponentsInChildren<Dropdown>(true);
                 Debug.Log(dropdown[0].options[dropdown[0].value].text);
-                GameObject.Find("ScenarioHandler").GetComponent<ScenarioHandler>().SetupScenario(dropdown[0].options[dropdown[0].value].text, first_time_opened);
+
+                var controlOptions = uiElement.GetComponentsInChildren<Toggle>(true);
+
+                GameObject.Find("ScenarioHandler").GetComponent<ScenarioHandler>().SetupScenario(
+                    dropdown[0].options[dropdown[0].value].text, 
+                    first_time_opened,
+                    controlOptions[1].isOn);
                 // Adjusting the view must only be performed, when the main is opened for the first time.
                 first_time_opened = false;
             });

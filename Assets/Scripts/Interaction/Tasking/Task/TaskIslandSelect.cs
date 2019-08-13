@@ -50,6 +50,8 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         {
             UpdateHighlights(focused);
 
+            Check_goal_reached(focused);
+
             _visualization = UIManager.Instance.Visualization;
             _visualization.GetComponent<ObjectStateSynchronizer>().SyncActive = false;
             _contentPane = UIManager.Instance.ContentPane;
@@ -134,6 +136,59 @@ namespace HoloIslandVis.Interaction.Tasking.Task
             focused.gameObject.layer = LayerMask.NameToLayer("Default");
             focused.Highlight.gameObject.SetActive(false);
             focused.OnSelect();
+        }
+
+        public void Check_goal_reached(Interactable focused)
+        {
+            Debug.Log(":)");
+            Debug.Log(focused.name);
+            Debug.Log(focused.name.GetType());
+            switch (ScenarioHandler.scenario)
+            {
+                case ScenarioHandler.Scenario_type.FIRST:
+                    switch (ScenarioHandler.control)
+                    {
+                        case ScenarioHandler.Control_type.GESTURE:
+                            if (focused.name == "RCE Components Switch GUI")
+                            {
+                                Debug.Log("Doing It for the Money");
+                            }
+                            break;
+                        case ScenarioHandler.Control_type.VOICE:
+                            if (focused.name == "RCE Database Component Execution")
+                            {
+                                Debug.Log("Pay the Man");
+                            }
+                            break;
+                    }
+                    break;
+                case ScenarioHandler.Scenario_type.SECOND:
+                    switch (ScenarioHandler.control)
+                    {
+                        case ScenarioHandler.Control_type.GESTURE:
+                            break;
+                        case ScenarioHandler.Control_type.VOICE:
+                            break;
+                    }
+                    break;
+                case ScenarioHandler.Scenario_type.THIRD:
+                    switch (ScenarioHandler.control)
+                    {
+                        case ScenarioHandler.Control_type.GESTURE:
+                            if (focused.name == "RCE Toolkit - Common Modules")
+                            {
+                                Debug.Log("Doing It for the Money");
+                            }
+                            break;
+                        case ScenarioHandler.Control_type.VOICE:
+                            if (focused.name == "RCE Input Provider Component Common")
+                            {
+                                Debug.Log("Pay the Man");
+                            }
+                            break;
+                    }
+                    break;
+            }
         }
     }
 }
