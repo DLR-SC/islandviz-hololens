@@ -140,9 +140,6 @@ namespace HoloIslandVis.Interaction.Tasking.Task
 
         public void Check_goal_reached(Interactable focused)
         {
-            Debug.Log(":)");
-            Debug.Log(focused.name);
-            Debug.Log(focused.name.GetType());
             switch (ScenarioHandler.scenario)
             {
                 case ScenarioHandler.Scenario_type.FIRST:
@@ -189,6 +186,12 @@ namespace HoloIslandVis.Interaction.Tasking.Task
                     }
                     break;
             }
+
+        }
+
+        private void end_scenario()
+        {
+            ScenarioHandler.scenarioEndTime = Time.time;
         }
     }
 }
