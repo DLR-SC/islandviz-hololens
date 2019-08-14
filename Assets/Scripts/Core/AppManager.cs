@@ -151,11 +151,6 @@ namespace HoloIslandVis.Core
             Debug.Log("Load Scenario");
         }
 
-        public void StopScenario()
-        {
-            ScenarioHandler.FinishScenario();
-        }
-
         private void Init_StateScenario(State state_scenario_manager, State state_setup, State state_main)
         {
             Command command_startScenario = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.Widget, InteractableType.None, StaticItem.None);

@@ -148,13 +148,13 @@ namespace HoloIslandVis.Interaction.Tasking.Task
                         case ScenarioHandler.Control_type.GESTURE:
                             if (focused.name == "RCE Components Switch GUI")
                             {
-                                ScenarioHandler.FinishScenario();
+                                ScenarioHandler.Instance.FinishScenario();
                             }
                             break;
                         case ScenarioHandler.Control_type.VOICE:
                             if (focused.name == "RCE Database Component Execution")
                             {
-                                ScenarioHandler.FinishScenario();
+                                ScenarioHandler.Instance.FinishScenario();
                             }
                             break;
                     }
@@ -174,13 +174,13 @@ namespace HoloIslandVis.Interaction.Tasking.Task
                         case ScenarioHandler.Control_type.GESTURE:
                             if (focused.name == "RCE Toolkit - Common Modules")
                             {
-                                ScenarioHandler.FinishScenario();
+                                ScenarioHandler.Instance.FinishScenario();
                             }
                             break;
                         case ScenarioHandler.Control_type.VOICE:
                             if (focused.name == "RCE Input Provider Component Common")
                             {
-                                ScenarioHandler.FinishScenario();
+                                ScenarioHandler.Instance.FinishScenario();
                             }
                             break;
                     }

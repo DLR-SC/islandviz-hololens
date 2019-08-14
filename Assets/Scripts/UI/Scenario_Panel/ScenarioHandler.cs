@@ -1,13 +1,16 @@
 ﻿using HoloIslandVis.Controller;
+using HoloIslandVis.Core;
 using HoloIslandVis.Interaction;
 using HoloIslandVis.UI;
 using HoloIslandVis.UI.Component;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class ScenarioHandler : MonoBehaviour
+public class ScenarioHandler : SingletonComponent<ScenarioHandler>
 {
 
     public static float scenarioStartTime;
@@ -80,7 +83,7 @@ public class ScenarioHandler : MonoBehaviour
                 GameObject.Find("RCE Components Switch GUI").GetComponent<Interactable>().Highlight.gameObject.SetActive(true);
                 break;
             case Control_type.VOICE:
-                GameObject.Find("RCE Cluster Component Execution").GetComponent<Interactable>().Highlight.gameObject.SetActive(true);
+                GameObject.Find("RCE Database Component Execution").GetComponent<Interactable>().Highlight.gameObject.SetActive(true);
                 break;
         }
 
@@ -179,8 +182,53 @@ public class ScenarioHandler : MonoBehaviour
         counterActionsSpeechControl++;
     }
 
-    public static void FinishScenario()
+    public void FinishScenario()
     {
-        Debug.Log(":^)");
+        scenarioEndTime = Time.time;
+        StartCoroutine(FetchData());
+    }
+
+    private IEnumerator FetchData()
+    {
+        Debug.Log("FetchData");
+        string putData = BuildPutData();
+        Debug.Log(putData);
+        byte[] bytes = Encoding.UTF8.GetBytes(putData);
+
+        string ServiceAdress = "127.0.0.1";
+        string ServicePort = "5000";
+        string serverEndpoint = "http://" + ServiceAdress + ":" + ServicePort + "/";
+
+        Debug.Log("Start Web Request");
+        var webRequest = UnityWebRequest.Put(serverEndpoint + "scenario", bytes);
+        webRequest.SetRequestHeader("Content-Type", "application/json");
+        yield return webRequest.SendWebRequest();
+
+        Debug.Log("Request sent");
+        if (webRequest.isNetworkError)
+        {
+            Debug.Log("Error While Sending: " + webRequest.error);
+            //_errorState = true;
+        }
+        else Debug.Log("Received: " + webRequest.downloadHandler.text);
+        string _latestResponse = webRequest.downloadHandler.text;
+        Debug.Log(_latestResponse);
+        Debug.Log("yeah");
+
+        yield return null;
+    }
+
+    private string BuildPutData()
+    {
+        StringBuilder builder = new StringBuilder();
+
+        builder.Append("{\"NumberScenario\": \"" + ScenarioHandler.scenario + "\",");
+        builder.Append("\"TypeScenario\": \"" + ScenarioHandler.control + "\",");
+        builder.Append("\"StartTime\": \"" + ScenarioHandler.scenarioStartTime + "\",");
+        builder.Append("\"EndTime\": \"" + ScenarioHandler.scenarioEndTime + "\",");
+        builder.Append("\"NumberActivitiesGesture\": \"" + ScenarioHandler.counterActionsGestureControl + "\",");
+        builder.Append("\"NumberActivitiesVoice\": \"" + ScenarioHandler.counterActionsSpeechControl + "\"}");
+
+        return builder.ToString();
     }
 }
