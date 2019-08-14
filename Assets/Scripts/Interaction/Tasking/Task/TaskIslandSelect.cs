@@ -186,12 +186,6 @@ namespace HoloIslandVis.Interaction.Tasking.Task
                     }
                     break;
             }
-
-        }
-
-        private void end_scenario()
-        {
-            ScenarioHandler.scenarioEndTime = Time.time;
         }
     }
 }
