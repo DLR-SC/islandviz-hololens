@@ -18,6 +18,8 @@ namespace HoloIslandVis.Interaction.Tasking.Task
 
         public override IEnumerator StartInteraction(GestureInteractionEventArgs eventArgs)
         {
+            ScenarioHandler.keywordsGesture.Add("Move");
+            ScenarioHandler.IncrementCounterGestureControl();
             _visualization = UIManager.Instance.Visualization;
 
             _position = _visualization.transform.position;

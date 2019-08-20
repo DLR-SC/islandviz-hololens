@@ -209,19 +209,37 @@ namespace HoloIslandVis.UI.Component
             Vector3 targetScale = GetTargetScale(tempScale, side);
             Vector3 targetPosition = GetTargetPosition(tempPosition, side);
 
-            while(Vector3.Distance(tempScale, targetScale) > THRESHOLD)
+            GameObject stopPanel = new GameObject();
+            Vector3 tempPositionStopPanel = new Vector3(0f, 0f, 0f);
+            Vector3 targetPositionStopPanel = new Vector3(0f, 0f, 0f);
+            /*if (ScenarioHandler.scenario == ScenarioHandler.Scenario_type.SECOND)
+            {
+                stopPanel = GameObject.Find("StopScenarioPanel");
+                tempPositionStopPanel = stopPanel.transform.position;
+                targetPositionStopPanel = getTargetPositionStopPanel(side, transform.position);
+            }*/
+            stopPanel = GameObject.Find("StopScenarioPanel");
+            tempPositionStopPanel = stopPanel.transform.position;
+            targetPositionStopPanel = getTargetPositionStopPanel(side, transform.position);
+
+            while (Vector3.Distance(tempScale, targetScale) > THRESHOLD)
             {
                 tempScale = Vector3.Lerp(tempScale, targetScale, INTERP_FAC);
                 tempPosition = Vector3.Lerp(tempPosition, targetPosition, INTERP_FAC);
+                //if (ScenarioHandler.scenario == ScenarioHandler.Scenario_type.SECOND)
+                    tempPositionStopPanel = Vector3.Lerp(tempPositionStopPanel, targetPositionStopPanel, INTERP_FAC);
 
                 transform.localScale = tempScale;
                 transform.localPosition = tempPosition;
+                //if (ScenarioHandler.scenario == ScenarioHandler.Scenario_type.SECOND)
+                    stopPanel.transform.position = tempPositionStopPanel;
 
                 yield return new WaitForSeconds(0.01f);
             }
 
             transform.localScale = targetScale;
             transform.localPosition = targetPosition;
+            stopPanel.transform.position = targetPositionStopPanel;
 
             Vector3 tbScale = GetToolbarScale();
             Vector3 tbPosition = GetToolbarPosition(side);
@@ -265,6 +283,28 @@ namespace HoloIslandVis.UI.Component
             transform.localPosition = _basePosition;
             _rollingIn = false;
             _unrolled = false;
+        }
+
+        private Vector3 getTargetPositionStopPanel(FrameSide side, Vector3 targetFrame)
+        {
+            Vector3 targetPosition = targetFrame + new Vector3(0f, 0.5f, 0f);
+
+            switch (side)
+            {
+                case FrameSide.Backward:
+                    targetPosition = targetPosition + new Vector3(1f, 0f, 0f);
+                    break;
+                case FrameSide.Forward:
+                    targetPosition = targetPosition + new Vector3(-1f, 0f, 0f);
+                    break;
+                case FrameSide.Right:
+                    targetPosition = targetPosition + new Vector3(0f, 0f, 1f);
+                    break;
+                case FrameSide.Left:
+                    targetPosition = targetPosition + new Vector3(0f, 0f, -1f);
+                    break;
+            }
+            return targetPosition;
         }
     }
 }

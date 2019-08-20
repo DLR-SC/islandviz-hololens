@@ -12,11 +12,14 @@ namespace HoloIslandVis.Interaction.Tasking.Task
     {
         public override IEnumerator Perform(GestureInteractionEventArgs eventArgs)
         {
+            ScenarioHandler.keywordsGesture.Add("Deselect[Building]");
             UpdateHighlights(eventArgs);
             yield return null;
         }
         public override IEnumerator Perform(SpeechInteractionEventArgs eventArgs)
         {
+            ScenarioHandler.keywordsSpeech.Add("Deselect[Building]");
+            ScenarioHandler.IncrementCounterVoiceControl();
             UpdateHighlights(eventArgs);
             yield return null;
         }

@@ -20,6 +20,7 @@ namespace HoloIslandVis.Interaction.Tasking.Task
 
         public override IEnumerator StartInteraction(GestureInteractionEventArgs eventArgs)
         {
+            ScenarioHandler.keywordsGesture.Add("Zoom");
             _visualization = UIManager.Instance.Visualization;
             _visualizationPosition = _visualization.transform.localPosition;
             _visualizationScale = _visualization.transform.localScale;

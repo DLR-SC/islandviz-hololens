@@ -19,7 +19,8 @@ namespace HoloIslandVis.Interaction.Tasking.Task
 
         public override IEnumerator StartInteraction(GestureInteractionEventArgs eventArgs)
         {
-            _visualization = UIManager.Instance.Visualization;
+            ScenarioHandler.keywordsGesture.Add("Rotate");
+               _visualization = UIManager.Instance.Visualization;
             _contentPane = UIManager.Instance.ContentPane;
 
             _projectionAxis = GameObject.Find("MixedRealityCamera").transform.right;

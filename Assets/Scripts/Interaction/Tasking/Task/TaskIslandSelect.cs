@@ -32,6 +32,8 @@ namespace HoloIslandVis.Interaction.Tasking.Task
 
         public override IEnumerator Perform(GestureInteractionEventArgs eventArgs)
         {
+            ScenarioHandler.current_bundle = eventArgs.Focused.name;
+            ScenarioHandler.keywordsGesture.Add("Select[Island]");
             _focused = eventArgs.Focused;
             _focused.OnSelect();
 
@@ -40,6 +42,9 @@ namespace HoloIslandVis.Interaction.Tasking.Task
 
         public override IEnumerator Perform(SpeechInteractionEventArgs eventArgs)
         {
+            ScenarioHandler.IncrementCounterVoiceControl();
+            ScenarioHandler.current_bundle = eventArgs.Focused.name;
+            ScenarioHandler.keywordsSpeech.Add("Select[Island]");
             _focused = eventArgs.Focused;
             _focused.OnSelect();
 
@@ -49,8 +54,13 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         public IEnumerator Perform(Interactable focused)
         {
             UpdateHighlights(focused);
+            if (ScenarioHandler.name_highlighted_island != "")
+            {
+                Debug.Log("Highlight island");
+                GameObject.Find(ScenarioHandler.name_highlighted_island).GetComponent<Interactable>().Highlight.gameObject.SetActive(false);
+            }
 
-            Check_goal_reached(focused);
+            //Check_goal_reached(focused);
 
             _visualization = UIManager.Instance.Visualization;
             _visualization.GetComponent<ObjectStateSynchronizer>().SyncActive = false;

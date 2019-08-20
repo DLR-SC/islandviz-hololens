@@ -21,8 +21,7 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         public override IEnumerator Perform(GestureInteractionEventArgs eventArgs)
         {
             UpdateHighlights(eventArgs);
-
-            Debug.Log("Deselect");
+            ScenarioHandler.keywordsGesture.Add("Deselect[Island]");
 
             _visualization = UIManager.Instance.Visualization;
             _visualization.GetComponent<ObjectStateSynchronizer>().SyncActive = false;
@@ -38,8 +37,8 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         public override IEnumerator Perform(SpeechInteractionEventArgs eventArgs)
         {
             UpdateHighlights(eventArgs);
-
-            Debug.Log("Deselect");
+            ScenarioHandler.keywordsSpeech.Add("Deselect[Island]");
+            ScenarioHandler.IncrementCounterVoiceControl();
 
             _visualization = UIManager.Instance.Visualization;
             _visualization.GetComponent<ObjectStateSynchronizer>().SyncActive = false;

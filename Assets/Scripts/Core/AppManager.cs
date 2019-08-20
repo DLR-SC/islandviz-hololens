@@ -23,6 +23,8 @@ namespace HoloIslandVis.Core
         public SyncManager SyncManager;
         public SingletonComponentInitializer Initializer;
 
+        public static bool first_time_opened;
+
         protected override void Awake()
         {
             SetDefaultConfig();
@@ -137,7 +139,7 @@ namespace HoloIslandVis.Core
             Init_StateMain(state_main, state_setup, state_inspectIsland);*/
             Init_StateSetup(state_setup, state_scenario_manager);
             Init_StateScenario(state_scenario_manager, state_setup, state_main);
-            Init_StateMain(state_main, state_scenario_manager, state_inspectIsland);
+            Init_StateMain(state_main, state_setup, state_inspectIsland, state_scenario_manager);
 
             Init_StateInspectIsland(state_inspectIsland, state_main, state_inspectRegion);
             Init_StateInspectRegion(state_inspectRegion, state_inspectIsland, state_inspectBuilding, state_main);
@@ -148,14 +150,20 @@ namespace HoloIslandVis.Core
 
         public void LoadScenario()
         {
-            Debug.Log("Load Scenario");
+        }
+
+        public void StopScenario()
+        {
+            ScenarioHandler.Instance.FinishScenario();
         }
 
         private void Init_StateScenario(State state_scenario_manager, State state_setup, State state_main)
         {
             Command command_startScenario = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.Widget, InteractableType.None, StaticItem.None);
 
+            ScenarioHandler.Instance.init_stuff();
             state_scenario_manager.AddOpenAction((State state) => UIManager.Instance.Activate(UIElement.ScenarioPanel));
+            state_scenario_manager.AddOpenAction((State state) => UIManager.Instance.Deactivate(UIElement.StopScenarioPanel));
             state_scenario_manager.AddCloseAction((State state) => UIManager.Instance.Deactivate(UIElement.ScenarioPanel));
             state_scenario_manager.AddStateTransition(command_startScenario, state_main);
         }
@@ -179,6 +187,14 @@ namespace HoloIslandVis.Core
             Command command_dragPhysics = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.ContentPane);
             Command command_setPane     = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.ContentPane, InteractableType.None, StaticItem.None);
 
+            GameObject obj1 = GameObject.Find("RCE Toolkit - Common Modules");
+            GameObject obj2 = GameObject.Find("RCE Input Provider Component Common");
+
+            obj1.transform.localPosition = obj1.transform.localPosition + new Vector3(-164f, 0f, -27f);
+            obj2.transform.localPosition = obj2.transform.localPosition + new Vector3(62f, 0f, 92f);
+
+
+
             state_setup.AddInteractionTask(command_dragPhysics, task_dragPhysics);
             state_setup.AddStateTransition(command_setPane, state_scenario);
 
@@ -190,9 +206,9 @@ namespace HoloIslandVis.Core
             state_setup.AddCloseAction((State state) => UIManager.Instance.Deactivate(UIElement.BoundingBoxRig));
         }
 
-        private void Init_StateMain(State state_main, State state_init, State state_inspectIsland)
+        private void Init_StateMain(State state_main, State state_init, State state_inspectIsland, State state_scenario)
         {
-            bool first_time_opened = true;
+            first_time_opened = true;
 
             TaskDragProjected task_dragProjected        = new TaskDragProjected();
             TaskZoomProjected task_zoomProjected        = new TaskZoomProjected();
@@ -204,6 +220,7 @@ namespace HoloIslandVis.Core
             TaskResetPane task_resetPane                = new TaskResetPane();
             TaskMoveDirection task_moveDirection        = new TaskMoveDirection();
             TaskZoom task_zoom                          = new TaskZoom();
+            
 
             Command command_dragProjected       = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command command_zoomProjected       = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
@@ -221,6 +238,7 @@ namespace HoloIslandVis.Core
             Command command_adjust              = new Command(StaticItem.Adjust);
             Command command_showDependencies    = new Command(StaticItem.Dependencies);
             Command command_fitContent          = new Command(StaticItem.Fit);
+            Command command_reset               = new Command(StaticItem.Reset);
 
             state_main.AddInteractionTask(command_dragProjected, task_dragProjected);
             state_main.AddInteractionTask(command_zoomProjected, task_zoomProjected);
@@ -241,7 +259,16 @@ namespace HoloIslandVis.Core
             state_main.AddStateTransition(command_adjust, state_init);
             state_main.AddStateTransition(command_islandSelectGesture, state_inspectIsland);
             state_main.AddStateTransition(command_islandSelectSpeech, state_inspectIsland);
+            state_main.AddStateTransition(command_reset, state_scenario);
 
+            state_main.AddOpenAction((State state) =>
+            {
+                if (ScenarioHandler.name_highlighted_island != "")
+                {
+                    Debug.Log("Start main");
+                    GameObject.Find(ScenarioHandler.name_highlighted_island).GetComponent<Interactable>().Highlight.gameObject.SetActive(true);
+                }
+            });
             state_main.AddOpenAction((State state) => {
                 UIManager.Instance.SetActiveButtons(StaticItem.Adjust, StaticItem.Panel, StaticItem.Fit, StaticItem.Dependencies);
 
@@ -256,18 +283,20 @@ namespace HoloIslandVis.Core
 
                 UIManager.Instance.EnableToolbar(true);
             });
-            state_main.AddOpenAction((State state) => Debug.Log("Main State"));
             state_main.AddOpenAction((State state) => {
-                var uiElement = (ScenarioPanel)UIManager.Instance.GetUIElement(UIElement.ScenarioPanel);
-                var dropdown = uiElement.GetComponentsInChildren<Dropdown>(true);
-                var controlOptions = uiElement.GetComponentsInChildren<Toggle>(true);
+                if (first_time_opened)
+                {
+                    var uiElement = (ScenarioPanel)UIManager.Instance.GetUIElement(UIElement.ScenarioPanel);
+                    var dropdown = uiElement.GetComponentsInChildren<Dropdown>(true);
+                    var controlOptions = uiElement.GetComponentsInChildren<Toggle>(true);
 
-                GameObject.Find("ScenarioHandler").GetComponent<ScenarioHandler>().SetupScenario(
-                    dropdown[0].options[dropdown[0].value].text, 
-                    first_time_opened,
-                    controlOptions[1].isOn);
-                // Adjusting the view must only be performed, when the main is opened for the first time.
-                first_time_opened = false;
+                    GameObject.Find("ScenarioHandler").GetComponent<ScenarioHandler>().SetupScenario(
+                        dropdown[0].options[dropdown[0].value].text,
+                        first_time_opened,
+                        controlOptions[1].isOn);
+                    // Adjusting the view must only be performed, when the main is opened for the first time.
+                    first_time_opened = false;
+                }
             });
 
             state_main.AddCloseAction((State state) => UIManager.Instance.DisableToolbar(true));
@@ -310,7 +339,16 @@ namespace HoloIslandVis.Core
             state_inspectIsland.AddStateTransition(command_regionSelect, state_inspectRegion);
             state_inspectIsland.AddStateTransition(command_regionSelectSpeech, state_inspectRegion);
 
+            state_inspectIsland.AddOpenAction((State state) =>
+            {
+                if (ScenarioHandler.name_highlighted_island != "")
+                {
+                    Debug.Log("Start inspect island");
+                    GameObject.Find(ScenarioHandler.name_highlighted_island).GetComponent<Interactable>().Highlight.gameObject.SetActive(false);
+                }
+            });
             state_inspectIsland.AddOpenAction((State state) => {
+                Debug.Log("inspect island");
                 UIManager.Instance.SetActiveButtons(StaticItem.Done, StaticItem.Panel, StaticItem.Dependencies);
                 UIManager.Instance.EnableToolbar(true);
             });

@@ -108,6 +108,10 @@ namespace HoloIslandVis.Interaction
                 _focused = false;
                 ContextManager.Instance.Focused = null;
             }
+            if ((ScenarioHandler.name_highlighted_island != "") && (StateManager.Instance.CurrentState.Name == "main") && !(StateManager.Instance._isProcessing))
+            {
+                GameObject.Find(ScenarioHandler.name_highlighted_island).GetComponent<Interactable>().Highlight.gameObject.SetActive(true);
+            }
         }
 
         public void OnSelect()
