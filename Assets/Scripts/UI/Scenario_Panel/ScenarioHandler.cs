@@ -31,6 +31,8 @@ public class ScenarioHandler : SingletonComponent<ScenarioHandler>
     private Vector3 scale;
     private Vector3 position;
 
+    private bool isDemo = false;
+
     private bool first_time = true;
     public static string name_highlighted_island = "";
 
@@ -87,6 +89,18 @@ public class ScenarioHandler : SingletonComponent<ScenarioHandler>
                 init_scenarioThree(adjust_view);
                 break;
             default:
+                AdjustVisalization();
+                isDemo = true;
+
+                UIManager.Instance.Activate(UIElement.StopScenarioPanel);
+                GameObject stopScenarioPanel = GameObject.Find("StopScenarioPanel");
+                GameObject contentPane = GameObject.Find("ContentPane");
+                stopScenarioPanel.GetComponent<HoloToolkit.Unity.Tagalong>().enabled = false;
+                stopScenarioPanel.transform.position = new Vector3(
+                    contentPane.transform.position.x - 0.4f,
+                    contentPane.transform.position.y + 1.05f,
+                    contentPane.transform.position.z - 0.94f
+                );
                 break;
         }
         scenarioStartTime = Time.time;
@@ -184,8 +198,7 @@ public class ScenarioHandler : SingletonComponent<ScenarioHandler>
             eventArgs.Selected._selected = false;
 
             Command command = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.Bundle);
-            AdjustVisalization();
-            //StartCoroutine(StateManager.Instance.IssueCommand(eventArgs, command));
+            StartCoroutine(StateManager.Instance.IssueCommand(eventArgs, command));
 
             UIManager.Instance.Activate(UIElement.StopScenarioPanel);
             GameObject stopScenarioPanel = GameObject.Find("StopScenarioPanel");
@@ -238,7 +251,14 @@ public class ScenarioHandler : SingletonComponent<ScenarioHandler>
     public void FinishScenario()
     {
         scenarioEndTime = Time.time;
-        StartCoroutine(FetchData());
+        if (isDemo)
+        {
+            isDemo = false;
+        }
+        else
+        {
+            StartCoroutine(FetchData());
+        }
         StartCoroutine(BackToBlack());
     }
 
@@ -249,6 +269,8 @@ public class ScenarioHandler : SingletonComponent<ScenarioHandler>
 
         keywordsGesture = new ArrayList();
         keywordsSpeech = new ArrayList();
+        counterActionsGestureControl = 0;
+        counterActionsSpeechControl = 0;
 
         string ServiceAdress = "192.168.1.100";
         string ServicePort = "5000";

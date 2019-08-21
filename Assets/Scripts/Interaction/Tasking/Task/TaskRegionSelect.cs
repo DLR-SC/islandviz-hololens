@@ -12,14 +12,14 @@ namespace HoloIslandVis.Interaction.Tasking.Task
     {
         public override IEnumerator Perform(GestureInteractionEventArgs eventArgs)
         {
-            ScenarioHandler.current_bundle = eventArgs.Focused.name;
+            ScenarioHandler.current_package = eventArgs.Focused.name;
             ScenarioHandler.keywordsGesture.Add("Select[Region]");
             UpdateHighlights(eventArgs);
             yield return null;
         }
         public override IEnumerator Perform(SpeechInteractionEventArgs eventArgs)
         {
-            ScenarioHandler.current_bundle = eventArgs.Focused.name;
+            ScenarioHandler.current_package = eventArgs.Focused.name;
             ScenarioHandler.keywordsSpeech.Add("Select[Region]");
             ScenarioHandler.IncrementCounterVoiceControl();
             UpdateHighlights(eventArgs);
