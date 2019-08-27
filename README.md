@@ -1,4 +1,6 @@
-**<h1>IslandViz (for HoloLens)</h1>**
+**<h1>IslandViz Augmented Reality (for HoloLens)</h1>**
+
+![IslandViz Augmented Reality](/Docs/Images/Logo_IslandViz-1a_RGB.png)
 
  [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/DLR-SC/islandviz-hololens/blob/master/LICENSE)
 
