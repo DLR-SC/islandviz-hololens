@@ -14,6 +14,8 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         {
             ScenarioHandler.current_compilationUnit = eventArgs.Focused.name;
             ScenarioHandler.keywordsGesture.Add("Select[Building]");
+            ScenarioHandler.IncrementCounterGestureControl();
+
             UpdateHighlights(eventArgs);
             yield return null;
         }
@@ -22,6 +24,7 @@ namespace HoloIslandVis.Interaction.Tasking.Task
             ScenarioHandler.current_compilationUnit = eventArgs.Focused.name;
             ScenarioHandler.keywordsSpeech.Add("Select[Building]");
             ScenarioHandler.IncrementCounterVoiceControl();
+
             UpdateHighlights(eventArgs);
             yield return null;
         }

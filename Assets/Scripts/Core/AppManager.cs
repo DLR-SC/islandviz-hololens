@@ -145,6 +145,8 @@ namespace HoloIslandVis.Core
             Init_StateInspectRegion(state_inspectRegion, state_inspectIsland, state_inspectBuilding, state_main);
             Init_StateInspectBuilding(state_inspectBuilding, state_inspectRegion, state_inspectIsland, state_main);
 
+            StartCoroutine(ScenarioHandler.SendLiveSignal());
+
             StateManager.Instance.Init(state_setup);
         }
 
@@ -164,6 +166,7 @@ namespace HoloIslandVis.Core
             ScenarioHandler.Instance.init_stuff();
             state_scenario_manager.AddOpenAction((State state) => UIManager.Instance.Activate(UIElement.ScenarioPanel));
             state_scenario_manager.AddOpenAction((State state) => UIManager.Instance.Deactivate(UIElement.StopScenarioPanel));
+            state_scenario_manager.AddOpenAction((State state) => Debug.Log("Scenario State"));
             state_scenario_manager.AddCloseAction((State state) => UIManager.Instance.Deactivate(UIElement.ScenarioPanel));
             state_scenario_manager.AddStateTransition(command_startScenario, state_main);
         }

@@ -8,9 +8,7 @@ namespace HoloIslandVis.Interaction.Tasking
     {
         public override IEnumerator Perform(InteractionEventArgs eventArgs)
         {
-            Debug.Log("heyheyhey");
             var casted = (SpeechInteractionEventArgs) eventArgs;
-            ScenarioHandler.IncrementCounterVoiceControl();
             yield return Perform(casted);
         }
 

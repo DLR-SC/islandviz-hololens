@@ -18,6 +18,8 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         public override IEnumerator Perform(SpeechInteractionEventArgs eventArgs)
         {
             ScenarioHandler.keywordsSpeech.Add("Move[" + eventArgs.Keyword + "]");
+            ScenarioHandler.IncrementCounterVoiceControl();
+
             _visualization = UIManager.Instance.GetUIElement(UIElement.Visualization);
             _contentPane = UIManager.Instance.GetUIElement(UIElement.ContentPane);
 

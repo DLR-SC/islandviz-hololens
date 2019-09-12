@@ -10,7 +10,6 @@ namespace HoloIslandVis.Interaction.Tasking
             if(eventArgs is GestureInteractionEventArgs)
             {
                 var casted = (GestureInteractionEventArgs)eventArgs;
-                ScenarioHandler.IncrementCounterGestureControl();
                 yield return Perform(casted);
             }
             else if(eventArgs is SpeechInteractionEventArgs)

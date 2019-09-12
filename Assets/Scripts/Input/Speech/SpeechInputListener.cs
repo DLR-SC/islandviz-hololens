@@ -70,13 +70,15 @@ namespace HoloIslandVis.Input.Speech
             _dictationRecognizer.DictationComplete += OnDictationComplete;
             _dictationRecognizer.DictationResult += OnDictationResult;
             _dictationRecognizer.DictationError += OnDictationError;
-            _dictationRecognizer.Start();
 
             _isProcessing = false;
+            StartCoroutine(Status());
+            StartCoroutine(RecognizerTimeout());
         }
 
         void Update()
         {
+            //Debug.Log("Update");
             if (!(_dictationRecognizer.Status == SpeechSystemStatus.Running)
                 && !_dictationStarted && !_isProcessing)
             {
@@ -85,14 +87,56 @@ namespace HoloIslandVis.Input.Speech
             }
         }
 
+        public IEnumerator Status()
+        {
+            while (true)
+            {
+                Debug.Log("dictation started: " + _dictationStarted);
+                Debug.Log("is processing: " + _isProcessing);
+                yield return new WaitForSeconds(2.0f);
+            }
+        }
+
         public IEnumerator StartRecording()
         {
+            //Debug.Log("Dictation Start!");
             _dictationRecognizer.Start();
             yield return null;
+            //Debug.Log("Dictation Stop!");
+        }
+
+        public IEnumerator RecognizerTimeout()
+        {
+            float currentTime = 0f;
+            while (true)
+            {
+                if (_dictationStarted)
+                {
+                    if (currentTime == 0)
+                    {
+                        currentTime = Time.time;
+                    }
+                    //Debug.Log("startTime :" + currentTime);
+                    //Debug.Log("currentTime :" + Time.time);
+                    if (currentTime + 3 > Time.time)
+                    {
+                        if (!_isProcessing)
+                        {
+                            //Debug.Log("Reset");
+                            _dictationRecognizer.Stop();
+                            _dictationStarted = false;
+                        }
+                        currentTime = 0f;
+                    }
+                }
+                yield return null;
+            }
         }
 
         public void OnDictationResult(string text, ConfidenceLevel confidence)
         {
+            //Debug.Log("OnDictationResultStart");
+            //Debug.Log("Dictation result: " + text);
             // Return if SpeechInputListener is already processing speech
             // input (external responders may take more time).
             if (_isProcessing)
@@ -107,30 +151,31 @@ namespace HoloIslandVis.Input.Speech
                 StartCoroutine(ProcessInput(eventArgs));
             }
 
-            if (_dictationRecognizer.Status == SpeechSystemStatus.Running)
-                _dictationRecognizer.Stop();
-
             _dictationStarted = false;
+            //Debug.Log("OnDictationResultStop");
         }
 
         public void OnDictationComplete(DictationCompletionCause cause)
         {
-            if(_dictationRecognizer.Status == SpeechSystemStatus.Running)
-                _dictationRecognizer.Stop();
-
+            //Debug.Log("OnDictationCompleteStart");
+            //Debug.Log("Dictation Complete: " + cause.ToString());
+            _dictationRecognizer.Stop();
             _dictationStarted = false;
+            //Debug.Log("OnDictationCompleteStop");
         }
 
         public void OnDictationError(string error, int hresult)
         {
-            if (_dictationRecognizer.Status == SpeechSystemStatus.Running)
-                _dictationRecognizer.Stop();
-
+            //Debug.Log("OnDictationErrorStart");
+            //Debug.Log("Dictation Error: " + error);
+            _dictationRecognizer.Stop();
             _dictationStarted = false;
+            //Debug.Log("OnDictationErrorStop");
         }
 
         private IEnumerator ProcessInput(SpeechInputEventArgs eventArgs)
         {
+            //Debug.Log("ProcessInputStart");
             /*if (!GameObject.Find("AppConfig").GetComponent<AppConfig>().IsServerInstance)
                 yield break;*/
 
@@ -155,7 +200,9 @@ namespace HoloIslandVis.Input.Speech
             action = response => SpeechInputEvent(response);
             InputHandler.Instance.InvokeSpeechInputEvent(action, eventArgs);
 
+            _dictationRecognizer.Stop();
             _isProcessing = false;
+            //Debug.Log("ProcessInputStop");
         }
     }
 }

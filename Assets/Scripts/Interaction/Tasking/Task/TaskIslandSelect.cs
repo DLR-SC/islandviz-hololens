@@ -34,6 +34,8 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         {
             ScenarioHandler.current_bundle = eventArgs.Focused.name;
             ScenarioHandler.keywordsGesture.Add("Select[Island]");
+            ScenarioHandler.IncrementCounterGestureControl();
+
             _focused = eventArgs.Focused;
             _focused.OnSelect();
 
@@ -45,6 +47,7 @@ namespace HoloIslandVis.Interaction.Tasking.Task
             ScenarioHandler.IncrementCounterVoiceControl();
             ScenarioHandler.current_bundle = eventArgs.Focused.name;
             ScenarioHandler.keywordsSpeech.Add("Select[Island]");
+
             _focused = eventArgs.Focused;
             _focused.OnSelect();
 

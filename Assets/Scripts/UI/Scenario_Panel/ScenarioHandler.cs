@@ -32,6 +32,7 @@ public class ScenarioHandler : SingletonComponent<ScenarioHandler>
     private Vector3 position;
 
     private bool isDemo = false;
+    private bool finishingScenario = false;
 
     private bool first_time = true;
     public static string name_highlighted_island = "";
@@ -104,6 +105,10 @@ public class ScenarioHandler : SingletonComponent<ScenarioHandler>
                 break;
         }
         scenarioStartTime = Time.time;
+        keywordsGesture = new ArrayList();
+        keywordsSpeech = new ArrayList();
+        counterActionsGestureControl = 0;
+        counterActionsSpeechControl = 0;
     }
 
     private void init_scenarioOne(bool adjust_view)
@@ -250,6 +255,12 @@ public class ScenarioHandler : SingletonComponent<ScenarioHandler>
 
     public void FinishScenario()
     {
+        if (finishingScenario) {
+            Debug.Log("Scenario is already finishing");
+            return;
+        }
+        finishingScenario = true;
+        Debug.Log("Finish the scenario");
         scenarioEndTime = Time.time;
         if (isDemo)
         {
@@ -266,11 +277,6 @@ public class ScenarioHandler : SingletonComponent<ScenarioHandler>
     {
         string putData = BuildPutData();
         byte[] bytes = Encoding.UTF8.GetBytes(putData);
-
-        keywordsGesture = new ArrayList();
-        keywordsSpeech = new ArrayList();
-        counterActionsGestureControl = 0;
-        counterActionsSpeechControl = 0;
 
         string ServiceAdress = "192.168.1.100";
         string ServicePort = "5000";
@@ -353,6 +359,30 @@ public class ScenarioHandler : SingletonComponent<ScenarioHandler>
         eventArgs.IsTwoHanded = false;
         Command command = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.Bundle);
 
+        GestureInteractionEventArgs eventArgsWorkaround = new GestureInteractionEventArgs();
+        Command commandWorkaround;
+        if (current_state.Name == "main")
+        {
+            eventArgsWorkaround.Focused = GameObject.Find("RCE XML Merger Component Execution").GetComponent<Interactable>();
+            eventArgsWorkaround.Focused._focused = true;
+            eventArgsWorkaround.Focused._selected = false;
+            eventArgsWorkaround.Gesture = GestureType.OneHandTap;
+            eventArgsWorkaround.HandOnePos = new Vector3(-0.4f, 1.4f, -5.3f);
+            eventArgsWorkaround.HandTwoPos = new Vector3(0f, 0f, 0f);
+            eventArgsWorkaround.IsTwoHanded = false;
+            eventArgsWorkaround.Selected = GameObject.Find("NoneInteractableProxy").GetComponent<Interactable>();
+            eventArgsWorkaround.Selected._focused = false;
+            eventArgsWorkaround.Selected._selected = false;
+
+            commandWorkaround = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.Bundle);
+            StartCoroutine(StateManager.Instance.IssueCommand(eventArgsWorkaround, commandWorkaround));
+            while (current_state.Name == "main")
+            {
+                yield return new WaitForSeconds(0.1f);
+                current_state = StateManager.Instance.CurrentState;
+            }
+        }
+
         switch(current_state.Name)
         {
             case "inspect building":
@@ -410,8 +440,39 @@ public class ScenarioHandler : SingletonComponent<ScenarioHandler>
         }
         
         AppManager.first_time_opened = true;
-        Debug.Log("End");
+        finishingScenario = false;
 
         yield return null;
+    }
+
+    public static IEnumerator SendLiveSignal()
+    {
+        while (true)
+        {
+            Debug.Log("SendLiveSignal");
+            string putData = "{\"live\": \"true\"}";
+            byte[] bytes = Encoding.UTF8.GetBytes(putData);
+
+            string ServiceAdress = "192.168.1.100";
+            string ServicePort = "5000";
+            string serverEndpoint = "http://" + ServiceAdress + ":" + ServicePort + "/";
+
+            var webRequest = UnityWebRequest.Put(serverEndpoint + "api", bytes);
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            yield return webRequest.SendWebRequest();
+            
+            if (webRequest.isNetworkError)
+            {
+                Debug.Log("Error While Sending: " + webRequest.error);
+                //_errorState = true;   
+            }
+            else
+            {
+                string _latestResponse = webRequest.downloadHandler.text;
+                Debug.Log("Received: " + _latestResponse);
+            }
+
+            yield return new WaitForSeconds(1f);
+        }
     }
 }

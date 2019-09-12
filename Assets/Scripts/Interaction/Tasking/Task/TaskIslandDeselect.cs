@@ -22,6 +22,7 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         {
             UpdateHighlights(eventArgs);
             ScenarioHandler.keywordsGesture.Add("Deselect[Island]");
+            ScenarioHandler.IncrementCounterGestureControl();
 
             _visualization = UIManager.Instance.Visualization;
             _visualization.GetComponent<ObjectStateSynchronizer>().SyncActive = false;

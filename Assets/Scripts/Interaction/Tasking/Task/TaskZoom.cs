@@ -23,6 +23,8 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         public override IEnumerator Perform(SpeechInteractionEventArgs eventArgs)
         {
             ScenarioHandler.keywordsSpeech.Add("Zoom[" + eventArgs.Keyword + "]");
+            ScenarioHandler.IncrementCounterVoiceControl();
+
             // Number of seconds to zoom.
             _duration = 2.0f;
             // Zoom intensity.
