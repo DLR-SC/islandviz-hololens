@@ -62,6 +62,7 @@ namespace HoloIslandVis.Core
             var nluServiceClient = GameObject.Find("NLUService").GetComponent<NLUServiceClient>();
             nluServiceClient.ServiceAddress = AppConfig.NLUServiceAddress;
             nluServiceClient.ServicePort = AppConfig.NLUServicePort;
+            StartCoroutine(nluServiceClient.SendLiveSignal());
 
             GameObject.Find("ServiceAddressInput").GetComponent<InputField>().text = AppConfig.SharingServiceAddress;
             GameObject.Find("ServicePortInput").GetComponent<InputField>().text = AppConfig.SharingServicePort.ToString();

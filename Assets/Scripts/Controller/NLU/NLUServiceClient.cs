@@ -102,5 +102,32 @@ namespace HoloIslandVis.Controller.NLU
             builder.Append($"\"gesture_type\":\"{context.GestureType}\"}}");
             return builder.ToString();
         }
+
+        public IEnumerator SendLiveSignal()
+        {
+            while (true)
+            {
+                Debug.Log("SendLiveSignal");
+                string putData = "{\"live\": \"true\"}";
+                byte[] bytes = Encoding.UTF8.GetBytes(putData);
+
+                var webRequest = UnityWebRequest.Put(_serverEndpoint + "api", bytes);
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+                yield return webRequest.SendWebRequest();
+
+                if (webRequest.isNetworkError)
+                {
+                    Debug.Log("Error While Sending: " + webRequest.error);
+                    //_errorState = true;   
+                }
+                else
+                {
+                    string _latestResponse = webRequest.downloadHandler.text;
+                    Debug.Log("Received: " + _latestResponse);
+                }
+
+                yield return new WaitForSeconds(1f);
+            }
+        }
     }
 }
