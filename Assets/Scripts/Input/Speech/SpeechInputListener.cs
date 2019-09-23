@@ -134,13 +134,10 @@ namespace HoloIslandVis.Input.Speech
 
         private IEnumerator ProcessInput(SpeechInputEventArgs eventArgs)
         {
-<<<<<<< HEAD
             if (!GameObject.Find("AppConfig").GetComponent<AppConfig>().IsServerInstance)
                 yield break;
 
             Debug.Log("Processing '" + eventArgs.Input + "'");
-=======
->>>>>>> fdd24e2bbbab8979434d4aed2691bd04d24dd502
             _isProcessing = true;
             Action<SpeechInputEventArgs> action;
 
