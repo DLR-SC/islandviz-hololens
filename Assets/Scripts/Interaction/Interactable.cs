@@ -64,8 +64,8 @@ namespace HoloIslandVis.Interaction
         public bool Selectable;
         public bool Focusable;
 
-        private bool _focused;
-        private bool _selected;
+        public bool _focused;
+        public bool _selected;
 
         public void Start()
         {

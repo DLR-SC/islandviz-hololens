@@ -17,13 +17,14 @@ namespace HoloIslandVis.Interaction.Tasking.Task
 
         public override IEnumerator Perform(SpeechInteractionEventArgs eventArgs)
         {
-            // Number of seconds to perform a shift.
-            _duration = 4.0f;
-            // Influences the width of the shift.
-            _scalingFactor = 20.0f;
-
             _visualization = UIManager.Instance.GetUIElement(UIElement.Visualization);
             _contentPane = UIManager.Instance.GetUIElement(UIElement.ContentPane);
+
+            // Number of seconds to perform a shift.
+            _duration = 2.0f;
+
+            // Set the width of the shift.
+            _scalingFactor = 30.0f * 0.01f / _visualization.transform.localScale.x;
 
             // Get position information
             Vector3 headPosition = GazeManager.Instance.GazeOrigin;

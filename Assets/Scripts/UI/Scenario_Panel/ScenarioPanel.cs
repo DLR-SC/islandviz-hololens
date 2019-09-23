@@ -1,15 +1,13 @@
-﻿using HoloIslandVis.UI;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections;
 
 namespace HoloIslandVis.UI.Component
 {
     public class ScenarioPanel : UIComponent
     {
+
         public override IEnumerator Activate()
         {
-            gameObject.SetActive(false);
+            gameObject.SetActive(true);
             yield break;
         }
 
