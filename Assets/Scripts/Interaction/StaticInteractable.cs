@@ -12,6 +12,7 @@ namespace HoloIslandVis.Interaction
         Panel,
         Fit,
         Dependencies,
+        Reset,
         Invariant
     }
 

@@ -23,6 +23,8 @@ namespace HoloIslandVis.Core
         public SyncManager SyncManager;
         public SingletonComponentInitializer Initializer;
 
+        public static bool first_time_opened;
+
         protected override void Awake()
         {
             SetDefaultConfig();
@@ -60,6 +62,7 @@ namespace HoloIslandVis.Core
             var nluServiceClient = GameObject.Find("NLUService").GetComponent<NLUServiceClient>();
             nluServiceClient.ServiceAddress = AppConfig.NLUServiceAddress;
             nluServiceClient.ServicePort = AppConfig.NLUServicePort;
+            StartCoroutine(nluServiceClient.SendLiveSignal());
 
             GameObject.Find("ServiceAddressInput").GetComponent<InputField>().text = AppConfig.SharingServiceAddress;
             GameObject.Find("ServicePortInput").GetComponent<InputField>().text = AppConfig.SharingServicePort.ToString();
@@ -118,8 +121,6 @@ namespace HoloIslandVis.Core
             State state_inspectRegion   = new State("inspect region");
             State state_inspectBuilding = new State("inspect building");
 
-            State state_scenario_manager = new State("scenario manager");
-
             StateManager.Instance.AddState(state_settings);
             StateManager.Instance.AddState(state_loading);
             StateManager.Instance.AddState(state_setup);
@@ -128,16 +129,9 @@ namespace HoloIslandVis.Core
             StateManager.Instance.AddState(state_inspectRegion);
             StateManager.Instance.AddState(state_inspectBuilding);
 
-            StateManager.Instance.AddState(state_scenario_manager);
-
             Init_StateSettings(state_settings, state_setup);
-            //Init_StateLoading(state_loading, state_setup);
-
-            /*Init_StateSetup(state_setup, state_main);
-            Init_StateMain(state_main, state_setup, state_inspectIsland);*/
-            Init_StateSetup(state_setup, state_scenario_manager);
-            Init_StateScenario(state_scenario_manager, state_setup, state_main);
-            Init_StateMain(state_main, state_scenario_manager, state_inspectIsland);
+            Init_StateSetup(state_setup, state_main);
+            Init_StateMain(state_main, state_setup, state_inspectIsland);
 
             Init_StateInspectIsland(state_inspectIsland, state_main, state_inspectRegion);
             Init_StateInspectRegion(state_inspectRegion, state_inspectIsland, state_inspectBuilding, state_main);
@@ -145,22 +139,6 @@ namespace HoloIslandVis.Core
 
             StateManager.Instance.Init(state_setup);
         }
-
-        public void LoadScenario()
-        {
-            Debug.Log("Load Scenario");
-        }
-
-        private void Init_StateScenario(State state_scenario_manager, State state_setup, State state_main)
-        {
-            Command command_startScenario = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.Widget, InteractableType.None, StaticItem.None);
-
-            state_scenario_manager.AddOpenAction((State state) => UIManager.Instance.Activate(UIElement.ScenarioPanel));
-            state_scenario_manager.AddCloseAction((State state) => UIManager.Instance.Deactivate(UIElement.ScenarioPanel));
-            state_scenario_manager.AddStateTransition(command_startScenario, state_main);
-        }
-
-
 
         private void Init_StateSettings(State state_settings, State state_setup)
         {
@@ -171,30 +149,29 @@ namespace HoloIslandVis.Core
         private void Init_StateLoading(State state_loading, State state_setup)
         {
             state_loading.AddOpenAction((State state) => LoadVisualization());
-
         }
 
-        private void Init_StateSetup(State state_setup, State state_scenario)
+        private void Init_StateSetup(State state_setup, State state_main)
         {
-            TaskDragPhysics task_dragPhysics    = new TaskDragPhysics();
+            TaskDragPhysics task_dragPhysics = new TaskDragPhysics();
 
             Command command_dragPhysics = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.ContentPane);
-            Command command_setPane     = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.ContentPane, InteractableType.None, StaticItem.None);
+            Command command_setPane = new Command(GestureType.OneHandTap, KeywordType.None, InteractableType.ContentPane, InteractableType.None, StaticItem.None);
 
             state_setup.AddInteractionTask(command_dragPhysics, task_dragPhysics);
-            state_setup.AddStateTransition(command_setPane, state_scenario);
+            state_setup.AddStateTransition(command_setPane, state_main);
 
             state_setup.AddOpenAction((State state) => {
                 UIManager.Instance.Activate(UIElement.BoundingBoxRig);
                 GameObject.Find("ContentPaneProxy").transform.position = GameObject.Find("ContentPane").transform.position;
-                }
+            }
             );
             state_setup.AddCloseAction((State state) => UIManager.Instance.Deactivate(UIElement.BoundingBoxRig));
         }
 
         private void Init_StateMain(State state_main, State state_init, State state_inspectIsland)
         {
-            bool first_time_opened = true;
+            first_time_opened = true;
 
             TaskDragProjected task_dragProjected        = new TaskDragProjected();
             TaskZoomProjected task_zoomProjected        = new TaskZoomProjected();
@@ -206,6 +183,7 @@ namespace HoloIslandVis.Core
             TaskResetPane task_resetPane                = new TaskResetPane();
             TaskMoveDirection task_moveDirection        = new TaskMoveDirection();
             TaskZoom task_zoom                          = new TaskZoom();
+            
 
             Command command_dragProjected       = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command command_zoomProjected       = new Command(GestureType.TwoHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
@@ -222,6 +200,7 @@ namespace HoloIslandVis.Core
             Command command_adjust              = new Command(StaticItem.Adjust);
             Command command_showDependencies    = new Command(StaticItem.Dependencies);
             Command command_fitContent          = new Command(StaticItem.Fit);
+            Command command_reset               = new Command(StaticItem.Reset);
 
             state_main.AddInteractionTask(command_dragProjected, task_dragProjected);
             state_main.AddInteractionTask(command_zoomProjected, task_zoomProjected);
@@ -255,15 +234,6 @@ namespace HoloIslandVis.Core
                 }
 
                 UIManager.Instance.EnableToolbar(true);
-            });
-            state_main.AddOpenAction((State state) => Debug.Log("Main State"));
-            state_main.AddOpenAction((State state) => {
-                var uiElement = (ScenarioPanel)UIManager.Instance.GetUIElement(UIElement.ScenarioPanel);
-                var dropdown = uiElement.GetComponentsInChildren<Dropdown>(true);
-                Debug.Log(dropdown[0].options[dropdown[0].value].text);
-                GameObject.Find("ScenarioHandler").GetComponent<ScenarioHandler>().SetupScenario(dropdown[0].options[dropdown[0].value].text, first_time_opened);
-                // Adjusting the view must only be performed, when the main is opened for the first time.
-                first_time_opened = false;
             });
 
             state_main.AddCloseAction((State state) => UIManager.Instance.DisableToolbar(true));

@@ -22,8 +22,6 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         {
             UpdateHighlights(eventArgs);
 
-            Debug.Log("Deselect");
-
             _visualization = UIManager.Instance.Visualization;
             _visualization.GetComponent<ObjectStateSynchronizer>().SyncActive = false;
             _visualizationPosition = _visualization.transform.localPosition;
@@ -38,8 +36,6 @@ namespace HoloIslandVis.Interaction.Tasking.Task
         public override IEnumerator Perform(SpeechInteractionEventArgs eventArgs)
         {
             UpdateHighlights(eventArgs);
-
-            Debug.Log("Deselect");
 
             _visualization = UIManager.Instance.Visualization;
             _visualization.GetComponent<ObjectStateSynchronizer>().SyncActive = false;

@@ -17,7 +17,7 @@ namespace HoloIslandVis.Controller
     public class StateManager : SingletonComponent<StateManager>, IInputReceiver
     {
         private Dictionary<string, State> _stateTable;
-        private bool _isProcessing;
+        public bool _isProcessing;
 
         public AppConfig AppConfig;
         public ContextManager ContextManager;
