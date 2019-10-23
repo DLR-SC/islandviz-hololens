@@ -33,6 +33,8 @@ namespace HoloIslandVis.Interaction
         MoveDown,
         MoveLeft,
         MoveRight,
+        SelectBiggest,
+        SelectSmallest,
         Invariant
     }
 

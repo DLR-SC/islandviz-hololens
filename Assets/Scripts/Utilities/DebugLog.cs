@@ -9,12 +9,15 @@ namespace HoloIslandVis.Utilities
     {
         private TextMesh _textMesh;
 
-        void Start()
+        void Awake()
         {
+            base.Awake();
             _textMesh = GetComponent<TextMesh>();
         }
 
         public void SetText(string text)
-            => _textMesh.text = text;
+        {
+            _textMesh.text = text;
+        }
     }
 }

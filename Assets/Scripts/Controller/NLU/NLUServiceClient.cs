@@ -35,10 +35,12 @@ namespace HoloIslandVis.Controller.NLU
                 { "move_left", KeywordType.MoveLeft},
                 { "move_right", KeywordType.MoveRight},
                 { "select_component", KeywordType.Select},
-                { "deselect_component", KeywordType.Deselect}
+                { "deselect_component", KeywordType.Deselect},
+                { "select_biggest_component", KeywordType.SelectBiggest },
+                { "select_smallest_component", KeywordType.SelectSmallest }
             };
 
-            StartCoroutine(SendLiveSignal());
+            //StartCoroutine(SendLiveSignal());
         }
 
         public IEnumerator SendRequest(SpeechInputEventArgs eventArgs)
@@ -62,9 +64,8 @@ namespace HoloIslandVis.Controller.NLU
             if (!_errorState)
             {
                 string response = _latestResponse;
-
                 JSONObject jsonObject = new JSONObject(response);
-                var intent = jsonObject.GetField("intent_name").GetField("name").ToString();
+                var intent = jsonObject.GetField("intent_name").ToString();
                 intent = char.ToLower(intent[1]) + intent.Substring(2, intent.Length - 3);
 
                 if (_intentToKeyword.ContainsKey(intent))
@@ -93,6 +94,9 @@ namespace HoloIslandVis.Controller.NLU
             }
             else Debug.Log("Received: " + webRequest.downloadHandler.text);
             _latestResponse = webRequest.downloadHandler.text;
+
+            Debug.Log(putData);
+            Debug.Log(_latestResponse);
         }
 
         private string buildPutData(string input, NLUServiceContext context)
@@ -132,7 +136,7 @@ namespace HoloIslandVis.Controller.NLU
                     Debug.Log("Received: " + _latestResponse);
                 }
 
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(5f);
             }
         }
     }

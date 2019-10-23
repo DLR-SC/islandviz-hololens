@@ -22,6 +22,7 @@ namespace HoloIslandVis.Core
         public AppConfig AppConfig;
         public SyncManager SyncManager;
         public SingletonComponentInitializer Initializer;
+        public OSGiProject CurrentProject;
 
         public static bool first_time_opened;
 
@@ -62,7 +63,7 @@ namespace HoloIslandVis.Core
             var nluServiceClient = GameObject.Find("NLUService").GetComponent<NLUServiceClient>();
             nluServiceClient.ServiceAddress = AppConfig.NLUServiceAddress;
             nluServiceClient.ServicePort = AppConfig.NLUServicePort;
-            StartCoroutine(nluServiceClient.SendLiveSignal());
+            //StartCoroutine(nluServiceClient.SendLiveSignal());
 
             GameObject.Find("ServiceAddressInput").GetComponent<InputField>().text = AppConfig.SharingServiceAddress;
             GameObject.Find("ServicePortInput").GetComponent<InputField>().text = AppConfig.SharingServicePort.ToString();
@@ -71,6 +72,7 @@ namespace HoloIslandVis.Core
         public void StartApplication()
         {
             UIManager.Instance.Activate(UIElement.SettingsPanel);
+
         }
 
         public void LoadVisualization()
@@ -98,10 +100,10 @@ namespace HoloIslandVis.Core
             Task.Factory.StartNew(() =>
             {
                 JSONObject modeldata = JSONObject.Create(filecontent);
-                OSGiProject project = OSGiProjectParser.Instance.Parse(modeldata);
+                CurrentProject = OSGiProjectParser.Instance.Parse(modeldata);
 
                 VisualizationLoader.Instance.VisualizationLoaded += OnVisualizationLoaded;
-                VisualizationLoader.Instance.Load(project);
+                VisualizationLoader.Instance.Load(CurrentProject);
             });
         }
 
@@ -175,6 +177,8 @@ namespace HoloIslandVis.Core
 
             TaskDragProjected task_dragProjected        = new TaskDragProjected();
             TaskZoomProjected task_zoomProjected        = new TaskZoomProjected();
+            TaskSelectBiggest task_selectBiggest        = new TaskSelectBiggest();
+            TaskSelectSmallest task_selectSmallest      = new TaskSelectSmallest();
             TaskIslandSelect task_islandSelect          = new TaskIslandSelect();
             TaskIslandDeselect task_islandDeselect      = new TaskIslandDeselect();
             TaskShowDependencies task_showDependencies  = new TaskShowDependencies();
@@ -191,6 +195,8 @@ namespace HoloIslandVis.Core
             Command command_exportSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ImportDock);
             Command command_importSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
             Command command_islandSelectSpeech  = new Command(GestureType.None, KeywordType.Select, InteractableType.Bundle);
+            Command command_selectBiggest       = new Command(GestureType.None, KeywordType.SelectBiggest, InteractableType.Invariant);
+            Command command_selectSmallest      = new Command(GestureType.None, KeywordType.SelectSmallest, InteractableType.Invariant);
             Command command_zoomIn              = new Command(GestureType.None, KeywordType.ZoomIn, InteractableType.Invariant);
             Command command_zoomOut             = new Command(GestureType.None, KeywordType.ZoomOut, InteractableType.Invariant);
             Command command_moveUp              = new Command(GestureType.None, KeywordType.MoveUp, InteractableType.Invariant);
@@ -216,10 +222,14 @@ namespace HoloIslandVis.Core
             state_main.AddInteractionTask(command_moveDown, task_moveDirection);
             state_main.AddInteractionTask(command_moveLeft, task_moveDirection);
             state_main.AddInteractionTask(command_moveRight, task_moveDirection);
+            state_main.AddInteractionTask(command_selectBiggest, task_selectBiggest);
+            state_main.AddInteractionTask(command_selectSmallest, task_selectSmallest);
 
             state_main.AddStateTransition(command_adjust, state_init);
             state_main.AddStateTransition(command_islandSelectGesture, state_inspectIsland);
             state_main.AddStateTransition(command_islandSelectSpeech, state_inspectIsland);
+            state_main.AddStateTransition(command_selectBiggest, state_inspectIsland);
+            state_main.AddStateTransition(command_selectSmallest, state_inspectIsland);
 
             state_main.AddOpenAction((State state) => {
                 UIManager.Instance.SetActiveButtons(StaticItem.Adjust, StaticItem.Panel, StaticItem.Fit, StaticItem.Dependencies);
@@ -246,6 +256,7 @@ namespace HoloIslandVis.Core
             TaskRotateInspect task_rotateInspect = new TaskRotateInspect();
             TaskShowDependencies task_showDependencies = new TaskShowDependencies();
             TaskToggleDependency task_toggleDependency = new TaskToggleDependency();
+            TaskSelectBiggestPackage task_selectBiggestPackage = new TaskSelectBiggestPackage();
 
             Command command_regionSelect = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.Package, InteractableType.Bundle, StaticItem.None);
             Command command_regionSelectSpeech = new Command(GestureType.None, KeywordType.Select, InteractableType.Package, InteractableType.Bundle, StaticItem.None);
@@ -257,6 +268,9 @@ namespace HoloIslandVis.Core
             Command command_importSelectGesture = new Command(GestureType.OneHandTap, KeywordType.Invariant, InteractableType.ExportDock);
             Command command_rotateInspect = new Command(GestureType.OneHandManipStart, KeywordType.Invariant, InteractableType.Invariant);
             Command command_showDependencies = new Command(StaticItem.Dependencies);
+            Command command_selectBiggest = new Command(GestureType.None, KeywordType.SelectBiggest, InteractableType.Invariant);
+            Command command_selectSmallest = new Command(GestureType.None, KeywordType.SelectSmallest, InteractableType.Invariant);
+
 
             state_inspectIsland.AddInteractionTask(command_regionSelect, task_regionSelect);
             state_inspectIsland.AddInteractionTask(command_regionSelectSpeech, task_regionSelect);
@@ -268,6 +282,8 @@ namespace HoloIslandVis.Core
             state_inspectIsland.AddInteractionTask(command_showDependencies, task_showDependencies);
             state_inspectIsland.AddInteractionTask(command_importSelectGesture, task_toggleDependency);
             state_inspectIsland.AddInteractionTask(command_exportSelectGesture, task_toggleDependency);
+            state_inspectIsland.AddInteractionTask(command_selectBiggest, task_selectBiggestPackage);
+            //state_inspectIsland.AddInteractionTask(command_selectSmallest, task_selectSmallestPackage);
 
             state_inspectIsland.AddStateTransition(command_islandDeselectGesture1, state_main);
             state_inspectIsland.AddStateTransition(command_islandDeselectGesture2, state_main);

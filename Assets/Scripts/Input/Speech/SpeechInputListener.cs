@@ -23,6 +23,8 @@ namespace HoloIslandVis.Input.Speech
         MoveDown,
         MoveLeft,
         MoveRight,
+        SelectBiggest,
+        SelectSmallest,
         Invariant
     }
 
@@ -91,8 +93,8 @@ namespace HoloIslandVis.Input.Speech
         {
             while (true)
             {
-                Debug.Log("dictation started: " + _dictationStarted);
-                Debug.Log("is processing: " + _isProcessing);
+                //Debug.Log("dictation started: " + _dictationStarted);
+                //Debug.Log("is processing: " + _isProcessing);
                 yield return new WaitForSeconds(2.0f);
             }
         }
@@ -144,9 +146,6 @@ namespace HoloIslandVis.Input.Speech
 
             // First token has to be equal to activation keyword, second token
             // is the actual input string for processing.
-
-            Debug.Log("Processing: " + text);
-
             string[] token = text.ToLower().Split(new char[] { ' ' }, 2);
             if (token[0] == ActivationKeyword.ToLower() && token.Length > 1)
             {
