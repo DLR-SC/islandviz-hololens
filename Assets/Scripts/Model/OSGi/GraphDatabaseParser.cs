@@ -56,7 +56,7 @@ namespace HoloIslandVis.Model.OSGi
             //_referenceResolver = new ReferenceResolver(modelData.GetField("packages"),
             //    modelData.GetField("services"));
 
-            //ParseBundles(osgiProject, modelData.GetField("bundles"));
+            ParseBundles(osgiProject, database);
             //ParseServices(osgiProject, modelData.GetField("services"));
             //ParseDependencies(osgiProject, modelData.GetField("bundles"));
 
@@ -81,18 +81,20 @@ namespace HoloIslandVis.Model.OSGi
             return osgiProject;
         }
 
-        private List<Bundle> ParseBundles(OSGiProject osgiProject, JSONObject fieldBundles)
+        private List<Bundle> ParseBundles(OSGiProject osgiProject, Neo4J database)
         {
-            foreach (JSONObject fieldBundle in fieldBundles.list)
+            IStatementResult result = database.Transaction("MATCH (b:Bundle) RETURN b.bundleSymbolicName as symbolicName");
+            List<string> bundleSymbolicNameList = result.Select(record => record["symbolicName"].As<string>()).ToList();
+
+            result = database.Transaction("MATCH (b:Bundle) RETURN b.name as name");
+            List<string> bundleNameList = result.Select(record => record["name"].As<string>()).ToList();
+
+            for (int i = 0; i < bundleNameList.Count; i++)
             {
-                string fieldBundleName = fieldBundle.GetField("name").str;
-                string fieldBundleSymbolicName = fieldBundle.GetField("symbolicName").str;
+                string fieldBundleName = bundleNameList[i];
+                string fieldBundleSymbolicName = bundleSymbolicNameList[i];
                 Bundle bundle = new Bundle(osgiProject, fieldBundleName, fieldBundleSymbolicName);
-                JSONObject fieldPackageFragments = fieldBundle.GetField("packageFragments");
-
-                if (fieldPackageFragments != null)
-                    ParsePackageFragments(bundle, fieldPackageFragments);
-
+                ParsePackageFragments(bundle, database);
                 osgiProject.Bundles.Add(bundle);
             }
 
@@ -100,17 +102,22 @@ namespace HoloIslandVis.Model.OSGi
             return osgiProject.Bundles;
         }
 
-        private List<Package> ParsePackageFragments(Bundle bundle, JSONObject fieldPackageFragments)
+        private List<Package> ParsePackageFragments(Bundle bundle, Neo4J database)
         {
-            foreach (JSONObject fieldPackageFragment in fieldPackageFragments.list)
-            {
-                JSONObject fieldPackageReference = fieldPackageFragment.GetField("package");
-                JSONObject fieldPackage = _referenceResolver.ResolvePackageReference(fieldPackageReference);
-                Package package = new Package(bundle, fieldPackage.GetField("qualifiedName").str);
-                JSONObject fieldCompilationUnits = fieldPackageFragment.GetField("compilationUnits");
+            IStatementResult result = database.Transaction("MATCH (b:Bundle {bundleSymbolicName: '" + bundle.SymbolicName + "'})-[h:HAS]->(p:Package) RETURN p.fileName as name"); // EXPORTS?
+            List<string> packageFileNameList = result.Select(record => record["name"].As<string>()).ToList();
 
-                if (fieldCompilationUnits != null)
-                    ParseCompilationUnits(package, fieldCompilationUnits);
+            if (packageFileNameList == null)
+                return null;
+
+            foreach (string packageFileName in packageFileNameList)
+            {
+                //JSONObject fieldPackageReference = fieldPackageFragment.GetField("package");
+                //JSONObject fieldPackage = _referenceResolver.ResolvePackageReference(fieldPackageReference);
+                Package package = new Package(bundle, packageFileName);
+                //JSONObject fieldCompilationUnits = fieldPackageFragment.GetField("compilationUnits");
+
+                ParseCompilationUnits(package, database);
 
                 bundle.Packages.Add(package);
             }
@@ -118,28 +125,42 @@ namespace HoloIslandVis.Model.OSGi
             return bundle.Packages;
         }
 
-        private List<CompilationUnit> ParseCompilationUnits(Package package, JSONObject fieldCompilationUnits)
+        private List<CompilationUnit> ParseCompilationUnits(Package package, Neo4J database)
         {
-            foreach (JSONObject fieldCompilationUnit in fieldCompilationUnits.list)
+            IStatementResult result = database.Transaction("MATCH (p:Package{fileName: '" + package.Name + "'})-[h:CONTAINS]->(c:Class) " + "RETURN c.name as className");
+            List<string> classNameList = result.Select(record => record["className"].As<string>()).ToList();
+
+            result = database.Transaction("MATCH (p:Package{fileName: '" + package.Name + "'})-[h:CONTAINS]->(c:Class) " + "RETURN c.visibility as classModifier");
+            List<string> classModifier = result.Select(record => record["classModifier"].As<string>()).ToList();
+
+            result = database.Transaction("MATCH (p:Package{fileName: '" + package.Name + "'})-[h:CONTAINS]->(c:Class) " + "RETURN c.linesOfCode as classLOC");
+            List<string> classLOC = result.Select(record => record["classLOC"].As<string>()).ToList();
+
+            if (classNameList == null || classModifier == null || classLOC == null)
+                return null;
+
+            for (int i = 0; i < classNameList.Count; i++)
             {
-                JSONObject fieldTopLevelType = fieldCompilationUnit.GetField("topLevelType");
-                string compilationUnitType = fieldTopLevelType.GetField("eClass").str;
-                string compilationUnitModifier = fieldTopLevelType.GetField("visibility").str;
-                long fieldLinesOfCode = fieldCompilationUnit.GetField("LOC").i;
+                if (classLOC[i] == null || classLOC[i] == "Null")
+                    classLOC[i] = "0";
+
+                //JSONObject fieldTopLevelType = fieldCompilationUnit.GetField("topLevelType");
+                string compilationUnitName = classNameList[i];
+                string compilationUnitModifier = classModifier[i];
+                long fieldLinesOfCode = long.Parse(classLOC[i]);
 
                 if (package.Bundle.OSGiProject.MaximalLinesOfCode < fieldLinesOfCode)
                     package.Bundle.OSGiProject.MaximalLinesOfCode = fieldLinesOfCode;
 
-                compilationUnitType = compilationUnitType.Replace(_redundantString, "");
-                compilationUnitModifier = compilationUnitModifier.Replace(_redundantString, "");
+                //compilationUnitType = compilationUnitType.Replace(_redundantString, "");
+                //compilationUnitModifier = compilationUnitModifier.Replace(_redundantString, "");
 
                 Type type = Type.Unknown;
                 AccessModifier modifier = AccessModifier.Default;
-                _types.TryGetValue(compilationUnitType, out type);
-                _accessModifiers.TryGetValue(compilationUnitType, out modifier);
+                _types.TryGetValue("Class", out type);
+                _accessModifiers.TryGetValue(compilationUnitModifier, out modifier);
 
-                CompilationUnit compilationUnit = new CompilationUnit(package,
-                    fieldTopLevelType.GetField("name").str, fieldLinesOfCode, type, modifier);
+                CompilationUnit compilationUnit = new CompilationUnit(package, compilationUnitName, fieldLinesOfCode, type, modifier);
                 package.CompilationUnits.Add(compilationUnit);
             }
 
