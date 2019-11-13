@@ -15,8 +15,8 @@ namespace Neo4JDriver
         // Start is called before the first frame update
         void Start()
         {
-            database = new Neo4J("bolt://localhost:7687", "neo4j", "123");
-            StartCoroutine(ConnectionStatus());
+            //database = new Neo4J("bolt://localhost:7687", "neo4j", "123");
+            //StartCoroutine(ConnectionStatus());
         }
 
         public void Query()
