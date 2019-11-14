@@ -40,7 +40,7 @@ namespace HoloIslandVis.Core.Builders
 
         public IEnumerator Construct(List<Service> services, List<Island> Islands)
         {
-            serviceVolume = new ServiceVolume();
+            //serviceVolume = new ServiceVolume();
             //yield return StartCoroutine(constructAll(services, Islands));
             ServiceGameObjectsBuilt(new ServiceGameObjectsBuiltEventArgs(Islands));
             yield return null;

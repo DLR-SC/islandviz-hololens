@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace HoloIslandVis.Model.OSGi
 {
-    public class GraphDatabaseParser : Singleton<OSGiProjectParser>
+    public class GraphDatabaseParser : Singleton<GraphDatabaseParser>
     {
         public delegate void ProjectModelParsedHandler(OSGiProject project);
         public event ProjectModelParsedHandler ProjectModelParsed = delegate { };
@@ -43,11 +43,6 @@ namespace HoloIslandVis.Model.OSGi
             };
         }
 
-        internal OSGiProject ParseAsync(JSONObject modeldata)
-        {
-            throw new NotImplementedException();
-        }
-
         public OSGiProject Parse(string ip, string user, string pass)
         {
             Neo4J database = new Neo4J("bolt://" + ip + ":7687", user, pass);
@@ -58,7 +53,7 @@ namespace HoloIslandVis.Model.OSGi
 
             ParseBundles(osgiProject, database);
             //ParseServices(osgiProject, modelData.GetField("services"));
-            //ParseDependencies(osgiProject, modelData.GetField("bundles"));
+            //ParseDependencies(osgiProject, database);
 
             // TODO: Refactor?
             osgiProject.Bundles.Sort((x, y) => x.Packages.Count.CompareTo(y.Packages.Count));
@@ -93,9 +88,18 @@ namespace HoloIslandVis.Model.OSGi
             {
                 string fieldBundleName = bundleNameList[i];
                 string fieldBundleSymbolicName = bundleSymbolicNameList[i];
+
+                IStatementResult packages = database.Transaction("MATCH (b:Bundle {bundleSymbolicName: '" + fieldBundleSymbolicName + "'})-[h:CONTAINS]->(p:PackageFragment) RETURN p.fileName as name"); // EXPORTS?
+                List<string> packageFileNameList = packages.Select(record => record["name"].As<string>()).ToList();
+
+                if (packageFileNameList.Count > 1 || packageFileNameList.Count == 0)
+                    continue;
+
                 Bundle bundle = new Bundle(osgiProject, fieldBundleName, fieldBundleSymbolicName);
                 ParsePackageFragments(bundle, database);
                 osgiProject.Bundles.Add(bundle);
+                GraphVertex vertex = new GraphVertex(bundle.Name);
+                osgiProject.DependencyGraph.AddVertex(vertex);
             }
 
 
@@ -104,7 +108,7 @@ namespace HoloIslandVis.Model.OSGi
 
         private List<Package> ParsePackageFragments(Bundle bundle, Neo4J database)
         {
-            IStatementResult result = database.Transaction("MATCH (b:Bundle {bundleSymbolicName: '" + bundle.SymbolicName + "'})-[h:HAS]->(p:Package) RETURN p.fileName as name"); // EXPORTS?
+            IStatementResult result = database.Transaction("MATCH (b:Bundle {bundleSymbolicName: '" + bundle.SymbolicName + "'})-[h:CONTAINS]->(p:PackageFragment) RETURN p.fileName as name"); // EXPORTS?
             List<string> packageFileNameList = result.Select(record => record["name"].As<string>()).ToList();
 
             if (packageFileNameList == null)
@@ -200,7 +204,7 @@ namespace HoloIslandVis.Model.OSGi
             {
                 ParseExports(osgiProject, fieldBundle.GetField("exports"), bundleIndex);
                 ParseImports(osgiProject, fieldBundle.GetField("imports"), bundleIndex);
-                ParseComponents(osgiProject, fieldBundle.GetField("components"), bundleIndex);
+                //ParseComponents(osgiProject, fieldBundle.GetField("components"), bundleIndex);
 
                 bundleIndex++;
             }

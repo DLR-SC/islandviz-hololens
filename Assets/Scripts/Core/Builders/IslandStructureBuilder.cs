@@ -12,6 +12,7 @@ using VFace = TriangleNet.Topology.DCEL.Face;
 using TNetMesh = TriangleNet.Mesh;
 using VHEdge = TriangleNet.Topology.DCEL.HalfEdge;
 using HoloIslandVis.Sharing;
+using System;
 
 namespace HoloIslandVis.Core.Builders
 {
@@ -46,6 +47,11 @@ namespace HoloIslandVis.Core.Builders
 
         private CartographicIsland BuildFromBundle(Bundle bundle)
         {
+            Debug.Log("Start building island structure " + bundle.Name);
+
+            if (bundle.Name == "Apache Derby 10.11")
+                Debug.Log("pause");
+
             int seed = bundle.GetHashCode();
             TriangleNet.Configuration config = new TriangleNet.Configuration();
             BoundedVoronoi voronoi = VoronoiMaker.Instance.CreateRelaxedVoronoi(1, CELL_SCALE, seed);
@@ -57,8 +63,15 @@ namespace HoloIslandVis.Core.Builders
             var island = new CartographicIsland(bundle, voronoi);
             int maxCount = bundle.MostCompilationUnits.CompilationUnitCount;
 
-            foreach (Package package in bundle.Packages)
-                ConstructRegion(package, island, startCells, maxCount);
+            try
+            {
+                foreach (Package package in bundle.Packages)
+                    ConstructRegion(package, island, startCells, maxCount);
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e.StackTrace);
+            }
 
             ShapeCoastArea(startCells, HEIGHT_PROFILE);
             SetCoastline(startCells, island);
@@ -74,7 +87,7 @@ namespace HoloIslandVis.Core.Builders
             island.CoastlineMeshes.AddRange(coastlineMeshes);
 
             LinkDependencyVertex(bundle, island);
-
+            Debug.Log("Done building island structure " + bundle.Name);
             return island;
         }
 

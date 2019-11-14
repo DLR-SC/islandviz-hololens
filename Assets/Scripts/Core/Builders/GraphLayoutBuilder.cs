@@ -93,6 +93,7 @@ namespace HoloIslandVis.Core.Builders
             int overlappingBundles = 0;
             foreach (GraphVertex vertex in project.DependencyGraph.Vertices)
             {
+                Debug.Log("Vertex position for " + vertex.Name);
                 Vector3 diagonalVector = min - max;
 
                 float randomX = diagonalVector.x * SyncDataStorage.Instance.GetRandomNumber(_random);
@@ -109,6 +110,7 @@ namespace HoloIslandVis.Core.Builders
 
                     randomVector = min + new Vector3(randomX, randomY, randomZ);
                     iteration++;
+                    Debug.Log("Vertex position for " + vertex.Name + ": iteration " + iteration);
                 }
 
                 vertex.Position = randomVector;

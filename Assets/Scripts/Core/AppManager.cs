@@ -100,7 +100,8 @@ namespace HoloIslandVis.Core
             Task.Factory.StartNew(() =>
             {
                 JSONObject modeldata = JSONObject.Create(filecontent);
-                CurrentProject = OSGiProjectParser.Instance.Parse(modeldata);
+                //CurrentProject = OSGiProjectParser.Instance.Parse(modeldata);
+                CurrentProject = GraphDatabaseParser.Instance.Parse("localhost", "neo4j", "123");
 
                 VisualizationLoader.Instance.VisualizationLoaded += OnVisualizationLoaded;
                 VisualizationLoader.Instance.Load(CurrentProject);
